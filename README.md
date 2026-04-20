@@ -14,6 +14,18 @@ TypeScript declarative UI component library for MCP apps. Renders to JSON compon
 - **ext-apps bridge** — `app()` factory with PostMessage transport, host theme, lifecycle hooks
 - **Auto-renderers** — `autoTable()`, `autoChart()`, `autoForm()`, `autoMetrics()` and more
 
+## Works Everywhere
+
+The renderer is **vanilla DOM** — no framework dependency. Drop it into any web app:
+
+- **React** — mount into a `ref` div
+- **Vue / Svelte / Angular** — same, it's just DOM
+- **Plain HTML** — single `<script>` tag
+- **Electron / Tauri** — desktop apps with web views
+- **Any iframe** — ext-apps, embedded widgets, sandboxed UIs
+
+Any app that connects to MCP servers can render `$prefab` tool output as rich interactive UI — tables, charts, forms, badges — with zero custom code.
+
 ## Install
 
 ```bash
@@ -292,7 +304,7 @@ import { ... } from '@max-health-inc/prefab/renderer'   // Browser renderer
 
 ```bash
 bun install          # Install dependencies
-bun test             # Run tests (221 passing)
+bun test             # Run tests (362 passing)
 bun run build        # TypeScript compile + IIFE bundle
 bun run lint         # ESLint
 bun run typecheck    # Type check without emitting
