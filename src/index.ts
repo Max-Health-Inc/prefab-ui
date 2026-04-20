@@ -42,6 +42,10 @@ export { Alert, AlertTitle, AlertDescription } from './components/alert/index.js
 // ── Media ────────────────────────────────────────────────────────────────────
 export { Image, Audio, Video, Embed, Svg, DropZone, Mermaid } from './components/media/index.js'
 
+// ── Auto-rendering ───────────────────────────────────────────────────────────
+export { autoDetail, autoTable, statusVariant, registerStatusVariants } from './auto/index.js'
+export type { AutoDetailOptions, AutoTableOptions } from './auto/index.js'
+
 // ── Re-export actions and rx for convenience ─────────────────────────────────
 export { rx, Rx, ITEM, INDEX, EVENT, ERROR, RESULT, STATE } from './rx/index.js'
 export { SetState, ToggleState, AppendState, PopState, ShowToast, CloseOverlay, OpenLink, SetInterval } from './actions/client.js'
