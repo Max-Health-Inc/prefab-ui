@@ -288,7 +288,8 @@ export class Bridge {
       theme: hostCtx?.theme
         ? { colorScheme: hostCtx.theme as 'light' | 'dark' | 'auto' }
         : undefined,
-      toolInput: hostCtx?.toolInfo?.arguments,
+      // ext-apps delivers tool args via ui/notifications/tool-input, not in hostContext
+      toolInput: undefined,
       meta: hostCtx as unknown as Record<string, unknown>,
     }
   }
