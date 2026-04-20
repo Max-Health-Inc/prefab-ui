@@ -5,7 +5,9 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-TypeScript declarative UI component library for MCP apps. Renders to JSON component trees using the **$prefab wire format**. Wire-compatible with the Python [prefab-ui](https://github.com/PrefectHQ/prefab) library.
+TypeScript declarative UI component library for MCP apps. Wire-compatible with PrefectHQ's Python [prefab-ui](https://github.com/PrefectHQ/prefab) — **same `$prefab` JSON, two languages**.
+
+Write MCP servers in **TypeScript/Bun** and generate the exact same wire format that Python servers produce. Render the output in **any web app** with the included vanilla DOM renderer. Full circle: server-side DSL → JSON → browser UI.
 
 - **100+ components** — layout, form, data, charts, media, interactive, control flow
 - **Reactive state** — `rx()` expressions, `SetState`/`ToggleState`/`AppendState` actions
