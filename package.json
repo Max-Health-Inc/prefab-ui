@@ -22,6 +22,10 @@
     "./charts": {
       "import": "./dist/components/charts/index.js",
       "types": "./dist/components/charts/index.d.ts"
+    },
+    "./mcp": {
+      "import": "./dist/mcp/index.js",
+      "types": "./dist/mcp/index.d.ts"
     }
   },
   "files": [

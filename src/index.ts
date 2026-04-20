@@ -58,6 +58,11 @@ export type { AutoMetricDef, AutoMetricsOptions } from './auto/metrics.js'
 export type { AutoTimelineEvent, AutoTimelineOptions } from './auto/timeline.js'
 export type { AutoProgressStep, AutoProgressOptions } from './auto/progress.js'
 
+// ── MCP Display Helpers ──────────────────────────────────────────────────────
+export { display, display_form, display_update, display_error } from './mcp/display.js'
+export type { DisplayOptions, DisplayFormOptions, DisplayErrorOptions, StateUpdate, PrefabUpdateWire } from './mcp/display.js'
+export type { McpToolResult, McpContent, McpTextContent } from './mcp/types.js'
+
 // ── Re-export actions and rx for convenience ─────────────────────────────────
 export { rx, Rx, ITEM, INDEX, EVENT, ERROR, RESULT, STATE } from './rx/index.js'
 export { SetState, ToggleState, AppendState, PopState, ShowToast, CloseOverlay, OpenLink, SetInterval } from './actions/client.js'
