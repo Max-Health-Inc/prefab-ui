@@ -25,6 +25,7 @@ export interface PrefabWireFormat {
   theme?: Theme
   defs?: Record<string, ComponentJSON>
   keyBindings?: Record<string, ActionJSON | ActionJSON[]>
+  onMount?: ActionJSON | ActionJSON[]
   stylesheets?: string[]
 }
 
@@ -104,6 +105,12 @@ export class PrefabApp {
           ? actions.map(a => a.toJSON())
           : actions.toJSON()
       }
+    }
+
+    if (this.onMount) {
+      wire.onMount = Array.isArray(this.onMount)
+        ? this.onMount.map(a => a.toJSON())
+        : this.onMount.toJSON()
     }
 
     return wire

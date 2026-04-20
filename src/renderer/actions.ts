@@ -72,6 +72,14 @@ async function dispatchOne(action: ActionJSON, ctx: DispatchContext): Promise<vo
       return handleSendMessage(action, ctx)
     case 'updateContext':
       { handleUpdateContext(action, ctx); return; }
+    case 'fetch':
+      return handleFetch(action, ctx)
+    case 'openFilePicker':
+      { handleOpenFilePicker(action, ctx); return; }
+    case 'callHandler':
+      return handleCallHandler(action, ctx)
+    case 'requestDisplayMode':
+      { handleRequestDisplayMode(action, ctx); return; }
     default:
       console.warn(`[prefab] Unknown action: ${type}`)
   }
@@ -195,6 +203,83 @@ function handleUpdateContext(action: ActionJSON, ctx: DispatchContext): void {
   if (context != null) {
     ctx.store.merge(context)
     ctx.rerender()
+  }
+}
+
+async function handleFetch(action: ActionJSON, ctx: DispatchContext): Promise<void> {
+  const url = resolveStr(action.url, ctx)
+  if (!isSafeUrl(url)) {
+    console.warn(`[prefab] Blocked unsafe URL in fetch: ${url}`)
+    return
+  }
+
+  const method = (action.method as string | undefined) ?? 'GET'
+  const headers = action.headers as Record<string, string> | undefined
+  const body = action.body !== undefined ? JSON.stringify(action.body) : undefined
+
+  try {
+    const resp = await globalThis.fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', ...headers },
+      ...(body && { body }),
+    })
+    const result = await resp.json().catch(() => resp.text())
+    if (action.resultKey != null) {
+      ctx.store.set(action.resultKey as string, result)
+    }
+    ctx.rerender()
+    await runCallbacks(action.onSuccess, ctx, { $result: result })
+  } catch (err) {
+    await runCallbacks(action.onError, ctx, { $error: err })
+  }
+}
+
+function handleOpenFilePicker(action: ActionJSON, ctx: DispatchContext): void {
+  if (typeof document === 'undefined') return
+
+  const input = document.createElement('input')
+  input.type = 'file'
+  if (action.accept) input.accept = action.accept as string
+  if (action.multiple === true) input.multiple = true
+
+  input.addEventListener('change', () => {
+    const files = Array.from(input.files ?? [])
+    if (action.resultKey != null) {
+      ctx.store.set(action.resultKey as string, files)
+    }
+    ctx.rerender()
+    void runCallbacks(action.onSuccess, ctx, { $result: files })
+  })
+  input.click()
+}
+
+async function handleCallHandler(action: ActionJSON, ctx: DispatchContext): Promise<void> {
+  const handler = action.handler as string
+  const args = resolveArgs(action.arguments as Record<string, unknown> | undefined, ctx)
+
+  // callHandler delegates to the transport like toolCall
+  if (!ctx.transport) {
+    console.warn(`[prefab] No transport configured for callHandler: ${handler}`)
+    return
+  }
+
+  try {
+    const result = await ctx.transport.callTool(handler, args)
+    if (action.resultKey != null) {
+      ctx.store.set(action.resultKey as string, result)
+    }
+    ctx.rerender()
+    await runCallbacks(action.onSuccess, ctx, { $result: result })
+  } catch (err) {
+    await runCallbacks(action.onError, ctx, { $error: err })
+  }
+}
+
+function handleRequestDisplayMode(action: ActionJSON, _ctx: DispatchContext): void {
+  if (typeof document !== 'undefined') {
+    document.dispatchEvent(new CustomEvent('prefab:request-display-mode', {
+      detail: { mode: action.mode },
+    }))
   }
 }
 

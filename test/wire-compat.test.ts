@@ -46,9 +46,9 @@ import { createNoopTransport } from '../src/renderer/transport'
 
 const GOLDEN_DIR = join(import.meta.dir, 'fixtures', 'golden')
 
-function loadFixture(name: string): Record<string, unknown> {
+function loadFixture(name: string): PrefabWireFormat & Record<string, unknown> {
   const raw = readFileSync(join(GOLDEN_DIR, name), 'utf-8')
-  return JSON.parse(raw) as Record<string, unknown>
+  return JSON.parse(raw) as PrefabWireFormat & Record<string, unknown>
 }
 
 function loadAllFixtures(): { name: string; data: Record<string, unknown> }[] {
@@ -238,10 +238,7 @@ describe('Wire compat: TS builder structural equivalence', () => {
     it('Badge content matches', () => {
       const goldenBadge = (goldenInner.children as Record<string, unknown>[])[1]
       const tsBadge = (tsInner.children as Record<string, unknown>[])[1]
-      // Python uses "label", TS uses "content" — check semantic equivalence
-      const goldenText = goldenBadge.label ?? goldenBadge.content
-      const tsText = tsBadge.content ?? tsBadge.label
-      expect(tsText).toBe(goldenText)
+      expect(tsBadge.label).toBe(goldenBadge.label)
       expect(tsBadge.variant).toBe(goldenBadge.variant)
     })
   })
@@ -750,88 +747,50 @@ describe('Wire compat: Round-trip TS→JSON→DOM', () => {
 })
 
 // ══════════════════════════════════════════════════════════════════════════════
-// Part 5: Known delta documentation — structural differences between
-// Python and TS that are intentional or need future alignment
+// Part 5: Full JSON equality — TS builder output matches Python golden fixtures
 // ══════════════════════════════════════════════════════════════════════════════
 
-describe('Wire compat: Known Python/TS deltas', () => {
+describe('Wire compat: Full JSON parity', () => {
 
-  it('Python compiles gap to cssClass, TS emits gap as prop', () => {
+  it('01-hello-world: TS output matches Python golden', () => {
     const golden = loadFixture('01-hello-world.json')
-    const goldenCol = innerView(golden)
-    const tsCol = Column({ gap: 4, children: [] }).toJSON()
-
-    // Python: gap → cssClass="gap-4", no gap prop
-    expect(goldenCol.cssClass).toContain('gap-4')
-    expect(goldenCol.gap).toBeUndefined()
-
-    // TS: gap as explicit prop
-    expect(tsCol.gap).toBe(4)
+    const tsView = Column({ gap: 4, children: [
+      Heading('Hello World'),
+      Badge('Active', { variant: 'success' }),
+    ]})
+    const tsWire = new PrefabApp({ view: tsView }).toJSON()
+    expect(tsWire).toEqual(golden)
   })
 
-  it('Python Badge uses "label", TS Badge uses "content"', () => {
-    const golden = loadFixture('01-hello-world.json')
-    const goldenBadge = ((innerView(golden).children as Record<string, unknown>[])[1])
-    const tsBadge = Badge('Active', { variant: 'success' }).toJSON()
-
-    expect(goldenBadge.label).toBe('Active')
-    expect(tsBadge.content).toBe('Active')
-  })
-
-  it('Python includes explicit defaults (disabled:false), TS omits them', () => {
-    const golden = loadFixture('03-form-with-actions.json')
-    const goldenBtn = (innerView(golden).children as Record<string, unknown>[])[3]
-    const tsBtn = Button('Submit', { onClick: new CallHandler('submit_form') }).toJSON()
-
-    // Python includes defaults
-    expect(goldenBtn.disabled).toBe(false)
-    expect(goldenBtn.variant).toBe('default')
-    expect(goldenBtn.size).toBe('default')
-
-    // TS omits undefined/default values
-    expect(tsBtn.disabled).toBeUndefined()
-  })
-
-  it('Python Heading defaults level=1, TS omits level when unset', () => {
-    const golden = loadFixture('01-hello-world.json')
-    const goldenHeading = (innerView(golden).children as Record<string, unknown>[])[0]
-    const tsHeading = Heading('Hello World').toJSON()
-
-    expect(goldenHeading.level).toBe(1)
-    expect(tsHeading.level).toBeUndefined()
-  })
-
-  it('Python DataTable emits extra defaults (search, paginated, pageSize)', () => {
+  it('02-data-table: TS output matches Python golden', () => {
     const golden = loadFixture('02-data-table.json')
-    const goldenDT = (innerView(golden).children as Record<string, unknown>[])[1]
-
-    // Python always emits these
-    expect(goldenDT.search).toBe(false)
-    expect(goldenDT.paginated).toBe(false)
-    expect(goldenDT.pageSize).toBe(10)
-
-    // TS DataTable omits defaults
-    const tsDT = DataTable({
-      rows: [],
-      columns: [col('x', 'X')],
-    }).toJSON()
-    expect(tsDT.search).toBeUndefined()
-    expect(tsDT.paginated).toBeUndefined()
-    expect(tsDT.pageSize).toBeUndefined()
+    const tsView = Column({ gap: 4, children: [
+      Heading('User Directory', { level: 2 }),
+      DataTable({
+        rows: [
+          { name: 'Alice', role: 'Admin', status: 'Active' },
+          { name: 'Bob', role: 'Editor', status: 'Inactive' },
+          { name: 'Carol', role: 'Viewer', status: 'Active' },
+        ],
+        columns: [col('name', 'Name'), col('role', 'Role'), col('status', 'Status')],
+      }),
+    ]})
+    const tsWire = new PrefabApp({ view: tsView }).toJSON()
+    expect(tsWire).toEqual(golden)
   })
 
-  it('Python Separator emits orientation, TS does not', () => {
-    const golden = loadFixture('04-detail-card.json')
-    // Navigate: innerView = Card, Card.children[1] = CardContent, CardContent.children[0] = Column
-    const gCard = innerView(golden)
-    const gContent = (gCard.children as Record<string, unknown>[])[1]
-    const gCol = (gContent.children as Record<string, unknown>[])[0]
-    const gSep = (gCol.children as Record<string, unknown>[])[1]
-
-    expect(gSep.type).toBe('Separator')
-    expect(gSep.orientation).toBe('horizontal')
-
-    const tsSep = Separator().toJSON()
-    expect(tsSep.orientation).toBeUndefined()
+  it('03-form-with-actions: TS output matches Python golden', () => {
+    const golden = loadFixture('03-form-with-actions.json')
+    const tsView = Column({ gap: 4, children: [
+      Heading('Contact Form', { level: 2 }),
+      Input({ name: 'email', placeholder: 'you@example.com' }),
+      Textarea({ name: 'message', placeholder: 'Your message...' }),
+      Button('Submit', { onClick: new CallHandler('submit_form') }),
+    ]})
+    const tsWire = new PrefabApp({
+      view: tsView,
+      state: { email: '', message: '' },
+    }).toJSON()
+    expect(tsWire).toEqual(golden)
   })
 })

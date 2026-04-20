@@ -33,7 +33,7 @@ describe('Layout', () => {
     const c = Column({ gap: 6, children: [Heading('Hi')] })
     const json = c.toJSON()
     expect(json.type).toBe('Column')
-    expect(json.gap).toBe(6)
+    expect(json.cssClass).toContain('gap-6')
     expect(json.children).toHaveLength(1)
     expect(json.children![0].type).toBe('Heading')
   })
@@ -142,7 +142,7 @@ describe('Data Display', () => {
 
   it('Badge with variant', () => {
     const json = Badge('5 items', { variant: 'outline' }).toJSON()
-    expect(json.content).toBe('5 items')
+    expect(json.label).toBe('5 items')
     expect(json.variant).toBe('outline')
   })
 

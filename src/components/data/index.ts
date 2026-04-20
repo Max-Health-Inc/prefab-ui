@@ -15,7 +15,7 @@ export interface DataTableColumnDef {
 
 /** Convenience factory for DataTableColumn definitions */
 export function col(key: string, header?: string, opts?: { sortable?: boolean }): DataTableColumnDef {
-  return { key, header: header ?? key, ...opts }
+  return { key, header: header ?? key, sortable: opts?.sortable ?? false }
 }
 
 export interface DataTableProps extends ComponentProps {
@@ -33,9 +33,11 @@ export function DataTable(props: DataTableProps): Component {
     columns: props.columns.map(col => ({
       key: col.key,
       header: col.header ?? col.key,
-      ...(col.sortable && { sortable: true }),
+      sortable: col.sortable ?? false,
     })),
-    ...(props.search && { search: true }),
+    search: props.search ?? false,
+    paginated: false,
+    pageSize: 10,
   })
   return c
 }
@@ -51,8 +53,8 @@ export interface BadgeProps extends ComponentProps {
 export function Badge(content: RxStr, props?: BadgeProps): Component {
   const c = new Component('Badge', props)
   c.getProps = () => ({
-    content: String(content),
-    ...(props?.variant && { variant: props.variant }),
+    label: String(content),
+    variant: props?.variant ?? 'default',
   })
   return c
 }
@@ -132,7 +134,9 @@ export function Progress(props: ProgressProps): Component {
 // ── Separator ────────────────────────────────────────────────────────────────
 
 export function Separator(props?: ComponentProps): Component {
-  return new Component('Separator', props)
+  const c = new Component('Separator', props)
+  c.getProps = () => ({ orientation: 'horizontal' })
+  return c
 }
 
 // ── Loader ───────────────────────────────────────────────────────────────────

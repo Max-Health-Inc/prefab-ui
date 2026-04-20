@@ -317,13 +317,20 @@ function splitPipes(expr: string): string[] {
   const parts: string[] = []
   let current = ''
   let inQuote: string | null = null
-  for (const ch of expr) {
+  for (let i = 0; i < expr.length; i++) {
+    const ch = expr[i]
     if (ch === "'" || ch === '"') {
       inQuote = inQuote === ch ? null : (inQuote ?? ch)
     }
     if (ch === '|' && !inQuote) {
-      parts.push(current)
-      current = ''
+      // Skip || (logical OR) — not a pipe
+      if (expr[i + 1] === '|') {
+        current += '||'
+        i++ // consume second |
+      } else {
+        parts.push(current)
+        current = ''
+      }
     } else {
       current += ch
     }

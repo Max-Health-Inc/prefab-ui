@@ -13,12 +13,14 @@ export interface ColumnProps extends ContainerProps {
 }
 
 export function Column(props: ColumnProps & { children?: Component[] }): ContainerComponent {
-  const c = new ContainerComponent('Column', props)
+  // Compile gap into cssClass to match Python wire format
+  const gapClass = props.gap !== undefined ? `gap-${props.gap}` : undefined
+  const mergedCss = [props.cssClass, gapClass].filter(Boolean).join(' ') || undefined
+  const c = new ContainerComponent('Column', { ...props, cssClass: mergedCss })
   Object.assign(c, { _gap: props.gap, _align: props.align })
   const origGetProps = c.getProps.bind(c)
   c.getProps = () => ({
     ...origGetProps(),
-    ...(props.gap !== undefined && { gap: props.gap }),
     ...(props.align && { align: props.align }),
   })
   return c
@@ -32,9 +34,11 @@ export interface RowProps extends ContainerProps {
 }
 
 export function Row(props: RowProps & { children?: Component[] }): ContainerComponent {
-  const c = new ContainerComponent('Row', props)
+  // Compile gap into cssClass to match Python wire format
+  const gapClass = props.gap !== undefined ? `gap-${props.gap}` : undefined
+  const mergedCss = [props.cssClass, gapClass].filter(Boolean).join(' ') || undefined
+  const c = new ContainerComponent('Row', { ...props, cssClass: mergedCss })
   c.getProps = () => ({
-    ...(props.gap !== undefined && { gap: props.gap }),
     ...(props.align && { align: props.align }),
   })
   return c

@@ -63,7 +63,7 @@ function renderDataTable(node: ComponentNode, ctx: RenderContext): HTMLElement {
   table.appendChild(tbody)
 
   // Search
-  if (node.search != null) {
+  if (node.search === true) {
     const input = document.createElement('input')
     input.type = 'text'
     input.placeholder = 'Search...'
@@ -96,7 +96,7 @@ function renderBadge(node: ComponentNode, ctx: RenderContext): HTMLElement {
   e.style.borderRadius = '9999px'
   e.style.fontSize = '12px'
   e.style.fontWeight = '500'
-  e.textContent = resolveStr(node.content, ctx)
+  e.textContent = resolveStr(node.label ?? node.content, ctx)
   applyBadgeStyle(e, variant)
   return e
 }

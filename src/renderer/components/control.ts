@@ -121,10 +121,11 @@ function renderDefine(node: ComponentNode, ctx: RenderContext): DocumentFragment
 
 /**
  * Use: materializes a named definition previously stored via Define.
+ * Accepts both `def` (TS builder) and `name` (legacy) props.
  */
 function renderUse(node: ComponentNode, ctx: RenderContext): DocumentFragment {
   const frag = document.createDocumentFragment()
-  const name = node.name as string
+  const name = (node.def ?? node.name) as string
   const children = ctx.templates?.[name]
   if (!children) return frag
 

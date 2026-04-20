@@ -86,7 +86,7 @@ function renderInput(node: ComponentNode, ctx: RenderContext): HTMLElement {
   if (node.name != null) input.name = node.name as string
   if (node.name != null) input.id = `pf-input-${node.name as string}`
   if (node.placeholder != null) input.placeholder = resolveStr(node.placeholder, ctx)
-  if (node.required != null) {
+  if (node.required === true) {
     input.required = true
     input.setAttribute('aria-required', 'true')
   }
@@ -119,7 +119,7 @@ function renderTextarea(node: ComponentNode, ctx: RenderContext): HTMLElement {
   if (node.name != null) textarea.id = `pf-textarea-${node.name as string}`
   if (node.placeholder != null) textarea.placeholder = resolveStr(node.placeholder, ctx)
   if (node.rows != null) textarea.rows = node.rows as number
-  if (node.required != null) textarea.setAttribute('aria-required', 'true')
+  if (node.required === true) textarea.setAttribute('aria-required', 'true')
 
   const name = node.name as string | undefined
   if (name != null) {
@@ -136,7 +136,7 @@ function renderTextarea(node: ComponentNode, ctx: RenderContext): HTMLElement {
 function renderButton(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const btn = document.createElement('button')
   btn.className = 'pf-button'
-  btn.type = node.type === 'submit' ? 'submit' : 'button'
+  btn.type = node.submit === true ? 'submit' : 'button'
   btn.textContent = resolveStr(node.label, ctx)
 
   const variant = (node.variant as string | undefined) ?? 'default'
@@ -144,7 +144,7 @@ function renderButton(node: ComponentNode, ctx: RenderContext): HTMLElement {
   applyButtonStyle(btn, variant)
 
   if (node.size != null) btn.setAttribute('data-size', node.size as string)
-  if (node.disabled != null) btn.disabled = true
+  if (node.disabled === true) btn.disabled = true
 
   if (node.onClick != null) {
     btn.addEventListener('click', () => {
@@ -217,7 +217,7 @@ function renderCheckbox(node: ComponentNode, ctx: RenderContext): HTMLElement {
   input.type = 'checkbox'
   input.className = 'pf-checkbox'
   if (node.name != null) input.name = node.name as string
-  if (node.checked != null) input.checked = true
+  if (node.checked === true) input.checked = true
 
   const name = node.name as string | undefined
   if (name) {

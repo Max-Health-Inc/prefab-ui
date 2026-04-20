@@ -122,7 +122,7 @@ describe('PrefabApp', () => {
 
     const columnView = json.view.children![0]
     expect(columnView.type).toBe('Column')
-    expect(columnView.gap).toBe(6)
+    expect(columnView.cssClass).toContain('gap-6')
     expect(columnView.children).toHaveLength(3)
 
     // Heading

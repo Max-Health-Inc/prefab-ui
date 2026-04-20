@@ -36,10 +36,12 @@ export function Input(props: InputProps): StatefulComponent {
   const origGetProps = c.getProps.bind(c)
   c.getProps = () => ({
     ...origGetProps(),
+    inputType: props.inputType ?? 'text',
     ...(props.label && { label: props.label }),
     ...(props.placeholder && { placeholder: props.placeholder }),
-    ...(props.inputType && { inputType: props.inputType }),
-    ...(props.required && { required: true }),
+    disabled: false,
+    readOnly: false,
+    required: props.required ?? false,
   })
   return c
 }
@@ -58,6 +60,8 @@ export function Textarea(props: TextareaProps): StatefulComponent {
     ...origGetProps(),
     ...(props.placeholder && { placeholder: props.placeholder }),
     ...(props.rows !== undefined && { rows: props.rows }),
+    disabled: false,
+    required: false,
   })
   return c
 }
@@ -71,6 +75,8 @@ export interface ButtonProps extends ComponentProps {
   variant?: ButtonVariant
   size?: ButtonSize
   disabled?: boolean
+  /** Set to true to make this a submit button inside a Form. */
+  submit?: boolean
   onClick?: Action | Action[]
 }
 
@@ -78,9 +84,10 @@ export function Button(label: RxStr, props?: ButtonProps): Component {
   const c = new Component('Button', props)
   c.getProps = () => {
     const p: Record<string, unknown> = { label: String(label) }
-    if (props?.variant) p.variant = props.variant
-    if (props?.size) p.size = props.size
-    if (props?.disabled) p.disabled = true
+    p.variant = props?.variant ?? 'default'
+    p.size = props?.size ?? 'default'
+    p.disabled = props?.disabled ?? false
+    if (props?.submit) p.submit = true
     if (props?.onClick) {
       p.onClick = Array.isArray(props.onClick)
         ? props.onClick.map((a: Action) => a.toJSON())

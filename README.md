@@ -9,10 +9,10 @@ TypeScript declarative UI component library for MCP apps. Wire-compatible with P
 
 Write MCP servers in **TypeScript/Bun** and generate the exact same wire format that Python servers produce. Render the output in **any web app** with the included vanilla DOM renderer. Full circle: server-side DSL → JSON → browser UI.
 
-- **150+ exports** — layout, form, data, charts, media, interactive, control flow components
+- **55+ components** — layout, form, data, charts, media, interactive, control flow
 - **Reactive state** — `rx()` expressions, `SetState`/`ToggleState`/`AppendState` actions
 - **MCP-native** — `display()`, `display_form()`, `CallTool`, `SendMessage` built in
-- **Browser renderer** — IIFE bundle, zero dependencies, vanilla DOM
+- **Browser renderer** — zero dependencies, vanilla DOM (optional separate import)
 - **ext-apps bridge** — `app()` factory with PostMessage transport, host theme, lifecycle hooks
 - **Auto-renderers** — `autoTable()`, `autoChart()`, `autoForm()`, `autoMetrics()` and more
 

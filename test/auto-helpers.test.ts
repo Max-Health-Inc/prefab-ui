@@ -90,7 +90,7 @@ describe('autoForm', () => {
     const inputs = form.children![0].children!.filter(c => c.type === 'Input')
     expect(inputs[0].required).toBe(true)  // email
     expect(inputs[1].required).toBe(true)  // name
-    expect(inputs[2].required).toBeUndefined()  // notes
+    expect(inputs[2].required).toBe(false)  // notes
   })
 
   it('custom submit label', () => {
@@ -136,7 +136,7 @@ describe('autoComparison', () => {
     const priceRow = content.children![0] // first detail row (price)
     const badge = priceRow.children!.find(c => c.type === 'Badge')
     expect(badge).toBeDefined()
-    expect(badge!.content).toBe('$10/mo')
+    expect(badge!.label).toBe('$10/mo')
   })
 
   it('handles empty items', () => {
@@ -272,7 +272,7 @@ describe('autoProgress', () => {
     const dot = firstRow.children!.find(c => c.type === 'Dot')
     expect(dot!.color).toBe('green') // completed
     const badge = firstRow.children!.find(c => c.type === 'Badge')
-    expect(badge!.content).toBe('Done')
+    expect(badge!.label).toBe('Done')
   })
 
   it('active step has blue dot', () => {

@@ -81,7 +81,7 @@ export function autoForm(
   const formChildren = [
     Column({ gap: 4, children: [
       ...inputComponents,
-      Button(submitLabel, { cssClass: 'w-full' }),
+      Button(submitLabel, { submit: true, cssClass: 'w-full' }),
     ] }),
   ]
 

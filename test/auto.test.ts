@@ -84,7 +84,7 @@ describe('autoDetail', () => {
     // Find the badge in first row
     const firstRowBadge = rows[0].children!.find(c => c.type === 'Badge')
     expect(firstRowBadge).toBeDefined()
-    expect(firstRowBadge!.content).toBe('Yes')
+    expect(firstRowBadge!.label).toBe('Yes')
     expect(firstRowBadge!.variant).toBe('success')
   })
 
@@ -171,7 +171,7 @@ describe('autoTable', () => {
     // Badge with count
     const row = json.children!.find(c => c.type === 'Row')!
     const badge = row.children!.find(c => c.type === 'Badge')
-    expect(badge!.content).toBe('3 records')
+    expect(badge!.label).toBe('3 records')
   })
 
   it('excludes specified columns', () => {
@@ -219,7 +219,7 @@ describe('autoTable', () => {
     const result = autoTable(sampleRows, { search: false })
     const json = result.toJSON()
     const table = json.children!.find(c => c.type === 'DataTable')!
-    expect(table.search).toBeUndefined()
+    expect(table.search).toBe(false)
   })
 
   it('disables sortable when option set', () => {
@@ -227,6 +227,6 @@ describe('autoTable', () => {
     const json = result.toJSON()
     const table = json.children!.find(c => c.type === 'DataTable')!
     const columns = table.columns as { sortable?: boolean }[]
-    expect(columns[0].sortable).toBeUndefined()
+    expect(columns[0].sortable).toBe(false)
   })
 })

@@ -23,7 +23,8 @@ function renderColumn(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const e = el('div', 'pf-column')
   e.style.display = 'flex'
   e.style.flexDirection = 'column'
-  if (node.gap != null) e.style.gap = `${(node.gap as number) * 4}px`
+  const gap = extractGap(node)
+  if (gap != null) e.style.gap = `${gap * 4}px`
   if (node.align != null) e.style.alignItems = mapAlign(node.align as string)
   if (node.justify != null) e.style.justifyContent = mapJustify(node.justify as string)
   renderChildren(node, e, ctx)
@@ -34,7 +35,8 @@ function renderRow(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const e = el('div', 'pf-row')
   e.style.display = 'flex'
   e.style.flexDirection = 'row'
-  if (node.gap != null) e.style.gap = `${(node.gap as number) * 4}px`
+  const gap = extractGap(node)
+  if (gap != null) e.style.gap = `${gap * 4}px`
   if (node.align != null) e.style.alignItems = mapAlign(node.align as string)
   if (node.justify != null) e.style.justifyContent = mapJustify(node.justify as string)
   if (node.wrap != null) e.style.flexWrap = 'wrap'
@@ -47,7 +49,8 @@ function renderGrid(node: ComponentNode, ctx: RenderContext): HTMLElement {
   e.style.display = 'grid'
   const cols = (node.columns as number | undefined) ?? 3
   e.style.gridTemplateColumns = `repeat(${cols}, 1fr)`
-  if (node.gap != null) e.style.gap = `${(node.gap as number) * 4}px`
+  const gap = extractGap(node)
+  if (gap != null) e.style.gap = `${gap * 4}px`
   renderChildren(node, e, ctx)
   return e
 }
@@ -88,6 +91,18 @@ function renderPages(node: ComponentNode, ctx: RenderContext): HTMLElement {
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
+
+const GAP_CLASS_RE = /\bgap-(\d+)\b/
+
+/** Extract gap value from node.gap prop or cssClass "gap-N" pattern */
+function extractGap(node: ComponentNode): number | null {
+  if (node.gap != null) return node.gap as number
+  if (typeof node.cssClass === 'string') {
+    const match = GAP_CLASS_RE.exec(node.cssClass)
+    if (match) return Number(match[1])
+  }
+  return null
+}
 
 function mapAlign(value: string): string {
   const m: Record<string, string> = { start: 'flex-start', end: 'flex-end', center: 'center', stretch: 'stretch', baseline: 'baseline' }

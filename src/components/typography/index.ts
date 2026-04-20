@@ -24,10 +24,8 @@ export interface HeadingProps extends ComponentProps {
 
 export function Heading(content: RxStr, props?: HeadingProps): Component {
   const c = new TextComponent('Heading', content, props)
-  if (props?.level) {
-    const origGetProps = c.getProps.bind(c)
-    c.getProps = () => ({ ...origGetProps(), level: props.level })
-  }
+  const origGetProps = c.getProps.bind(c)
+  c.getProps = () => ({ ...origGetProps(), level: props?.level ?? 1 })
   return c
 }
 
