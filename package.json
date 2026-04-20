@@ -1,0 +1,58 @@
+{
+  "name": "prefab-ui",
+  "version": "0.1.0",
+  "description": "TypeScript declarative UI component library for MCP apps. Wire-compatible with Python prefab-ui.",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./actions": {
+      "import": "./dist/actions/index.js",
+      "types": "./dist/actions/index.d.ts"
+    },
+    "./rx": {
+      "import": "./dist/rx/index.js",
+      "types": "./dist/rx/index.d.ts"
+    },
+    "./charts": {
+      "import": "./dist/components/charts/index.js",
+      "types": "./dist/components/charts/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun run scripts/build.ts",
+    "test": "bun test",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "mcp",
+    "prefab",
+    "ui",
+    "components",
+    "model-context-protocol",
+    "declarative-ui",
+    "fastmcp"
+  ],
+  "author": "Max Health Inc",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Max-Health-Inc/prefab-ui.git"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.0",
+    "typescript": "^5.8.0"
+  }
+}
