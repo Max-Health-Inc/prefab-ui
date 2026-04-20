@@ -9,10 +9,10 @@ TypeScript declarative UI component library for MCP apps. Wire-compatible with P
 
 Write MCP servers in **TypeScript/Bun** and generate the exact same wire format that Python servers produce. Render the output in **any web app** with the included vanilla DOM renderer. Full circle: server-side DSL → JSON → browser UI.
 
-- **100+ components** — layout, form, data, charts, media, interactive, control flow
+- **150+ exports** — layout, form, data, charts, media, interactive, control flow components
 - **Reactive state** — `rx()` expressions, `SetState`/`ToggleState`/`AppendState` actions
 - **MCP-native** — `display()`, `display_form()`, `CallTool`, `SendMessage` built in
-- **Browser renderer** — 54KB IIFE bundle, zero dependencies, vanilla DOM
+- **Browser renderer** — IIFE bundle, zero dependencies, vanilla DOM
 - **ext-apps bridge** — `app()` factory with PostMessage transport, host theme, lifecycle hooks
 - **Auto-renderers** — `autoTable()`, `autoChart()`, `autoForm()`, `autoMetrics()` and more
 
@@ -46,10 +46,10 @@ import { display, autoTable, H1, Column } from '@max-health-inc/prefab'
 async function listUsers(args: any) {
   const users = await db.query('SELECT * FROM users')
   return display(
-    Column(
+    Column({ children: [
       H1('Users'),
       autoTable(users),
-    ),
+    ]}),
     { title: 'User List' }
   )
 }
@@ -63,12 +63,8 @@ async function listUsers(args: any) {
   const ui = await prefab.app();
 
   ui.onToolInput((args) => {
-    ui.render('#root',
-      prefab.Column(
-        prefab.H1('Results'),
-        prefab.autoTable(args.data),
-      )
-    );
+    // Render wire-format JSON received from the MCP host
+    ui.mount('#root', args);
   });
 </script>
 ```
@@ -113,18 +109,30 @@ async function listUsers(args: any) {
 Use `rx()` to create reactive expressions that update when state changes:
 
 ```ts
-import { rx, ITEM, INDEX, STATE } from '@max-health-inc/prefab'
+import { rx, STATE } from '@max-health-inc/prefab'
 
-// String interpolation
-Text(rx`Hello, ${STATE}.name!`)
+// Simple state reference
+Text(rx('count'))                    // → "{{ count }}"
+
+// Arithmetic
+Text(rx('count').add(1))             // → "{{ count + 1 }}"
+
+// Dot-path access
+Text(rx('user').dot('name'))         // → "{{ user.name }}"
+
+// Direct template string
+Text('Hello, {{ user.name }}!')      // interpolated at render time
 
 // Ternary
-Badge(rx`${STATE}.status == 'active' ? 'Online' : 'Offline'`)
+Badge(rx('status').eq('active').then('Online', 'Offline'))
 
 // Pipes (filters)
-Text(rx`${STATE}.amount | currency`)
-Text(rx`${STATE}.items | length`)
-Text(rx`${STATE}.name | upper | truncate:20`)
+Text(rx('amount').currency())        // → "{{ amount | currency }}"
+Text(rx('items').length())           // → "{{ items | length }}"
+Text(rx('name').upper().truncate(20)) // → "{{ name | upper | truncate:20 }}"
+
+// STATE proxy (single-level shorthand: STATE.key → rx('key'))
+Text(STATE.count)                    // → "{{ count }}"
 ```
 
 **Built-in pipes:** `upper`, `lower`, `capitalize`, `truncate`, `currency`, `number`, `percent`, `date`, `time`, `datetime`, `length`, `default`, `json`, `keys`, `values`, `first`, `last`
@@ -134,16 +142,19 @@ Text(rx`${STATE}.name | upper | truncate:20`)
 Actions are triggered by user interactions (`onClick`, `onChange`, `onSubmit`) or lifecycle events (`onMount`):
 
 ```ts
-import { SetState, CallTool, ShowToast, rx } from '@max-health-inc/prefab'
+import { SetState, ToggleState, CallTool, ShowToast, OpenLink, rx } from '@max-health-inc/prefab'
 
 // Client-side state mutation
-Button('Increment', { onClick: SetState('count', rx`${STATE}.count + 1`) })
+Button('Increment', { onClick: new SetState('count', rx('count').add(1)) })
+
+// Toggle boolean
+Button('Toggle', { onClick: new ToggleState('expanded') })
 
 // MCP tool call
-Button('Refresh', { onClick: CallTool('get_data', { id: rx`${STATE}.selectedId` }) })
+Button('Refresh', { onClick: new CallTool('get_data', { arguments: { id: '{{ selectedId }}' } }) })
 
 // Toast notification
-Button('Save', { onClick: ShowToast('Saved!', { variant: 'success' }) })
+Button('Save', { onClick: new ShowToast('Saved!', { variant: 'success' }) })
 ```
 
 **Client actions:** `SetState`, `ToggleState`, `AppendState`, `PopState`, `ShowToast`, `CloseOverlay`, `OpenLink`, `SetInterval`, `Fetch`, `OpenFilePicker`, `CallHandler`
@@ -158,21 +169,29 @@ Generate complete UIs from raw data — no manual component wiring:
 import { autoTable, autoChart, autoForm, autoMetrics } from '@max-health-inc/prefab'
 
 // Table from array of objects
-autoTable(users, { title: 'Users', searchable: true })
+autoTable(users, { title: 'Users', search: true })
 
-// Chart from data (auto-selects best chart type)
-autoChart(salesData, { title: 'Revenue', type: 'bar' })
+// Chart from data + series definitions
+autoChart(
+  salesData,
+  [{ dataKey: 'revenue', label: 'Revenue', color: '#3b82f6' }],
+  { title: 'Revenue', chartType: 'bar', xAxis: 'month' },
+)
 
-// Form from field definitions
-autoForm([
-  { name: 'email', type: 'email', required: true },
-  { name: 'role', type: 'select', options: ['admin', 'user'] },
-], { submitTool: 'create_user' })
+// Form that submits to an MCP tool
+autoForm(
+  [
+    { name: 'email', type: 'email', required: true },
+    { name: 'name', label: 'Full Name', required: true },
+  ],
+  'create_user',
+  { title: 'New User', submitLabel: 'Create' },
+)
 
-// Metric cards from numeric data
+// KPI metric cards
 autoMetrics([
-  { label: 'Revenue', value: 125000, format: 'currency' },
-  { label: 'Users', value: 3420, change: 12.5 },
+  { label: 'Revenue', value: '$42K', delta: '+12%', trend: 'up', trendSentiment: 'positive' },
+  { label: 'Users', value: '3,420', delta: '+5%', trend: 'up', trendSentiment: 'positive' },
 ])
 ```
 
@@ -183,16 +202,21 @@ autoMetrics([
 Return UIs from MCP tool handlers:
 
 ```ts
-import { display, display_form, display_update, display_error } from '@max-health-inc/prefab/mcp'
+import { display, display_form, display_update, display_error } from '@max-health-inc/prefab'
+import { Column, H1 } from '@max-health-inc/prefab'
 
 // Full UI
-return display(Column(H1('Dashboard'), autoMetrics(kpis)), { title: 'Dashboard' })
+return display(Column({ children: [H1('Dashboard'), autoMetrics(kpis)] }), { title: 'Dashboard' })
 
-// Form that submits back to a tool
-return display_form('update_user', [
-  { name: 'name', type: 'text', required: true },
-  { name: 'email', type: 'email' },
-], { title: 'Edit User' })
+// Form that submits back to a tool (fields, toolName, options)
+return display_form(
+  [
+    { name: 'name', type: 'text', required: true },
+    { name: 'email', type: 'email' },
+  ],
+  'update_user',
+  { title: 'Edit User' },
+)
 
 // Partial state update (no full re-render)
 return display_update({ count: 42, status: 'complete' })
@@ -251,7 +275,7 @@ All UIs serialize to the `$prefab` wire format (JSON):
     "type": "Column",
     "children": [
       { "type": "H1", "content": "Hello" },
-      { "type": "Text", "content": "{{ state.message }}" }
+      { "type": "Text", "content": "{{ message }}" }
     ]
   },
   "state": {
@@ -283,11 +307,10 @@ All UIs serialize to the `$prefab` wire format (JSON):
   "content": "Click me",
   "variant": "default",
   "onClick": {
-    "type": "SetState",
+    "action": "setState",
     "key": "count",
-    "value": "{{ state.count + 1 }}"
-  },
-  "children": []
+    "value": "{{ count + 1 }}"
+  }
 }
 ```
 
