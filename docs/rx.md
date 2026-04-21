@@ -18,7 +18,7 @@ Expressions are wrapped in `{{ }}`:
 The `rx()` function provides a typed, chainable API for building expressions:
 
 ```ts
-import { rx, STATE, ITEM, INDEX, EVENT, ERROR, RESULT } from '@max-health-inc/prefab'
+import { rx, STATE, ITEM, INDEX, EVENT, ERROR, RESULT } from 'prefab-ui'
 ```
 
 ### Basic Usage

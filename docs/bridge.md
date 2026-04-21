@@ -229,7 +229,7 @@ const ui = await prefab.app({
 For custom integrations, use `Bridge` directly:
 
 ```ts
-import { Bridge, isIframe, applyHostTheme } from '@max-health-inc/prefab/renderer';
+import { Bridge, isIframe, applyHostTheme } from 'prefab-ui/renderer';
 
 if (isIframe()) {
   const bridge = new Bridge('https://host.example.com');

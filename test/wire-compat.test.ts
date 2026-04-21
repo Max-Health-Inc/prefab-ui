@@ -1,7 +1,7 @@
 /**
  * Wire compatibility tests — validates cross-language parity between
  * the Python prefab-ui library (golden JSON fixtures) and the TypeScript
- * @max-health-inc/prefab builder + renderer.
+ * prefab-ui builder + renderer.
  *
  * Test strategy:
  *   1. Parse: Each golden fixture is valid $prefab v0.2 wire format

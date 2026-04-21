@@ -3,7 +3,7 @@
  *
  * Usage (CDN — new API):
  * ```html
- * <script src="https://cdn.jsdelivr.net/npm/@max-health-inc/prefab/dist/renderer.min.js"></script>
+ * <script src="https://cdn.jsdelivr.net/npm/prefab-ui/dist/renderer.min.js"></script>
  * <script>
  *   const ui = await prefab.app();
  *   ui.onToolInput((args) => {
@@ -14,7 +14,7 @@
  *
  * Usage (CDN — legacy):
  * ```html
- * <script src="https://cdn.jsdelivr.net/npm/@max-health-inc/prefab/dist/renderer.min.js"></script>
+ * <script src="https://cdn.jsdelivr.net/npm/prefab-ui/dist/renderer.min.js"></script>
  * <script>
  *   PrefabRenderer.mount(document.getElementById('root'), data);
  * </script>
@@ -22,7 +22,7 @@
  *
  * Or as ESM:
  * ```ts
- * import { PrefabRenderer, app } from '@max-health-inc/prefab/renderer'
+ * import { PrefabRenderer, app } from 'prefab-ui/renderer'
  * const ui = await app()
  * ```
  */

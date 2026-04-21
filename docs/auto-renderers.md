@@ -6,7 +6,7 @@ Auto-renderers generate complete UI components from raw data — no manual compo
 import {
   autoDetail, autoTable, autoChart, autoForm,
   autoComparison, autoMetrics, autoTimeline, autoProgress,
-} from '@max-health-inc/prefab'
+} from 'prefab-ui'
 ```
 
 ---
@@ -36,7 +36,7 @@ Status columns (`status`, `state`, etc.) are automatically rendered as `Badge` c
 ### Custom Status Variants
 
 ```ts
-import { registerStatusVariants } from '@max-health-inc/prefab'
+import { registerStatusVariants } from 'prefab-ui'
 
 registerStatusVariants({
   'custom_status': 'success',

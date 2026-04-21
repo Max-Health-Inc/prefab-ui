@@ -3,9 +3,9 @@
 ## Installation
 
 ```bash
-npm install @max-health-inc/prefab
+npm install prefab-ui
 # or
-bun add @max-health-inc/prefab
+bun add prefab-ui
 ```
 
 ## Usage Modes
@@ -14,7 +14,7 @@ prefab has two usage modes:
 
 | Mode | Where | Import |
 |------|-------|--------|
-| **Server-side** | MCP tool handlers (Python/TS) | `@max-health-inc/prefab` |
+| **Server-side** | MCP tool handlers (Python/TS) | `prefab-ui` |
 | **Client-side** | Browser (ext-app iframe) | `dist/renderer.min.js` script tag |
 
 ---
@@ -26,7 +26,7 @@ Build a component tree, wrap it with `display()`, and return it as an MCP tool r
 ```ts
 import {
   display, Column, H1, Text, DataTable, col, Badge, autoTable,
-} from '@max-health-inc/prefab'
+} from 'prefab-ui'
 
 // Simple: auto-generate a table from data
 async function listUsers() {
@@ -68,7 +68,7 @@ Load the renderer bundle and use the `app()` factory:
 <head><title>My App</title></head>
 <body>
   <div id="root"></div>
-  <script src="https://cdn.jsdelivr.net/npm/@max-health-inc/prefab/dist/renderer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prefab-ui/dist/renderer.min.js"></script>
   <script>
     (async () => {
       const ui = await prefab.app();
@@ -96,12 +96,12 @@ The `app()` factory:
 ## Subpath Imports
 
 ```ts
-import { ... } from '@max-health-inc/prefab'           // Everything
-import { ... } from '@max-health-inc/prefab/actions'    // Actions only
-import { ... } from '@max-health-inc/prefab/rx'         // Rx expressions
-import { ... } from '@max-health-inc/prefab/charts'     // Chart components
-import { ... } from '@max-health-inc/prefab/mcp'        // MCP display helpers
-import { ... } from '@max-health-inc/prefab/renderer'   // Browser renderer
+import { ... } from 'prefab-ui'           // Everything
+import { ... } from 'prefab-ui/actions'    // Actions only
+import { ... } from 'prefab-ui/rx'         // Rx expressions
+import { ... } from 'prefab-ui/charts'     // Chart components
+import { ... } from 'prefab-ui/mcp'        // MCP display helpers
+import { ... } from 'prefab-ui/renderer'   // Browser renderer
 ```
 
 ## Next Steps

@@ -142,7 +142,7 @@ export class PrefabApp {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${escapeHtml(this.title)}</title>
     ${stylesheetTags}
-    <script src="https://cdn.jsdelivr.net/npm/@max-health-inc/prefab@${cdnVersion}/dist/renderer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prefab-ui@${cdnVersion}/dist/renderer.min.js"></script>
     ${scriptTags}
   </head>
   <body>

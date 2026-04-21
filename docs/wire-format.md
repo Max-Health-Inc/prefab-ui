@@ -188,7 +188,7 @@ This merges values into the existing state store and triggers re-evaluation of a
 Use `validateWireFormat()` to check a payload:
 
 ```ts
-import { validateWireFormat } from '@max-health-inc/prefab'
+import { validateWireFormat } from 'prefab-ui'
 
 const result = validateWireFormat(jsonPayload)
 if (!result.valid) {
