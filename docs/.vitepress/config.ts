@@ -5,6 +5,7 @@ export default defineConfig({
   description:
     'TypeScript declarative UI component library for MCP apps. Wire-compatible with Python prefab-ui.',
 
+  base: '/prefab/',
   cleanUrls: true,
   lastUpdated: true,
 
