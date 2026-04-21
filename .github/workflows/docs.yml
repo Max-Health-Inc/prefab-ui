@@ -27,7 +27,7 @@ jobs:
       - run: bun install --frozen-lockfile
 
       - name: Build docs
-        run: bun run --bun vitepress build docs
+        run: bun run docs:build
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
