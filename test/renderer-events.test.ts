@@ -190,7 +190,7 @@ describe('Checkbox state binding', () => {
     const ctx = makeCtx({ agree: true })
     const node: ComponentNode = { type: 'Checkbox', name: 'agree', label: 'I agree' }
     const dom = renderNode(node, ctx) as HTMLElement
-    const input = dom.querySelector('input[type="checkbox"]')!
+    const input = dom.querySelector('input[type="checkbox"]') as HTMLInputElement
     expect(input.checked).toBe(true)
   })
 
@@ -198,7 +198,7 @@ describe('Checkbox state binding', () => {
     const ctx = makeCtx({ agree: false })
     const node: ComponentNode = { type: 'Checkbox', name: 'agree', label: 'I agree' }
     const dom = renderNode(node, ctx) as HTMLElement
-    const input = dom.querySelector('input[type="checkbox"]')!
+    const input = dom.querySelector('input[type="checkbox"]') as HTMLInputElement
 
     input.checked = true
     input.dispatchEvent(new Event('change', { bubbles: true }))
@@ -236,7 +236,7 @@ describe('Slider state binding', () => {
     const ctx = makeCtx({ volume: 75 })
     const node: ComponentNode = { type: 'Slider', name: 'volume', min: 0, max: 100 }
     const dom = renderNode(node, ctx) as HTMLElement
-    const input = dom.querySelector('input[type="range"]')!
+    const input = dom.querySelector('input[type="range"]') as HTMLInputElement
     expect(input.value).toBe('75')
   })
 
@@ -244,7 +244,7 @@ describe('Slider state binding', () => {
     const ctx = makeCtx({ volume: 50 })
     const node: ComponentNode = { type: 'Slider', name: 'volume', min: 0, max: 100 }
     const dom = renderNode(node, ctx) as HTMLElement
-    const input = dom.querySelector('input[type="range"]')!
+    const input = dom.querySelector('input[type="range"]') as HTMLInputElement
 
     input.value = '80'
     input.dispatchEvent(new Event('input', { bubbles: true }))

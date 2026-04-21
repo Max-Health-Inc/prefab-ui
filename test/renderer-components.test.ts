@@ -214,7 +214,7 @@ describe('Table components', () => {
       colSpan: 3,
       children: [{ type: 'Text', content: 'Wide cell' }],
     }
-    const dom = renderNode(node, ctx) as HTMLElement
+    const dom = renderNode(node, ctx) as HTMLTableCellElement
     expect(dom.tagName).toBe('TD')
     expect(dom.colSpan).toBe(3)
   })
@@ -357,7 +357,7 @@ describe('DataTable with search', () => {
       search: true,
     }
     const dom = renderNode(node, ctx) as HTMLElement
-    const searchInput = dom.querySelector('.pf-datatable-search')!
+    const searchInput = dom.querySelector('.pf-datatable-search') as HTMLInputElement
     expect(searchInput).toBeTruthy()
     expect(searchInput.type).toBe('text')
   })
@@ -373,7 +373,7 @@ describe('DataTable with search', () => {
       search: true,
     }
     const dom = renderNode(node, ctx) as HTMLElement
-    const searchInput = dom.querySelector('.pf-datatable-search')!
+    const searchInput = dom.querySelector('.pf-datatable-search') as HTMLInputElement
     const tbody = dom.querySelector('tbody') as HTMLElement
 
     searchInput.value = 'alice'

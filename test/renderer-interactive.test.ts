@@ -215,7 +215,7 @@ describe('Accordion', () => {
 
     const controlsId = triggers[0].getAttribute('aria-controls')
     expect(controlsId).toBeTruthy()
-    expect(contents[0].id).toBe(controlsId)
+    expect(contents[0].id).toBe(controlsId!)
   })
 })
 
@@ -313,7 +313,7 @@ describe('ExpandableRow', () => {
       children: [{ type: 'Text', content: 'Detail content' }],
     }
     const dom = renderNode(node, ctx) as HTMLElement
-    const detail = dom.querySelector('.pf-expandable-row-detail')!
+    const detail = dom.querySelector('.pf-expandable-row-detail') as HTMLElement
     expect(detail.style.display).toBe('none')
   })
 
@@ -325,8 +325,8 @@ describe('ExpandableRow', () => {
       children: [{ type: 'Text', content: 'Detail content' }],
     }
     const dom = renderNode(node, ctx) as HTMLElement
-    const summary = dom.querySelector('.pf-expandable-row-summary')!
-    const detail = dom.querySelector('.pf-expandable-row-detail')!
+    const summary = dom.querySelector('.pf-expandable-row-summary') as HTMLElement
+    const detail = dom.querySelector('.pf-expandable-row-detail') as HTMLElement
 
     summary.click()
     expect(detail.style.display).toBe('block')
@@ -340,8 +340,8 @@ describe('ExpandableRow', () => {
       children: [{ type: 'Text', content: 'Detail content' }],
     }
     const dom = renderNode(node, ctx) as HTMLElement
-    const summary = dom.querySelector('.pf-expandable-row-summary')!
-    const detail = dom.querySelector('.pf-expandable-row-detail')!
+    const summary = dom.querySelector('.pf-expandable-row-summary') as HTMLElement
+    const detail = dom.querySelector('.pf-expandable-row-detail') as HTMLElement
 
     summary.click() // expand
     summary.click() // collapse
