@@ -1,0 +1,71 @@
+{
+  "$prefab": {
+    "version": "0.2"
+  },
+  "view": {
+    "cssClass": "pf-app-root",
+    "type": "Div",
+    "children": [
+      {
+        "cssClass": "gap-4",
+        "type": "Column",
+        "children": [
+          {
+            "content": "Counter App",
+            "type": "Heading",
+            "level": 1
+          },
+          {
+            "content": "Count: {{ count }}",
+            "type": "Text"
+          },
+          {
+            "cssClass": "gap-2",
+            "type": "Row",
+            "children": [
+              {
+                "type": "Button",
+                "label": "+1",
+                "variant": "default",
+                "size": "default",
+                "disabled": false,
+                "onClick": {
+                  "action": "setState",
+                  "key": "count",
+                  "value": "{{ count + 1 }}"
+                }
+              },
+              {
+                "type": "Button",
+                "label": "-1",
+                "variant": "default",
+                "size": "default",
+                "disabled": false,
+                "onClick": {
+                  "action": "setState",
+                  "key": "count",
+                  "value": "{{ count - 1 }}"
+                }
+              },
+              {
+                "type": "Button",
+                "label": "Reset",
+                "variant": "default",
+                "size": "default",
+                "disabled": false,
+                "onClick": {
+                  "action": "setState",
+                  "key": "count",
+                  "value": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "state": {
+    "count": 0
+  }
+}

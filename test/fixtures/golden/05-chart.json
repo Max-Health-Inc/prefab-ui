@@ -1,0 +1,70 @@
+{
+  "$prefab": {
+    "version": "0.2"
+  },
+  "view": {
+    "cssClass": "pf-app-root",
+    "type": "Div",
+    "children": [
+      {
+        "cssClass": "gap-4",
+        "type": "Column",
+        "children": [
+          {
+            "content": "Revenue Report",
+            "type": "Heading",
+            "level": 2
+          },
+          {
+            "type": "BarChart",
+            "data": [
+              {
+                "month": "Jan",
+                "revenue": 4000,
+                "costs": 2400
+              },
+              {
+                "month": "Feb",
+                "revenue": 3000,
+                "costs": 1398
+              },
+              {
+                "month": "Mar",
+                "revenue": 2000,
+                "costs": 9800
+              },
+              {
+                "month": "Apr",
+                "revenue": 2780,
+                "costs": 3908
+              }
+            ],
+            "series": [
+              {
+                "dataKey": "revenue",
+                "label": "Revenue",
+                "color": "#4f46e5"
+              },
+              {
+                "dataKey": "costs",
+                "label": "Costs",
+                "color": "#ef4444"
+              }
+            ],
+            "xAxis": "month",
+            "height": 300,
+            "stacked": false,
+            "horizontal": false,
+            "barRadius": 4,
+            "showLegend": true,
+            "showTooltip": true,
+            "animate": true,
+            "showGrid": true,
+            "showYAxis": true,
+            "yAxisFormat": "auto"
+          }
+        ]
+      }
+    ]
+  }
+}

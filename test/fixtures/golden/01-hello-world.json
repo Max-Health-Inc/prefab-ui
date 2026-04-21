@@ -1,0 +1,27 @@
+{
+  "$prefab": {
+    "version": "0.2"
+  },
+  "view": {
+    "cssClass": "pf-app-root",
+    "type": "Div",
+    "children": [
+      {
+        "cssClass": "gap-4",
+        "type": "Column",
+        "children": [
+          {
+            "content": "Hello World",
+            "type": "Heading",
+            "level": 1
+          },
+          {
+            "type": "Badge",
+            "label": "Active",
+            "variant": "success"
+          }
+        ]
+      }
+    ]
+  }
+}

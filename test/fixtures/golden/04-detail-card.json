@@ -1,0 +1,79 @@
+{
+  "$prefab": {
+    "version": "0.2"
+  },
+  "view": {
+    "cssClass": "pf-app-root",
+    "type": "Div",
+    "children": [
+      {
+        "type": "Card",
+        "children": [
+          {
+            "type": "CardHeader",
+            "children": [
+              {
+                "type": "CardTitle",
+                "content": "Patient Summary"
+              },
+              {
+                "type": "CardDescription",
+                "content": "Last updated: 2024-01-15"
+              }
+            ]
+          },
+          {
+            "type": "CardContent",
+            "children": [
+              {
+                "cssClass": "gap-3",
+                "type": "Column",
+                "children": [
+                  {
+                    "cssClass": "gap-4",
+                    "type": "Row",
+                    "children": [
+                      {
+                        "type": "Metric",
+                        "label": "Heart Rate",
+                        "value": "72 bpm"
+                      },
+                      {
+                        "type": "Metric",
+                        "label": "Blood Pressure",
+                        "value": "120/80"
+                      },
+                      {
+                        "type": "Metric",
+                        "label": "Temperature",
+                        "value": "98.6\u00b0F"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Separator",
+                    "orientation": "horizontal"
+                  },
+                  {
+                    "content": "Patient is in stable condition.",
+                    "type": "Text"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "CardFooter",
+            "children": [
+              {
+                "type": "Badge",
+                "label": "Stable",
+                "variant": "success"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

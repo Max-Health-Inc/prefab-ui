@@ -1,0 +1,63 @@
+{
+  "$prefab": {
+    "version": "0.2"
+  },
+  "view": {
+    "cssClass": "pf-app-root",
+    "type": "Div",
+    "children": [
+      {
+        "cssClass": "gap-4",
+        "type": "Column",
+        "children": [
+          {
+            "type": "Card",
+            "children": [
+              {
+                "type": "CardContent",
+                "children": [
+                  {
+                    "cssClass": "gap-4",
+                    "type": "Row",
+                    "children": [
+                      {
+                        "cssClass": "gap-2",
+                        "type": "Column",
+                        "children": [
+                          {
+                            "content": "Left Panel",
+                            "type": "Heading",
+                            "level": 3
+                          },
+                          {
+                            "content": "Left content",
+                            "type": "Text"
+                          }
+                        ]
+                      },
+                      {
+                        "cssClass": "gap-2",
+                        "type": "Column",
+                        "children": [
+                          {
+                            "content": "Right Panel",
+                            "type": "Heading",
+                            "level": 3
+                          },
+                          {
+                            "content": "Right content",
+                            "type": "Text"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

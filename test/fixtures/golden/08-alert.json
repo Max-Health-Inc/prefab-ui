@@ -1,0 +1,45 @@
+{
+  "$prefab": {
+    "version": "0.2"
+  },
+  "view": {
+    "cssClass": "pf-app-root",
+    "type": "Div",
+    "children": [
+      {
+        "cssClass": "gap-4",
+        "type": "Column",
+        "children": [
+          {
+            "type": "Alert",
+            "variant": "default",
+            "children": [
+              {
+                "type": "AlertTitle",
+                "content": "Information"
+              },
+              {
+                "type": "AlertDescription",
+                "content": "This is a standard info alert."
+              }
+            ]
+          },
+          {
+            "type": "Alert",
+            "variant": "destructive",
+            "children": [
+              {
+                "type": "AlertTitle",
+                "content": "Error"
+              },
+              {
+                "type": "AlertDescription",
+                "content": "Something went wrong."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

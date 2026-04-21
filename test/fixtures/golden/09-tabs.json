@@ -1,0 +1,63 @@
+{
+  "$prefab": {
+    "version": "0.2"
+  },
+  "view": {
+    "cssClass": "pf-app-root",
+    "type": "Div",
+    "children": [
+      {
+        "cssClass": "gap-4",
+        "type": "Column",
+        "children": [
+          {
+            "content": "Settings",
+            "type": "Heading",
+            "level": 2
+          },
+          {
+            "name": "tabs_1",
+            "type": "Tabs",
+            "variant": "default",
+            "orientation": "horizontal",
+            "children": [
+              {
+                "type": "Tab",
+                "title": "General",
+                "disabled": false,
+                "children": [
+                  {
+                    "content": "General settings go here.",
+                    "type": "Text"
+                  }
+                ]
+              },
+              {
+                "type": "Tab",
+                "title": "Security",
+                "disabled": false,
+                "children": [
+                  {
+                    "content": "Security settings go here.",
+                    "type": "Text"
+                  }
+                ]
+              },
+              {
+                "type": "Tab",
+                "title": "Notifications",
+                "disabled": false,
+                "children": [
+                  {
+                    "content": "Notification preferences go here.",
+                    "type": "Text"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

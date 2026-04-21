@@ -1,0 +1,62 @@
+{
+  "$prefab": {
+    "version": "0.2"
+  },
+  "view": {
+    "cssClass": "pf-app-root",
+    "type": "Div",
+    "children": [
+      {
+        "cssClass": "gap-4",
+        "type": "Column",
+        "children": [
+          {
+            "content": "User Directory",
+            "type": "Heading",
+            "level": 2
+          },
+          {
+            "type": "DataTable",
+            "columns": [
+              {
+                "key": "name",
+                "header": "Name",
+                "sortable": false
+              },
+              {
+                "key": "role",
+                "header": "Role",
+                "sortable": false
+              },
+              {
+                "key": "status",
+                "header": "Status",
+                "sortable": false
+              }
+            ],
+            "rows": [
+              {
+                "name": "Alice",
+                "role": "Admin",
+                "status": "Active"
+              },
+              {
+                "name": "Bob",
+                "role": "Editor",
+                "status": "Inactive"
+              },
+              {
+                "name": "Carol",
+                "role": "Viewer",
+                "status": "Active"
+              }
+            ],
+            "search": false,
+            "paginated": false,
+            "pageSize": 10
+          }
+        ]
+      }
+    ]
+  }
+}
