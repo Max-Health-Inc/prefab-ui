@@ -22,7 +22,7 @@ features:
     details: Layout, typography, data tables, charts, forms, interactive tabs, accordions, dialogs — all declarative JSON.
   - icon: ⚡
     title: Reactive State
-    details: Template expressions like {{ count + 1 }} with 20+ pipes. Auto-update on state changes, no framework needed.
+    details: 'Template expressions like <code>{{ count + 1 }}</code> with 20+ pipes. Auto-update on state changes, no framework needed.'
   - icon: 🔌
     title: MCP-Native
     details: display() wraps your component tree as an MCP tool result. First-class CallTool, SendMessage, and UpdateContext actions.

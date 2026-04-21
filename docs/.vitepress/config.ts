@@ -8,16 +8,6 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
 
-  // Prevent Vue from parsing {{ }} in markdown as template expressions.
-  // Our docs use {{ expr }} as literal prefab reactive expression syntax.
-  vue: {
-    template: {
-      compilerOptions: {
-        delimiters: ['${', '}'] as [string, string],
-      },
-    },
-  },
-
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
   ],
