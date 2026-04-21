@@ -1,7 +1,7 @@
 # prefab
 
 [![CI](https://github.com/Max-Health-Inc/prefab-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Max-Health-Inc/prefab-ui/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/prefab-ui)](https://www.npmjs.com/package/prefab-ui)
+[![npm](https://img.shields.io/npm/v/@maxhealth.tech/prefab)](https://www.npmjs.com/package/@maxhealth.tech/prefab)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -31,9 +31,9 @@ Any app that connects to MCP servers can render `$prefab` tool output as rich in
 ## Install
 
 ```bash
-npm install prefab-ui
+npm install @maxhealth.tech/prefab
 # or
-bun add prefab-ui
+bun add @maxhealth.tech/prefab
 ```
 
 ## Quick Start
@@ -41,7 +41,7 @@ bun add prefab-ui
 ### Server-side (MCP tool handler)
 
 ```ts
-import { display, autoTable, H1, Column } from 'prefab-ui'
+import { display, autoTable, H1, Column } from '@maxhealth.tech/prefab'
 
 async function listUsers(args: any) {
   const users = await db.query('SELECT * FROM users')
@@ -58,7 +58,7 @@ async function listUsers(args: any) {
 ### Client-side (browser ext-app)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/prefab-ui/dist/renderer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab/dist/renderer.min.js"></script>
 <script>
   const ui = await prefab.app();
 
@@ -109,7 +109,7 @@ async function listUsers(args: any) {
 Use `rx()` to create reactive expressions that update when state changes:
 
 ```ts
-import { rx, STATE } from 'prefab-ui'
+import { rx, STATE } from '@maxhealth.tech/prefab'
 
 // Simple state reference
 Text(rx('count'))                    // → "{{ count }}"
@@ -142,7 +142,7 @@ Text(STATE.count)                    // → "{{ count }}"
 Actions are triggered by user interactions (`onClick`, `onChange`, `onSubmit`) or lifecycle events (`onMount`):
 
 ```ts
-import { SetState, ToggleState, CallTool, ShowToast, OpenLink, rx } from 'prefab-ui'
+import { SetState, ToggleState, CallTool, ShowToast, OpenLink, rx } from '@maxhealth.tech/prefab'
 
 // Client-side state mutation
 Button('Increment', { onClick: new SetState('count', rx('count').add(1)) })
@@ -166,7 +166,7 @@ Button('Save', { onClick: new ShowToast('Saved!', { variant: 'success' }) })
 Generate complete UIs from raw data — no manual component wiring:
 
 ```ts
-import { autoTable, autoChart, autoForm, autoMetrics } from 'prefab-ui'
+import { autoTable, autoChart, autoForm, autoMetrics } from '@maxhealth.tech/prefab'
 
 // Table from array of objects
 autoTable(users, { title: 'Users', search: true })
@@ -202,8 +202,8 @@ autoMetrics([
 Return UIs from MCP tool handlers:
 
 ```ts
-import { display, display_form, display_update, display_error } from 'prefab-ui'
-import { Column, H1 } from 'prefab-ui'
+import { display, display_form, display_update, display_error } from '@maxhealth.tech/prefab'
+import { Column, H1 } from '@maxhealth.tech/prefab'
 
 // Full UI
 return display(Column({ children: [H1('Dashboard'), autoMetrics(kpis)] }), { title: 'Dashboard' })
@@ -317,12 +317,12 @@ All UIs serialize to the `$prefab` wire format (JSON):
 ## Subpath Exports
 
 ```ts
-import { ... } from 'prefab-ui'           // Everything
-import { ... } from 'prefab-ui/actions'    // Actions only
-import { ... } from 'prefab-ui/rx'         // Rx expressions only
-import { ... } from 'prefab-ui/charts'     // Chart components only
-import { ... } from 'prefab-ui/mcp'        // MCP display helpers
-import { ... } from 'prefab-ui/renderer'   // Browser renderer
+import { ... } from '@maxhealth.tech/prefab'           // Everything
+import { ... } from '@maxhealth.tech/prefab/actions'    // Actions only
+import { ... } from '@maxhealth.tech/prefab/rx'         // Rx expressions only
+import { ... } from '@maxhealth.tech/prefab/charts'     // Chart components only
+import { ... } from '@maxhealth.tech/prefab/mcp'        // MCP display helpers
+import { ... } from '@maxhealth.tech/prefab/renderer'   // Browser renderer
 ```
 
 ## Development

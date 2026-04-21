@@ -3,9 +3,9 @@
 ## Installation
 
 ```bash
-npm install prefab-ui
+npm install @maxhealth.tech/prefab
 # or
-bun add prefab-ui
+bun add @maxhealth.tech/prefab
 ```
 
 ## Usage Modes
@@ -14,7 +14,7 @@ prefab has two usage modes:
 
 | Mode | Where | Import |
 |------|-------|--------|
-| **Server-side** | MCP tool handlers (Python/TS) | `prefab-ui` |
+| **Server-side** | MCP tool handlers (Python/TS) | `@maxhealth.tech/prefab` |
 | **Client-side** | Browser (ext-app iframe) | `dist/renderer.min.js` script tag |
 
 ---
@@ -26,7 +26,7 @@ Build a component tree, wrap it with `display()`, and return it as an MCP tool r
 ```ts
 import {
   display, Column, H1, Text, DataTable, col, Badge, autoTable,
-} from 'prefab-ui'
+} from '@maxhealth.tech/prefab'
 
 // Simple: auto-generate a table from data
 async function listUsers() {
@@ -68,7 +68,7 @@ Load the renderer bundle and use the `app()` factory:
 <head><title>My App</title></head>
 <body>
   <div id="root"></div>
-  <script src="https://cdn.jsdelivr.net/npm/prefab-ui/dist/renderer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab/dist/renderer.min.js"></script>
   <script>
     (async () => {
       const ui = await prefab.app();
@@ -96,12 +96,12 @@ The `app()` factory:
 ## Subpath Imports
 
 ```ts
-import { ... } from 'prefab-ui'           // Everything
-import { ... } from 'prefab-ui/actions'    // Actions only
-import { ... } from 'prefab-ui/rx'         // Rx expressions
-import { ... } from 'prefab-ui/charts'     // Chart components
-import { ... } from 'prefab-ui/mcp'        // MCP display helpers
-import { ... } from 'prefab-ui/renderer'   // Browser renderer
+import { ... } from '@maxhealth.tech/prefab'           // Everything
+import { ... } from '@maxhealth.tech/prefab/actions'    // Actions only
+import { ... } from '@maxhealth.tech/prefab/rx'         // Rx expressions
+import { ... } from '@maxhealth.tech/prefab/charts'     // Chart components
+import { ... } from '@maxhealth.tech/prefab/mcp'        // MCP display helpers
+import { ... } from '@maxhealth.tech/prefab/renderer'   // Browser renderer
 ```
 
 ## Next Steps

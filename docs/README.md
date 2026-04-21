@@ -45,7 +45,7 @@
 
 ## Quick Links
 
-- **npm:** `prefab-ui`
+- **npm:** `@maxhealth.tech/prefab`
 - **Bundle:** `dist/renderer.min.js` (54KB, zero deps)
 - **Tests:** 253 passing (570 assertions)
 - **License:** MIT

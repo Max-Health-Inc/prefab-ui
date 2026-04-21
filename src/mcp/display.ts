@@ -6,8 +6,8 @@
  *
  * @example
  * ```ts
- * import { display, display_error } from 'prefab-ui/mcp'
- * import { autoTable } from 'prefab-ui'
+ * import { display, display_error } from '@maxhealth.tech/prefab/mcp'
+ * import { autoTable } from '@maxhealth.tech/prefab'
  *
  * // In a FastMCP tool handler:
  * async function listPatients(args, context) {

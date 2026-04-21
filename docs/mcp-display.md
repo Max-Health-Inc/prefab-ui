@@ -3,7 +3,7 @@
 These functions wrap prefab component trees as MCP tool result content arrays. Use them in MCP tool handlers to return rich UIs.
 
 ```ts
-import { display, display_form, display_update, display_error } from 'prefab-ui/mcp'
+import { display, display_form, display_update, display_error } from '@maxhealth.tech/prefab/mcp'
 ```
 
 ---
@@ -13,7 +13,7 @@ import { display, display_form, display_update, display_error } from 'prefab-ui/
 Return a full UI as an MCP tool result.
 
 ```ts
-import { display, Column, H1, autoTable } from 'prefab-ui'
+import { display, Column, H1, autoTable } from '@maxhealth.tech/prefab'
 
 async function listPatients(args: any) {
   const patients = await db.query('SELECT * FROM patients')
@@ -61,7 +61,7 @@ Accepts either a `Component` (auto-wrapped in `PrefabApp`) or a `PrefabApp` inst
 Return a form that submits back to an MCP tool. Shorthand for building a `Form` + `Input` components manually.
 
 ```ts
-import { display_form } from 'prefab-ui/mcp'
+import { display_form } from '@maxhealth.tech/prefab/mcp'
 
 async function editUser(args: any) {
   const user = await db.getUser(args.id)
@@ -95,7 +95,7 @@ async function editUser(args: any) {
 Return a partial state update. The renderer merges these values into the existing store without re-rendering the full UI.
 
 ```ts
-import { display_update } from 'prefab-ui/mcp'
+import { display_update } from '@maxhealth.tech/prefab/mcp'
 
 async function incrementCounter(args: any) {
   const newCount = args.currentCount + 1
@@ -123,7 +123,7 @@ async function incrementCounter(args: any) {
 Return a standardized error view.
 
 ```ts
-import { display_error } from 'prefab-ui/mcp'
+import { display_error } from '@maxhealth.tech/prefab/mcp'
 
 async function getPatient(args: any) {
   const patient = await db.getPatient(args.id)

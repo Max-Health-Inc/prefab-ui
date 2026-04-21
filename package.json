@@ -1,5 +1,5 @@
 {
-  "name": "prefab-ui",
+  "name": "@maxhealth.tech/prefab",
   "version": "0.1.2",
   "description": "TypeScript declarative UI component library for MCP apps. Wire-compatible with Python prefab-ui.",
   "type": "module",
