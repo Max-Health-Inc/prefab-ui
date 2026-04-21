@@ -24,14 +24,10 @@ jobs:
         with:
           bun-version: latest
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
       - run: bun install --frozen-lockfile
 
       - name: Build docs
-        run: node ./node_modules/vitepress/bin/vitepress.js build docs
+        run: bun --bun vitepress build docs
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
