@@ -8,6 +8,17 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
 
+  // Add v-pre to inline <code> so {{ }} isn't parsed as Vue interpolation.
+  // Fenced code blocks already get v-pre via Shiki, but inline code does not.
+  markdown: {
+    config: (md) => {
+      const defaultCodeInline = md.renderer.rules.code_inline!
+      md.renderer.rules.code_inline = (...args) => {
+        return defaultCodeInline(...args).replace('<code>', '<code v-pre>')
+      }
+    },
+  },
+
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
   ],
