@@ -56,7 +56,7 @@ Accepts either a `Component` (auto-wrapped in `PrefabApp`) or a `PrefabApp` inst
 
 ---
 
-## `display_form(tool, fields, opts?)`
+## `display_form(fields, submitTool, opts?)`
 
 Return a form that submits back to an MCP tool. Shorthand for building a `Form` + `Input` components manually.
 
@@ -65,12 +65,12 @@ import { display_form } from '@maxhealth.tech/prefab/mcp'
 
 async function editUser(args: any) {
   const user = await db.getUser(args.id)
-  return display_form('save_user', [
+  return display_form([
     { name: 'id', type: 'hidden', defaultValue: user.id },
     { name: 'name', type: 'text', required: true, defaultValue: user.name },
     { name: 'email', type: 'email', required: true, defaultValue: user.email },
     { name: 'role', type: 'select', options: ['admin', 'user'] },
-  ], {
+  ], 'save_user', {
     title: 'Edit User',
     submitLabel: 'Save Changes',
   })
@@ -81,8 +81,8 @@ async function editUser(args: any) {
 
 | Param | Type | Description |
 |-------|------|-------------|
-| `tool` | `string` | MCP tool to call on submit |
 | `fields` | `AutoFormField[]` | Field definitions (same as `autoForm`) |
+| `submitTool` | `string` | MCP tool to call on submit |
 | `opts.title` | `string` | Form heading |
 | `opts.subtitle` | `string` | Secondary text |
 | `opts.submitLabel` | `string` | Submit button text |
@@ -110,7 +110,7 @@ async function incrementCounter(args: any) {
   "content": [
     {
       "type": "text",
-      "text": "{\"$prefab\":{\"version\":\"0.2\"},\"stateUpdate\":{\"count\":43}}"
+      "text": "{\"$prefab\":{\"version\":\"0.2\"},\"update\":{\"state\":{\"count\":43}}}"
     }
   ]
 }
@@ -118,7 +118,7 @@ async function incrementCounter(args: any) {
 
 ---
 
-## `display_error(message, opts?)`
+## `display_error(title, message, opts?)`
 
 Return a standardized error view.
 
@@ -128,21 +128,29 @@ import { display_error } from '@maxhealth.tech/prefab/mcp'
 async function getPatient(args: any) {
   const patient = await db.getPatient(args.id)
   if (!patient) {
-    return display_error('Patient not found', {
-      code: 404,
+    return display_error('Not Found', 'Patient not found', {
       detail: `No patient with ID ${args.id}`,
+      hint: 'Check the patient ID and try again.',
     })
   }
   return display(patientView(patient))
 }
 ```
 
+### Parameters
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `title` | `string` | Error heading (shown in alert title) |
+| `message` | `string` | Error description |
+
 ### Options
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `code` | `number` | Error code |
-| `detail` | `string` | Detailed error message |
+| `detail` | `string` | Detailed error / stack trace (shown in code block) |
+| `hint` | `string` | Help text for the user (shown as muted text) |
+| `theme` | `Theme` | Theme overrides |
 
 ---
 
@@ -178,10 +186,10 @@ async function getPatient(args: { id: string }) {
 // Tool 3: Edit form
 async function editPatientForm(args: { id: string }) {
   const patient = await db.getPatient(args.id)
-  return display_form('save_patient', [
+  return display_form([
     { name: 'id', type: 'hidden', defaultValue: patient.id },
     { name: 'name', type: 'text', required: true, defaultValue: patient.name },
     { name: 'email', type: 'email', defaultValue: patient.email },
-  ], { title: `Edit ${patient.name}` })
+  ], 'save_patient', { title: `Edit ${patient.name}` })
 }
 ```

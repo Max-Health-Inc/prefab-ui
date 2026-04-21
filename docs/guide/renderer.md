@@ -54,7 +54,8 @@ Returns a `MountedApp` with:
 
 | Method | Description |
 |--------|-------------|
-| `update(data)` | Re-render with new wire data |
+| `update(data)` | Apply a state update from `display_update()` |
+| `rerender()` | Re-render the entire UI from current state |
 | `destroy()` | Unmount and clean up |
 | `store` | Access the reactive `Store` |
 
@@ -73,7 +74,7 @@ store.merge({ a: 1, b: 2 }); // Merge multiple
 store.toggle('active');        // Toggle boolean
 store.append('items', item);   // Push to array
 store.pop('items', 0);         // Remove by index
-store.snapshot();              // Full state copy
+store.getAll();               // Full state copy
 ```
 
 State changes automatically re-evaluate all `{{ }}` expressions in the DOM.
@@ -128,12 +129,16 @@ Control:     ForEach, If, Elif, Else, Define, Use, Slot
 Register custom renderers before mounting:
 
 ```js
-PrefabRenderer.registerComponent('MyWidget', (node, ctx) => {
+import { registerComponent } from '@maxhealth.tech/prefab/renderer'
+
+registerComponent('MyWidget', (node, ctx) => {
   const el = document.createElement('div');
   el.textContent = node.content;
   return el;
 });
 ```
+
+`registerComponent` is a standalone function, not a method on `PrefabRenderer`.
 
 ---
 

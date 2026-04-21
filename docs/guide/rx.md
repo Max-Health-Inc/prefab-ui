@@ -26,7 +26,7 @@ import { rx, STATE, ITEM, INDEX, EVENT, ERROR, RESULT } from '@maxhealth.tech/pr
 ```ts
 rx('count')                        // → "{{ count }}"
 rx('user.name')                    // → "{{ user.name }}"
-rx`Hello, ${STATE}.name!`          // → "Hello, {{ state.name }}!" (tagged template)
+// STATE.name → rx('name')         (proxy shorthand for state keys)
 ```
 
 ### Property Access
@@ -92,7 +92,6 @@ rx('date').date()                  // → "{{ date | date }}"
 |------|-------------|---------|
 | `upper` | Uppercase | `{{ name \| upper }}` |
 | `lower` | Lowercase | `{{ name \| lower }}` |
-| `capitalize` | Capitalize first letter | `{{ name \| capitalize }}` |
 | `truncate:N` | Truncate to N chars | `{{ desc \| truncate:50 }}` |
 | `currency` / `currency:'USD'` | Format as currency | `{{ price \| currency:'EUR' }}` |
 | `number` | Format number | `{{ count \| number }}` |
@@ -102,11 +101,15 @@ rx('date').date()                  // → "{{ date | date }}"
 | `datetime` | Format date + time | `{{ created \| datetime }}` |
 | `length` | Array/string length | `{{ items \| length }}` |
 | `default:'fallback'` | Default if null/empty | `{{ name \| default:'Unknown' }}` |
-| `json` | JSON stringify | `{{ data \| json }}` |
-| `keys` | Object keys | `{{ obj \| keys }}` |
-| `values` | Object values | `{{ obj \| values }}` |
 | `first` | First element | `{{ items \| first }}` |
 | `last` | Last element | `{{ items \| last }}` |
+| `round:N` | Round to N decimals | `{{ value \| round:2 }}` |
+| `compact:N` | Compact number format | `{{ value \| compact }}` |
+| `abs` | Absolute value | `{{ value \| abs }}` |
+| `pluralize:'word'` | Pluralize word by count | `{{ count \| pluralize:'item' }}` |
+| `join:','` | Join array with separator | `{{ items \| join:',' }}` |
+| `selectattr:'key'` | Filter objects by truthy attr | `{{ items \| selectattr:'active' }}` |
+| `rejectattr:'key'` | Filter objects by falsy attr | `{{ items \| rejectattr:'deleted' }}` |
 
 Pipes can be chained: `{{ name | upper | truncate:20 }}`
 
@@ -114,7 +117,7 @@ Pipes can be chained: `{{ name | upper | truncate:20 }}`
 
 | Variable | Builder | Description |
 |----------|---------|-------------|
-| `state.*` | `STATE` | Reactive state store |
+| `state.*` | `STATE` | Reactive state store (`STATE.foo` → `rx('foo')`) |
 | `item` | `ITEM` | Current item in `ForEach` loop |
 | `index` | `INDEX` | Current index in `ForEach` loop |
 | `event` | `EVENT` | Event data (e.g. form values) |

@@ -3,6 +3,10 @@ dist/
 *.tgz
 .DS_Store
 
+# VitePress
+docs/.vitepress/cache
+docs/.vitepress/dist
+
 # Compiled test artifacts (from stale tsc runs)
 test/**/*.js
 test/**/*.js.map

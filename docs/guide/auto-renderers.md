@@ -100,20 +100,22 @@ autoForm([
   { name: 'email', type: 'email', required: true },
   { name: 'role', type: 'select', options: ['admin', 'user', 'viewer'] },
   { name: 'notes', type: 'textarea' },
-], {
+], 'create_user', {
   title: 'Create User',
-  submitTool: 'create_user',
   submitLabel: 'Create',
 })
 ```
+
+The second argument is the `submitTool` — the MCP tool name to call on submit.
 
 | Option | Type | Description |
 |--------|------|-------------|
 | `title` | `string` | Form heading |
 | `subtitle` | `string` | Secondary text |
-| `submitTool` | `string` | MCP tool to call on submit |
 | `submitLabel` | `string` | Submit button text (default: `'Submit'`) |
-| `onSuccess` | `Action` | Post-submit action |
+| `onSubmit` | `Action` | Custom submit action (overrides submitTool) |
+| `successMessage` | `string` | Toast message on success |
+| `errorMessage` | `string` | Toast message on error |
 
 ### Field Definition
 

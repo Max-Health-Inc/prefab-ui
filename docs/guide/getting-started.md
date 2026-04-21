@@ -106,8 +106,8 @@ import { ... } from '@maxhealth.tech/prefab/renderer'   // Browser renderer
 
 ## Next Steps
 
-- [Components](components.md) — full reference for all 100+ components
-- [Actions](actions.md) — client-side and MCP actions
-- [Reactive Expressions](rx.md) — dynamic values with `rx()`
-- [Auto-Renderers](auto-renderers.md) — generate UIs from raw data
-- [Wire Format](wire-format.md) — the `$prefab` JSON spec
+- [Components](./components) — full reference for all 100+ components
+- [Actions](./actions) — client-side and MCP actions
+- [Reactive Expressions](./rx) — dynamic values with `rx()`
+- [Auto-Renderers](./auto-renderers) — generate UIs from raw data
+- [Wire Format](/reference/wire-format) — the `$prefab` JSON spec
