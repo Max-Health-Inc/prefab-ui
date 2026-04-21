@@ -107,7 +107,7 @@ export default defineConfig({
 
     footer: {
       message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2024-present Max Health Inc.',
+      copyright: 'Copyright © 2026-present Max Health Inc.',
     },
   },
 })
