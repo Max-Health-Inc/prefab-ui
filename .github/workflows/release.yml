@@ -89,6 +89,8 @@ jobs:
           tag_name: v${{ steps.version.outputs.next }}
           name: v${{ steps.version.outputs.next }}
           generate_release_notes: true
+          files: |
+            dist/renderer.min.js
 
       # Trigger publish.yml explicitly (GITHUB_TOKEN tag pushes don't trigger other workflows)
       - name: Trigger publish workflow
