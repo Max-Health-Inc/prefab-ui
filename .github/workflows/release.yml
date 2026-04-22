@@ -9,6 +9,7 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write
   id-token: write
 
 jobs:
@@ -89,7 +90,11 @@ jobs:
           name: v${{ steps.version.outputs.next }}
           generate_release_notes: true
 
-      # npm publish is handled by publish.yml (triggered by the v* tag above)
+      # Trigger publish.yml explicitly (GITHUB_TOKEN tag pushes don't trigger other workflows)
+      - name: Trigger publish workflow
+        run: gh workflow run publish.yml --ref "v${{ steps.version.outputs.next }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Summary
         run: |
