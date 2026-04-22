@@ -11,7 +11,7 @@ import { renderNode } from '../src/renderer/engine'
 import type { ComponentNode, RenderContext } from '../src/renderer/engine'
 import { registerAllComponents } from '../src/renderer/components/index'
 import { createNoopTransport } from '../src/renderer/transport'
-import { evaluateTemplate, evaluateExpression } from '../src/renderer/rx'
+import { evaluateTemplate } from '../src/renderer/rx'
 import { validateWireFormat } from '../src/core/validate'
 import { applyTheme } from '../src/renderer/theme'
 
@@ -432,11 +432,11 @@ describe('Image rendering', () => {
 import { applyKeyBindings } from '../src/renderer/theme'
 
 describe('Key bindings', () => {
-  it('dispatches action on matching combo', async () => {
+  it('dispatches action on matching combo', () => {
     let dispatched = false
     const cleanup = applyKeyBindings(
       { 'ctrl+s': { action: 'setState', key: 'saved', value: true } },
-      async () => { dispatched = true },
+      () => { dispatched = true; return Promise.resolve() },
     )
     document.dispatchEvent(new KeyboardEvent('keydown', {
       key: 's', ctrlKey: true, bubbles: true,
@@ -449,7 +449,7 @@ describe('Key bindings', () => {
     let dispatched = false
     const cleanup = applyKeyBindings(
       { 'ctrl+s': { action: 'setState' } },
-      async () => { dispatched = true },
+      () => { dispatched = true; return Promise.resolve() },
     )
     document.dispatchEvent(new KeyboardEvent('keydown', {
       key: 'a', ctrlKey: true, bubbles: true,
@@ -458,11 +458,11 @@ describe('Key bindings', () => {
     cleanup?.()
   })
 
-  it('handles shift modifier', async () => {
+  it('handles shift modifier', () => {
     let dispatched = false
     const cleanup = applyKeyBindings(
       { 'shift+enter': { action: 'setState' } },
-      async () => { dispatched = true },
+      () => { dispatched = true; return Promise.resolve() },
     )
     document.dispatchEvent(new KeyboardEvent('keydown', {
       key: 'Enter', shiftKey: true, bubbles: true,
@@ -475,7 +475,7 @@ describe('Key bindings', () => {
     let count = 0
     const cleanup = applyKeyBindings(
       { 'ctrl+z': { action: 'setState' } },
-      async () => { count++ },
+      () => { count++; return Promise.resolve() },
     )
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, bubbles: true }))
     expect(count).toBe(1)

@@ -117,6 +117,7 @@ describe('Textarea rendering', () => {
     const ctx = makeCtx()
     const dom = renderNode({ type: 'Textarea', name: 'bio', rows: 8 } as ComponentNode, ctx) as HTMLElement
     const textarea = dom.querySelector('textarea')!
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-conversion -- HappyDOM returns string
     expect(Number(textarea.rows)).toBe(8)
   })
 })

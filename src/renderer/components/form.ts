@@ -416,7 +416,7 @@ function renderRadioGroup(node: ComponentNode, ctx: RenderContext): HTMLElement 
   const stateVal = ctx.store.get(name)
   for (const radio of Array.from(e.querySelectorAll('input[type="radio"]'))) {
     ;(radio as HTMLInputElement).name = name
-    if (stateVal != null && (radio as HTMLInputElement).value === String(stateVal)) {
+    if (stateVal != null && (radio as HTMLInputElement).value === String(stateVal as string | number)) {
       ;(radio as HTMLInputElement).checked = true
     }
   }
@@ -447,7 +447,7 @@ function renderCombobox(node: ComponentNode, ctx: RenderContext): HTMLElement {
   // Read initial value from state
   const cbName = input.name
   const cbStateVal = ctx.store.get(cbName)
-  if (cbStateVal != null) input.value = String(cbStateVal)
+  if (cbStateVal != null) input.value = String(cbStateVal as string | number)
 
   input.style.padding = '6px 12px'
   input.style.borderRadius = '6px'
@@ -522,7 +522,7 @@ function renderCalendar(node: ComponentNode, ctx: RenderContext): HTMLElement {
   // Read initial value from state
   const calName = input.name
   const calStateVal = ctx.store.get(calName)
-  if (calStateVal != null) input.value = String(calStateVal)
+  if (calStateVal != null) input.value = String(calStateVal as string | number)
   if (node.minDate != null) input.min = resolveStr(node.minDate, ctx)
   if (node.maxDate != null) input.max = resolveStr(node.maxDate, ctx)
   input.style.padding = '6px 12px'
@@ -552,7 +552,7 @@ function renderDatePicker(node: ComponentNode, ctx: RenderContext): HTMLElement 
   // Read initial value from state
   const dpName = input.name
   const dpStateVal = ctx.store.get(dpName)
-  if (dpStateVal != null) input.value = String(dpStateVal)
+  if (dpStateVal != null) input.value = String(dpStateVal as string | number)
   if (node.minDate != null) input.min = resolveStr(node.minDate, ctx)
   if (node.maxDate != null) input.max = resolveStr(node.maxDate, ctx)
   input.style.padding = '6px 12px'
