@@ -154,7 +154,8 @@ function renderRing(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const e = el('div', 'pf-ring')
   const size = (node.size as number | undefined) ?? 80
   const thickness = (node.thickness as number | undefined) ?? 8
-  const value = Number(resolveValue(node.value, ctx) ?? 0)
+  const rawValue = Number(resolveValue(node.value, ctx) ?? 0)
+  const value = Math.max(0, Math.min(100, rawValue))
   const radius = (size - thickness) / 2
   const circumference = 2 * Math.PI * radius
   const offset = circumference * (1 - value / 100)
@@ -265,8 +266,9 @@ function renderSparkline(node: ComponentNode, _ctx: RenderContext): HTMLElement 
   svg.setAttribute('height', String(h))
   svg.setAttribute('viewBox', `0 0 ${w} ${h}`)
 
+  const divisor = data.length > 1 ? data.length - 1 : 1
   const points = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * w
+    const x = (i / divisor) * w
     const y = h - ((v - min) / range) * (h - 4) - 2
     return `${x},${y}`
   }).join(' ')

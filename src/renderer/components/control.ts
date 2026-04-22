@@ -18,7 +18,8 @@ export function registerControlComponents(): void {
 
 function renderForEach(node: ComponentNode, ctx: RenderContext): DocumentFragment {
   const frag = document.createDocumentFragment()
-  const expr = node.expression as string
+  const expr = node.expression as string | undefined
+  if (!expr) return frag
   let items: unknown[]
 
   if (isRxExpression(expr)) {

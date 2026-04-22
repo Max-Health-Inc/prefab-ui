@@ -67,7 +67,9 @@ export function createHttpTransport(opts?: McpTransportOptions): McpTransport {
           try {
             const parsed: unknown = JSON.parse(block.text)
             if (typeof parsed === 'object' && parsed !== null && '$prefab' in parsed) return parsed
-          } catch { /* not JSON, that's ok */ }
+            // Return the parsed value (unwraps JSON-encoded primitives)
+            return parsed
+          } catch { /* not JSON — return raw text */ }
           return block.text
         }
       }

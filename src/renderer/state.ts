@@ -73,12 +73,10 @@ export class Store {
     for (const [key, value] of Object.entries(partial)) {
       setPath(this.data, key, value)
     }
-    // Notify all changed keys + global
+    // Notify all changed keys (including parent paths) + global
     for (const key of Object.keys(partial)) {
-      const subs = this.subscribers.get(key)
-      if (subs) subs.forEach(fn => fn())
+      this.notify(key)
     }
-    this.globalSubscribers.forEach(fn => fn())
   }
 
   /** Subscribe to changes on a specific path */

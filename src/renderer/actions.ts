@@ -135,7 +135,11 @@ function handleCloseOverlay(_action: ActionJSON, _ctx: DispatchContext): void {
 
 function handleOpenLink(action: ActionJSON): void {
   if (typeof window !== 'undefined') {
-    const url = action.url as string
+    const url = action.url as string | undefined
+    if (!url) {
+      console.warn('[prefab] openLink: missing url')
+      return
+    }
     if (!isSafeUrl(url)) {
       console.warn(`[prefab] Blocked unsafe URL scheme: ${url}`)
       return

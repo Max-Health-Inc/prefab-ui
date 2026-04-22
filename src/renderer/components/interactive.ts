@@ -242,7 +242,9 @@ function renderPopover(node: ComponentNode, ctx: RenderContext): HTMLElement {
 
   renderChildren(node, content, ctx)
 
-  wrapper.addEventListener('click', () => {
+  wrapper.addEventListener('click', (e) => {
+    // Don't toggle if the click originated inside the content
+    if (content.contains(e.target as Node) && content.style.display !== 'none') return
     content.style.display = content.style.display === 'none' ? 'block' : 'none'
   })
 
@@ -355,11 +357,13 @@ function renderCarousel(node: ComponentNode, ctx: RenderContext): HTMLElement {
   }
 
   prev.addEventListener('click', () => {
+    if (slideCount === 0) return
     current = Math.max(0, current - 1)
     update()
   })
 
   next.addEventListener('click', () => {
+    if (slideCount === 0) return
     current = Math.min(slideCount - 1, current + 1)
     update()
   })

@@ -127,6 +127,9 @@ export class PrefabApp {
       ? JSON.stringify(this.toJSON(), null, 2)
       : JSON.stringify(this.toJSON())
 
+    // Escape </script> in JSON to prevent breaking out of the inline script tag
+    const safeJsonStr = jsonStr.replace(/<\//g, '<\\/')
+
     const stylesheetTags = (this.stylesheets ?? [])
       .map(s => s.startsWith('<') ? s : `<link rel="stylesheet" href="${escapeHtml(s)}">`)
       .join('\n    ')
@@ -148,7 +151,7 @@ export class PrefabApp {
   <body>
     <div id="prefab-root"></div>
     <script>
-      window.__PREFAB_DATA__ = ${jsonStr};
+      window.__PREFAB_DATA__ = ${safeJsonStr};
       if (window.PrefabRenderer) {
         window.PrefabRenderer.mount(document.getElementById('prefab-root'), window.__PREFAB_DATA__);
       }

@@ -252,6 +252,10 @@ function applyFilter(filterStr: string, value: unknown): unknown {
 const COMPARISONS: [string, (a: unknown, b: unknown) => boolean][] = [
   ['!==', (a, b) => a !== b],
   ['===', (a, b) => a === b],
+  // eslint-disable-next-line eqeqeq -- intentional loose equality for user expressions
+  ['!=', (a, b) => a != b],
+  // eslint-disable-next-line eqeqeq -- intentional loose equality for user expressions
+  ['==', (a, b) => a == b],
   ['>=', (a, b) => Number(a) >= Number(b)],
   ['<=', (a, b) => Number(a) <= Number(b)],
   ['>', (a, b) => Number(a) > Number(b)],
