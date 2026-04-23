@@ -39,13 +39,13 @@ function makeDispatchCtx(
   state: Record<string, unknown> = {},
   overrides: Partial<DispatchContext> = {},
 ): DispatchContext {
-  const store = new Store(state)
+  const defaultStore = new Store(state)
+  const store = overrides.store ?? defaultStore
   return {
     store,
     rerender: () => {},
     onToast: () => {},
     ...overrides,
-    store: overrides.store ?? store,
   }
 }
 
@@ -190,7 +190,7 @@ describe('Popover click behavior', () => {
 describe('PrefabApp toHTML script safety', () => {
   test('JSON containing </script> must not break HTML', () => {
     const app = new PrefabApp({
-      view: Text({ content: '</script><script>alert(1)</script>' }),
+      view: Text('</script><script>alert(1)</script>'),
     })
     const html = app.toHTML()
     // The raw </script> should NOT appear unescaped in the HTML body
@@ -440,7 +440,7 @@ describe('createNoopTransport', () => {
 describe('fetch action', () => {
   test('onSuccess callback should receive $result in scope', async () => {
     const origFetch = globalThis.fetch
-    globalThis.fetch = mock(async () => new Response(JSON.stringify({ data: 42 }))) as typeof fetch
+    globalThis.fetch = mock(async () => new Response(JSON.stringify({ data: 42 }))) as unknown as typeof fetch
     try {
       const store = new Store({})
       let rerenderCount = 0
@@ -466,7 +466,7 @@ describe('fetch action', () => {
 
   test('onError callback should fire on network failure', async () => {
     const origFetch = globalThis.fetch
-    globalThis.fetch = mock(async () => { throw new Error('Network error') }) as typeof fetch
+    globalThis.fetch = mock(async () => { throw new Error('Network error') }) as unknown as typeof fetch
     try {
       const store = new Store({})
       const ctx: DispatchContext = {
@@ -492,7 +492,7 @@ describe('fetch action', () => {
     globalThis.fetch = mock(async (_url: string | URL | Request, init?: RequestInit) => {
       capturedInit = init!
       return new Response('{}')
-    }) as typeof fetch
+    }) as unknown as typeof fetch
     try {
       const ctx: DispatchContext = {
         store: new Store({}),
@@ -1057,7 +1057,7 @@ describe('DataTable search', () => {
 describe('PrefabApp toHTML', () => {
   test('pretty option should produce formatted JSON', () => {
     const app = new PrefabApp({
-      view: Text({ content: 'Hello' }),
+      view: Text('Hello'),
     })
     const html = app.toHTML({ pretty: true })
     // Pretty JSON has newlines and indentation
@@ -1069,7 +1069,7 @@ describe('PrefabApp toHTML', () => {
 
   test('custom cdnVersion should appear in script src', () => {
     const app = new PrefabApp({
-      view: Text({ content: 'Hello' }),
+      view: Text('Hello'),
     })
     const html = app.toHTML({ cdnVersion: '1.2.3' })
     expect(html).toContain('@1.2.3/dist/renderer.min.js')
@@ -1077,7 +1077,7 @@ describe('PrefabApp toHTML', () => {
 
   test('stylesheets should render as link tags', () => {
     const app = new PrefabApp({
-      view: Text({ content: 'Hello' }),
+      view: Text('Hello'),
       stylesheets: ['https://example.com/style.css'],
     })
     const html = app.toHTML()
@@ -1086,7 +1086,7 @@ describe('PrefabApp toHTML', () => {
 
   test('scripts should render as script tags', () => {
     const app = new PrefabApp({
-      view: Text({ content: 'Hello' }),
+      view: Text('Hello'),
       scripts: ['https://example.com/lib.js'],
     })
     const html = app.toHTML()
@@ -1096,7 +1096,7 @@ describe('PrefabApp toHTML', () => {
   test('title should be HTML-escaped', () => {
     const app = new PrefabApp({
       title: 'My <App> & "Dashboard"',
-      view: Text({ content: 'Hello' }),
+      view: Text('Hello'),
     })
     const html = app.toHTML()
     expect(html).toContain('<title>My &lt;App&gt; &amp; &quot;Dashboard&quot;</title>')
