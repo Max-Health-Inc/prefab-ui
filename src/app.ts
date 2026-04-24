@@ -11,7 +11,7 @@ import type { Action, ActionJSON } from './actions/types.js'
 import { drainAutoState } from './rx/state-collector.js'
 
 /** Package version — injected by build script, updated at release time. */
-export const VERSION = '0.1.8'
+export const VERSION = '0.1.9'
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 
