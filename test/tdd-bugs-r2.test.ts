@@ -5,11 +5,11 @@
  * expression evaluator, and action dispatcher.
  */
 
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { describe, it, expect } from 'bun:test'
 import { PrefabRenderer, type PrefabWireData } from '../src/renderer/index'
 import { Store } from '../src/renderer/state'
 import { evaluateTemplate, evaluateExpression } from '../src/renderer/rx'
-import { dispatchActions, type DispatchContext, type ActionJSON } from '../src/renderer/actions'
+import { dispatchActions, type DispatchContext } from '../src/renderer/actions'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 

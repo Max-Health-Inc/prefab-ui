@@ -15,7 +15,7 @@ import { describe, it, expect, beforeEach } from 'bun:test'
 import { PrefabApp } from '../src/app'
 import { Column, Text } from '../src/index'
 import { PrefabRenderer } from '../src/renderer/index'
-import { registerPipe, unregisterPipe, listPipes, type PipeFn } from '../src/rx/pipes'
+import { unregisterPipe, listPipes, type PipeFn } from '../src/rx/pipes'
 import type { PrefabWireFormat } from '../src/app'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

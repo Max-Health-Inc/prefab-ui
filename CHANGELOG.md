@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.2.2] — 2026-04-25
+## [0.2.0] — 2026-04-25
 
 ### Bug Fix: If/Elif/Else Conditional Chains
 - **Fixed**: `Elif` and `Else` nodes rendered independently instead of being consumed by the preceding `If` chain. All branches in an `If/Elif/Else` sequence now render—only the first matching branch renders; the rest are skipped.
@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - `ForEach`, `If`, and `Else` body rendering now uses chain-aware iteration for nested chains
 - 55 new tests in `test/tdd-bugs-r2.test.ts` — **913 total tests**
 
-## [0.2.1] — 2026-04-25
+### Bug Fix: Browser Pipe Registration
 
 ### Bug Fix: Browser Pipe Registration
 - **Fixed**: Custom pipes registered in Node (via `registerPipe()`) were not available in the browser renderer bundle. Pipes are functions — they can't be serialized as JSON. The renderer loaded a fresh instance with zero custom pipes, causing `{{ name | humanName }}` to fall through to `[object Object]`.
