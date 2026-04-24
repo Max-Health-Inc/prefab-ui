@@ -10,7 +10,7 @@ import type { ComponentJSON } from './core/component.js'
 import type { Action, ActionJSON } from './actions/types.js'
 
 /** Package version — injected by build script, updated at release time. */
-export const VERSION = '0.1.5'
+export const VERSION = '0.1.6'
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 
