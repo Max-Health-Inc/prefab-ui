@@ -200,6 +200,63 @@ Button('Fullscreen', { onClick: new RequestDisplayMode('fullscreen') })
 
 ---
 
+## Action Builder Sugar
+
+Ergonomic wrappers that accept `Signal` or `Collection` instead of raw string keys. These produce the same wire-format actions but keep your code type-safe and DRY.
+
+```ts
+import { set, toggle, append, pop } from '@maxhealth.tech/prefab'
+import { signal, collection } from '@maxhealth.tech/prefab'
+```
+
+### `set(target, value, opts?)`
+
+```ts
+const count = signal('count', 0)
+
+set(count, 42)                        // → new SetState('count', 42)
+set(count, rx`${count} + 1`)          // → new SetState('count', '{{ count + 1 }}')
+set('rawKey', 'value')                // raw string key also works
+```
+
+### `toggle(target)`
+
+```ts
+const darkMode = signal('darkMode', false)
+toggle(darkMode)                      // → new ToggleState('darkMode')
+```
+
+### `append(target, item, index?)`
+
+```ts
+const items = collection('items', rows, { key: 'id' })
+append(items, { id: 'new', name: 'New' })       // → new AppendState('items', {...})
+append(items, newItem, 0)                         // insert at index 0
+```
+
+### `pop(target, indexOrValue?)`
+
+```ts
+pop(items, 0)                         // → new PopState('items', 0)
+pop(items)                            // → new PopState('items', -1) (last element)
+pop(items, 'some-value')              // remove by value
+```
+
+### `StateTarget` type
+
+All sugar functions accept: `Signal | Collection | string`
+
+### Composition
+
+Sugar functions return the same action classes, so `onSuccess` / `onError` chains work:
+
+```ts
+Button('Save', {
+  onClick: set(count, 0, { onSuccess: ShowToast('Reset!') }),
+})
+
+---
+
 ## Action Chaining
 
 Actions can be chained via `onSuccess` / `onError`:

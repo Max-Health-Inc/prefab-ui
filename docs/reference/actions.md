@@ -226,3 +226,22 @@ display(myView, {
   onMount: CallTool('get_initial_data', { resultKey: 'data' }),
 })
 ```
+
+---
+
+## Action Builder Sugar
+
+Ergonomic wrappers that accept `Signal`, `Collection`, or raw `string` keys.
+
+```ts
+import { set, toggle, append, pop } from '@maxhealth.tech/prefab'
+```
+
+| Function | Signature | Produces |
+|----------|-----------|----------|
+| `set(target, value, opts?)` | `(StateTarget, unknown, SetStateOpts?) → SetState` | `SetState` |
+| `toggle(target)` | `(StateTarget) → ToggleState` | `ToggleState` |
+| `append(target, item, index?)` | `(StateTarget, unknown, number?) → AppendState` | `AppendState` |
+| `pop(target, indexOrValue?)` | `(StateTarget, number \| string) → PopState` | `PopState` (defaults to `-1`) |
+
+`StateTarget` = `Signal | Collection | string`

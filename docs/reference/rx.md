@@ -110,6 +110,8 @@ rx('date').date()                  // → "{{ date | date }}"
 | `join:','` | Join array with separator | `{{ items \| join:',' }}` |
 | `selectattr:'key'` | Filter objects by truthy attr | `{{ items \| selectattr:'active' }}` |
 | `rejectattr:'key'` | Filter objects by falsy attr | `{{ items \| rejectattr:'deleted' }}` |
+| `find:'field',keyRef` | Find row in array by key | `{{ patients \| find:'id',selectedId }}` |
+| `dot:'field'` | Extract property from object | `{{ patient \| dot:'name' }}` |
 
 Pipes can be chained: `{{ name | upper | truncate:20 }}`
 
@@ -145,4 +147,120 @@ CallTool('search', {
   onSuccess: SetState('items', rx`${RESULT}.data`),
   onError: SetState('errorMsg', rx`${ERROR}`),
 })
+```
+
+---
+
+## `Signal`
+
+```ts
+import { signal, Signal } from '@maxhealth.tech/prefab'
+```
+
+A named reactive scalar. Allowed value types: `string | number | boolean | null`.
+
+### `signal(key, initial, options?)`
+
+Factory function — returns a `Signal<T>`.
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `key` | `string` | State key |
+| `initial` | `SignalValue` | Initial value |
+| `options.urlSync` | `string` | URL query param name (opt-in) |
+
+### Instance Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `toRx()` | `Rx` | `{{ key }}` expression |
+| `toString()` | `string` | `{{ key }}` |
+| `toJSON()` | `string` | Same as `toString()` |
+| `toState()` | `Record<string, T>` | `{ key: initial }` |
+
+---
+
+## `Collection`
+
+```ts
+import { collection, Collection } from '@maxhealth.tech/prefab'
+```
+
+A named keyed array with typed lookup helpers.
+
+### `collection(stateKey, rows, { key })`
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `stateKey` | `string` | State key |
+| `rows` | `T[]` | Source data |
+| `key` | `string` | Field used for identity lookups |
+
+### Instance Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `by(signal)` | `Ref<T>` | Lazy row reference via `find` pipe |
+| `firstKey()` | `string \| null` | Key of first row |
+| `lastKey()` | `string \| null` | Key of last row |
+| `length` | `number` | Row count |
+| `toRx()` | `Rx` | `{{ stateKey }}` expression |
+| `toState()` | `Record<string, T[]>` | `{ stateKey: rows }` |
+
+---
+
+## `Ref`
+
+```ts
+import { Ref } from '@maxhealth.tech/prefab'
+```
+
+A lazy, serializable reference to a row in a collection. Returned by `collection.by(signal)`.
+
+### Instance Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `toRx()` | `Rx` | The find expression as `Rx` |
+| `dot(field)` | `Ref` | Nested property access via `dot` pipe |
+| `toString()` | `string` | `{{ expr }}` |
+| `toJSON()` | `string` | Same as `toString()` |
+
+---
+
+## Custom Pipes
+
+```ts
+import { registerPipe, unregisterPipe, listPipes } from '@maxhealth.tech/prefab'
+```
+
+### `registerPipe(name, fn)`
+
+Register a custom pipe. Built-in pipes always shadow custom pipes.
+
+```ts
+registerPipe('humanName', (value) => {
+  const n = value as { given?: string[]; family?: string }
+  return `${(n.given ?? []).join(' ')} ${n.family ?? ''}`.trim()
+})
+```
+
+### `unregisterPipe(name): boolean`
+
+Remove a custom pipe. Returns `true` if it existed.
+
+### `listPipes(): string[]`
+
+List registered custom pipe names.
+
+---
+
+## `resetAutoState()`
+
+Clear the auto state collector. Call this between `PrefabApp` builds in long-running or serverless processes.
+
+```ts
+import { resetAutoState } from '@maxhealth.tech/prefab'
+
+resetAutoState()
 ```

@@ -58,7 +58,7 @@ Every component serializes to a flat JSON object:
 Component types use PascalCase and map 1:1 to the TypeScript/Python function names:
 
 ```
-Column, Row, Grid, GridItem, Container, Div, Span,
+Column, Row, Grid, GridItem, Container, Div, Span, MasterDetail, Detail,
 H1, H2, H3, H4, Text, Heading, Muted, Code, Markdown, Link, Kbd,
 Card, CardHeader, CardTitle, CardContent, CardFooter,
 DataTable, Badge, Metric, Progress, Separator, Loader, Icon,
@@ -132,8 +132,19 @@ multiplicative = unary (("*" | "/" | "%") unary)*
 unary        = "!" primary | primary
 primary      = number | string | boolean | null | dotpath | "(" expression ")"
 dotpath      = identifier ("." identifier)*
-piped        = expression ("|" pipeName (":" pipeArg)?)*
+piped        = expression ("|" pipeName (":" pipeArg ("," pipeArg)*)? )*
 ```
+
+### Key Pipes for Collections
+
+| Pipe | Syntax | Description |
+|------|--------|-------------|
+| `find` | `collection \| find:'keyField',stateKeyRef` | Find a row where `row[keyField]` matches the value of `stateKeyRef` |
+| `dot` | `object \| dot:'field'` | Extract a property from an object |
+
+Example: `{{ patients | find:'id',selectedPatientId | dot:'name' }}`
+
+These pipes enable the Signal/Collection/Ref data pattern on the wire format level.
 
 ### Scope Variables
 

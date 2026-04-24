@@ -110,6 +110,8 @@ rx('date').date()                  // → "{{ date | date }}"
 | `join:','` | Join array with separator | `{{ items \| join:',' }}` |
 | `selectattr:'key'` | Filter objects by truthy attr | `{{ items \| selectattr:'active' }}` |
 | `rejectattr:'key'` | Filter objects by falsy attr | `{{ items \| rejectattr:'deleted' }}` |
+| `find:'field',keyRef` | Find row in array by key | `{{ patients \| find:'id',selectedId }}` |
+| `dot:'field'` | Extract property from object | `{{ patient \| dot:'name' }}` |
 
 Pipes can be chained: `{{ name | upper | truncate:20 }}`
 
@@ -146,3 +148,143 @@ CallTool('search', {
   onError: SetState('errorMsg', rx`${ERROR}`),
 })
 ```
+
+---
+
+## Signals & Collections
+
+Signals and Collections are the typed reactive data layer. They produce `{{ }}` expressions and auto-register their initial values with `PrefabApp` state — no manual `.toState()` needed.
+
+### `signal(key, initial, options?)`
+
+A named reactive scalar (string, number, boolean, or null).
+
+```ts
+import { signal } from '@maxhealth.tech/prefab'
+
+const selectedId = signal('selectedPatientId', 'p1')
+
+selectedId.key       // 'selectedPatientId'
+selectedId.initial   // 'p1'
+selectedId.toRx()    // Rx → "{{ selectedPatientId }}"
+selectedId.toString() // "{{ selectedPatientId }}"
+selectedId.toState() // { selectedPatientId: 'p1' }
+```
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `key` | `string` | State key name |
+| `initial` | `string \| number \| boolean \| null` | Initial value |
+| `options.urlSync` | `string` | Sync with URL query parameter (opt-in) |
+
+### `collection(key, rows, { key: field })`
+
+A named keyed array with typed lookups.
+
+```ts
+import { collection } from '@maxhealth.tech/prefab'
+
+const patients = collection('patients', fhirPatients, { key: 'id' })
+
+patients.stateKey    // 'patients'
+patients.keyField    // 'id'
+patients.rows        // the array
+patients.length      // row count
+patients.firstKey()  // key of first row, or null
+patients.lastKey()   // key of last row, or null
+patients.toRx()      // Rx → "{{ patients }}"
+patients.toState()   // { patients: [...] }
+```
+
+### `collection.by(signal)` → `Ref`
+
+Lazily resolve a row by a signal's value. Returns a `Ref` that compiles to a `find` pipe expression:
+
+```ts
+const selected = patients.by(selectedId)
+
+selected.expr        // "patients | find:'id',selectedPatientId"
+selected.toString()  // "{{ patients | find:'id',selectedPatientId }}"
+selected.dot('name') // Rx → "{{ patients | find:'id',selectedPatientId | dot:'name' }}"
+```
+
+The `Ref.dot()` method returns another `Ref`, so you can chain further:
+
+```ts
+selected.dot('address').dot('city')
+// → "{{ patients | find:'id',selectedPatientId | dot:'address' | dot:'city' }}"
+```
+
+### Auto State Collection
+
+When you create signals and collections, their state is auto-collected by `PrefabApp`:
+
+```ts
+const patients = collection('patients', data, { key: 'id' })
+const selectedId = signal('selectedPatientId', patients.firstKey())
+
+const app = new PrefabApp({
+  title: 'Patient Browser',
+  view: myView,
+  // No need for: state: { ...patients.toState(), ...selectedId.toState() }
+  // State is auto-collected from signal() and collection() calls!
+})
+
+// wire.state === { patients: [...], selectedPatientId: 'p1' }
+```
+
+Use `resetAutoState()` to clear the collector between app builds (important in long-running processes or serverless).
+
+---
+
+## `find` and `dot` Pipes
+
+These pipes enable collection lookups in the wire format. They're used internally by `Ref` but can also be written manually.
+
+### `find:'field',keyRef`
+
+Find a row in an array where `row[field]` matches the value of a state key:
+
+```
+{{ patients | find:'id',selectedPatientId }}
+```
+
+- The second argument can be a state key, a scope variable (`$item.parentId`), or a quoted literal (`'p1'`).
+- Numeric coercion: string `'2'` matches number `2` and vice versa.
+- Returns `undefined` if no match is found.
+
+### `dot:'field'`
+
+Extract a property from an object:
+
+```
+{{ patients | find:'id',selectedPatientId | dot:'name' }}
+```
+
+Returns `undefined` if the input is null/undefined.
+
+---
+
+## Custom Pipes
+
+Register domain-specific pipes that work in `{{ }}` expressions:
+
+```ts
+import { registerPipe, unregisterPipe, listPipes } from '@maxhealth.tech/prefab'
+
+// Register a FHIR human name formatter
+registerPipe('humanName', (value) => {
+  if (!value || typeof value !== 'object') return ''
+  const name = value as { given?: string[]; family?: string }
+  return `${(name.given ?? []).join(' ')} ${name.family ?? ''}`.trim()
+})
+
+// Use in expressions:
+// {{ patient | dot:'name' | humanName }}
+
+// Debugging
+listPipes()           // → ['humanName']
+unregisterPipe('humanName')
+```
+
+Built-in pipes always take precedence over custom pipes. Re-registering a pipe with the same name warns and overwrites (HMR-friendly).

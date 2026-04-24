@@ -74,6 +74,44 @@ Dashboard grid layout with named items.
 
 Paginated view container.
 
+### `Detail(props, children?)`
+
+Conditional detail pane that shows content when a `Ref` resolves, or an empty placeholder otherwise.
+
+```ts
+import { collection, signal, Detail, Heading, Text } from '@maxhealth.tech/prefab'
+
+const patients = collection('patients', data, { key: 'id' })
+const selectedId = signal('selectedPatientId', patients.firstKey())
+const selected = patients.by(selectedId)
+
+Detail({ of: selected, empty: Text('Select a patient') }, [
+  Heading(selected.dot('name')),
+  Text(selected.dot('dob')),
+])
+```
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `of` | `Ref \| RxStr` | Reactive reference expression |
+| `empty` | `Component` | Shown when ref resolves to null/undefined |
+
+### `MasterDetail(props?, children?)`
+
+Two-pane layout: master (list) on the left, detail on the right. Expects exactly two children.
+
+```ts
+MasterDetail({ masterWidth: '350px', gap: 4 }, [
+  table,   // master panel
+  detail,  // detail panel
+])
+```
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `masterWidth` | `string` | Width of master pane (default: `'33%'`) |
+| `gap` | `number` | Gap between panes |
+
 ---
 
 ## Typography
@@ -165,33 +203,68 @@ Card sub-components. All accept children.
 
 ## Data Display
 
-### `DataTable(data, columns, props?)`
+### `DataTable(props)`
 
-Rich data table with auto-column detection.
+Rich data table with search, column definitions, and optional row selection.
 
 ```ts
-DataTable(users, [
-  col('name', 'Name'),
-  col('email', 'Email'),
-  col('status', 'Status', (v) => Badge(v)),
-], { searchable: true, sortable: true })
+DataTable({
+  rows: users,
+  columns: [
+    col('name', 'Name'),
+    col('email', 'Email'),
+    col('status', 'Status'),
+  ],
+  search: true,
+})
 ```
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `data` | `unknown[]` | Array of row objects |
+| `rows` | `unknown[] \| RxStr` | Array of row objects (or reactive expression) |
 | `columns` | `DataTableColumnDef[]` | Column definitions (use `col()` helper) |
-| `searchable` | `boolean` | Enable search |
-| `sortable` | `boolean` | Enable column sort |
+| `search` | `boolean` | Enable search |
+| `from` | `Collection` | Derive rows from a Collection (mutually exclusive with `rows`) |
+| `selected` | `Signal` | Signal tracking the selected row's key (requires `from`) |
 
-### `col(key, label?, render?)`
+#### Row Selection with Signal/Collection
 
-Column definition helper.
+When `from` and `selected` are provided, DataTable auto-generates row click handling:
 
 ```ts
-col('name', 'Full Name')
-col('status', 'Status', (v) => Badge(v, { variant: statusVariant(v) }))
+const patients = collection('patients', data, { key: 'id' })
+const selectedId = signal('selectedPatientId', patients.firstKey())
+
+DataTable({
+  columns: [col('name'), col('dob')],
+  from: patients,
+  selected: selectedId,
+})
+// Wire: rows="{{ patients }}", rowKey="id", selected="{{ selectedPatientId }}",
+//       onRowClick=[{ action: "setState", key: "selectedPatientId", value: "{{ $item.id }}" }]
 ```
+
+### `col(key, header?, opts?)`
+
+Column definition helper. Short form or descriptor form:
+
+```ts
+// Short form
+col('name', 'Full Name')
+col('email', 'Email', { sortable: true })
+
+// Descriptor form (object)
+col({ key: 'amount', header: 'Amount', format: 'currency' })
+col({ key: 'name', accessor: 'name | humanName', header: 'Patient' })
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `key` | `string` | Row object field name |
+| `header` | `string` | Column header label (defaults to `key`) |
+| `sortable` | `boolean` | Enable column sorting |
+| `format` | `string` | Pipe name applied to cell values (e.g. `'currency'`, `'date'`) |
+| `accessor` | `string` | Pipe expression for complex access (overrides `key` for display) |
 
 ### `Badge(content, props?)`
 

@@ -7,7 +7,8 @@ The prefab renderer is a 54KB IIFE bundle (`dist/renderer.min.js`) that renders 
 ### Script Tag (CDN)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab/dist/renderer.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.1/dist/prefab.css">
+<script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.1/dist/renderer.min.js"></script>
 ```
 
 This creates the `window.PrefabRenderer` global and (in ext-app mode) `window.prefab`.

@@ -74,6 +74,24 @@ Dashboard grid layout with named items.
 
 Paginated view container.
 
+### `Detail(props, children?)`
+
+Conditional detail pane. Shows `children` when `of` resolves, shows `empty` otherwise.
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `of` | `Ref \| RxStr` | Reactive reference expression |
+| `empty` | `Component` | Shown when ref is null/undefined |
+
+### `MasterDetail(props?, children?)`
+
+Two-pane layout (master list + detail). Expects two children.
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `masterWidth` | `string` | Master pane width (default: `'33%'`) |
+| `gap` | `number` | Gap between panes |
+
 ---
 
 ## Typography
@@ -165,33 +183,29 @@ Card sub-components. All accept children.
 
 ## Data Display
 
-### `DataTable(data, columns, props?)`
+### `DataTable(props)`
 
-Rich data table with auto-column detection.
-
-```ts
-DataTable(users, [
-  col('name', 'Name'),
-  col('email', 'Email'),
-  col('status', 'Status', (v) => Badge(v)),
-], { searchable: true, sortable: true })
-```
+Rich data table with search, column definitions, and optional row selection.
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `data` | `unknown[]` | Array of row objects |
-| `columns` | `DataTableColumnDef[]` | Column definitions (use `col()` helper) |
-| `searchable` | `boolean` | Enable search |
-| `sortable` | `boolean` | Enable column sort |
+| `rows` | `unknown[] \| RxStr` | Array of row objects (or reactive expression) |
+| `columns` | `DataTableColumnDef[]` | Column definitions (use `col()`) |
+| `search` | `boolean` | Enable search |
+| `from` | `Collection` | Derive rows from a Collection (mutually exclusive with `rows`) |
+| `selected` | `Signal` | Signal tracking selected row key (requires `from`) |
 
-### `col(key, label?, render?)`
+### `col(key, header?, opts?)`
 
-Column definition helper.
+Column definition helper — short form or descriptor form.
 
-```ts
-col('name', 'Full Name')
-col('status', 'Status', (v) => Badge(v, { variant: statusVariant(v) }))
-```
+| Field | Type | Description |
+|-------|------|-------------|
+| `key` | `string` | Row object field name |
+| `header` | `string` | Column header (defaults to `key`) |
+| `sortable` | `boolean` | Enable column sorting |
+| `format` | `string` | Pipe name for cell display (e.g. `'currency'`) |
+| `accessor` | `string` | Pipe expression for complex access |
 
 ### `Badge(content, props?)`
 

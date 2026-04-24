@@ -8,14 +8,35 @@ npm install @maxhealth.tech/prefab
 bun add @maxhealth.tech/prefab
 ```
 
+## Base Theme CSS
+
+Prefab ships a base CSS theme (`prefab.css`) that provides design tokens and structural styles for all components.
+
+**Bundler (Vite / webpack):**
+
+```ts
+import '@maxhealth.tech/prefab/prefab.css'
+```
+
+**CDN:**
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.1/dist/prefab.css">
+```
+
+When using `toHTML()`, the base CSS is injected automatically. Pass `{ includeStyles: false }` to opt out.
+
+The layering order is: `prefab.css` (base) → `stylesheets[]` (your overrides) → `theme` (runtime CSS variables).
+
 ## Usage Modes
 
-prefab has two usage modes:
+prefab has three usage modes:
 
 | Mode | Where | Import |
 |------|-------|--------|
 | **Server-side** | MCP tool handlers (Python/TS) | `@maxhealth.tech/prefab` |
 | **Client-side** | Browser (ext-app iframe) | `dist/renderer.min.js` script tag |
+| **Hybrid** | Node/Bun backend → HTML response | `PrefabApp.toHTML()` |
 
 ---
 
@@ -42,14 +63,16 @@ async function userDashboard() {
     Column({ gap: 8 }, [
       H1('User Dashboard'),
       Text('Manage your organization members.'),
-      DataTable(users, [
-        col('name', 'Name'),
-        col('email', 'Email'),
-        col('role', 'Role'),
-        col('status', 'Status', (v) => Badge(v, {
-          variant: v === 'active' ? 'success' : 'destructive',
-        })),
-      ]),
+      DataTable({
+        rows: users,
+        columns: [
+          col('name', 'Name'),
+          col('email', 'Email'),
+          col('role', 'Role'),
+          col('status', 'Status'),
+        ],
+        search: true,
+      }),
     ]),
     { title: 'User Dashboard' },
   )
@@ -65,10 +88,13 @@ Load the renderer bundle and use the `app()` factory:
 ```html
 <!DOCTYPE html>
 <html>
-<head><title>My App</title></head>
+<head>
+  <title>My App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.1/dist/prefab.css">
+</head>
 <body>
   <div id="root"></div>
-  <script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab/dist/renderer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.1/dist/renderer.min.js"></script>
   <script>
     (async () => {
       const ui = await prefab.app();
@@ -87,11 +113,39 @@ Load the renderer bundle and use the `app()` factory:
 </html>
 ```
 
+::: tip Use versioned CDN URLs
+Always pin a version (e.g. `@0.2.1`) in production to prevent breaking changes.
+:::
+
 The `app()` factory:
 1. Detects whether the page is in an iframe (bridge mode) or standalone
 2. Performs the PostMessage handshake with the host (if bridged)
 3. Applies the host theme
 4. Returns an API object with `callTool`, `render`, `onToolInput`, etc.
+
+## Hybrid: Self-Contained HTML
+
+Use `PrefabApp.toHTML()` to generate a complete HTML page from a server:
+
+```ts
+import { PrefabApp, Column, H1, Text } from '@maxhealth.tech/prefab'
+
+const app = new PrefabApp({
+  title: 'My Dashboard',
+  view: Column({ gap: 4 }, [H1('Hello'), Text('World')]),
+})
+
+const html = app.toHTML()
+// Returns a self-contained HTML page with embedded JSON + renderer script
+```
+
+Options:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `cdnVersion` | Current package version | CDN version for script/CSS tags |
+| `pretty` | `false` | Pretty-print the embedded JSON |
+| `includeStyles` | `true` | Inject the `prefab.css` base theme |
 
 ## Subpath Imports
 
@@ -102,11 +156,13 @@ import { ... } from '@maxhealth.tech/prefab/rx'         // Rx expressions
 import { ... } from '@maxhealth.tech/prefab/charts'     // Chart components
 import { ... } from '@maxhealth.tech/prefab/mcp'        // MCP display helpers
 import { ... } from '@maxhealth.tech/prefab/renderer'   // Browser renderer
+import '@maxhealth.tech/prefab/prefab.css'              // Base theme CSS
 ```
 
 ## Next Steps
 
-- [Components](./components) — full reference for all 100+ components
+- [Components](./components) — full reference for all 55+ components
+- [Signals & Collections](./rx#signals--collections) — reactive data layer
 - [Actions](./actions) — client-side and MCP actions
 - [Reactive Expressions](./rx) — dynamic values with `rx()`
 - [Auto-Renderers](./auto-renderers) — generate UIs from raw data

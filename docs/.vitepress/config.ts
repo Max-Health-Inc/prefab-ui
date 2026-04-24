@@ -59,6 +59,7 @@ export default defineConfig({
             { text: 'Components', link: '/guide/components' },
             { text: 'Actions', link: '/guide/actions' },
             { text: 'Reactive Expressions', link: '/guide/rx' },
+            { text: 'Signals & Collections', link: '/guide/rx#signals--collections' },
             { text: 'Auto-Renderers', link: '/guide/auto-renderers' },
           ],
         },
