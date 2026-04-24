@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] — 2026-04-25
+
+### Bug Fix: If/Elif/Else Conditional Chains
+- **Fixed**: `Elif` and `Else` nodes rendered independently instead of being consumed by the preceding `If` chain. All branches in an `If/Elif/Else` sequence now render—only the first matching branch renders; the rest are skipped.
+- New `renderChildArray()` in the render engine detects `If/Elif/Else` sibling sequences and evaluates them as a single conditional chain
+- Orphaned `Elif`/`Else` nodes (not adjacent to an `If`) are silently skipped
+- `ForEach`, `If`, and `Else` body rendering now uses chain-aware iteration for nested chains
+- 55 new tests in `test/tdd-bugs-r2.test.ts` — **913 total tests**
+
 ## [0.2.1] — 2026-04-25
 
 ### Bug Fix: Browser Pipe Registration

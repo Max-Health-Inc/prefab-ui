@@ -2,7 +2,7 @@
  * Control flow renderers — ForEach, If/Elif/Else
  */
 
-import { registerComponent, renderNode } from '../engine.js'
+import { registerComponent, renderNode, renderChildArray } from '../engine.js'
 import type { ComponentNode, RenderContext } from '../engine.js'
 import { evaluateTemplate, isRxExpression } from '../rx.js'
 
@@ -43,9 +43,7 @@ function renderForEach(node: ComponentNode, ctx: RenderContext): DocumentFragmen
     const childCtx = { ...ctx, scope: childScope }
 
     if (node.children) {
-      for (const child of node.children) {
-        frag.appendChild(renderNode(child, childCtx))
-      }
+      renderChildArray(node.children, frag, childCtx)
     }
   }
 
@@ -70,9 +68,7 @@ function renderIf(node: ComponentNode, ctx: RenderContext): HTMLElement | Docume
   if (condition) {
     const frag = document.createDocumentFragment()
     if (node.children) {
-      for (const child of node.children) {
-        frag.appendChild(renderNode(child, ctx))
-      }
+      renderChildArray(node.children, frag, ctx)
     }
     return frag
   }
@@ -89,9 +85,7 @@ function renderElif(node: ComponentNode, ctx: RenderContext): HTMLElement | Docu
 function renderElse(node: ComponentNode, ctx: RenderContext): DocumentFragment {
   const frag = document.createDocumentFragment()
   if (node.children) {
-    for (const child of node.children) {
-      frag.appendChild(renderNode(child, ctx))
-    }
+    renderChildArray(node.children, frag, ctx)
   }
   return frag
 }

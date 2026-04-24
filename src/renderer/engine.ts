@@ -100,12 +100,98 @@ export function renderNode(node: ComponentNode, ctx: RenderContext): HTMLElement
 
 /**
  * Render all children of a node into a parent element.
+ * Handles If/Elif/Else chains: only the first matching branch renders.
  */
 export function renderChildren(node: ComponentNode, parent: HTMLElement, ctx: RenderContext): void {
   if (!node.children) return
-  for (const child of node.children) {
-    parent.appendChild(renderNode(child, ctx))
+  renderChildArray(node.children, parent, ctx)
+}
+
+/**
+ * Render an array of child nodes into a parent, handling If/Elif/Else chains.
+ * Exported so ForEach and other manual-loop renderers can use it.
+ */
+export function renderChildArray(
+  children: ComponentNode[],
+  parent: HTMLElement | DocumentFragment,
+  ctx: RenderContext,
+): void {
+  let i = 0
+  while (i < children.length) {
+    const child = children[i]
+    if (child.type === 'If') {
+      i = renderConditionalChain(children, i, parent, ctx)
+    } else if (child.type === 'Elif' || child.type === 'Else') {
+      // Orphaned Elif/Else outside an If chain — skip silently
+      i++
+    } else {
+      parent.appendChild(renderNode(child, ctx))
+      i++
+    }
   }
+}
+
+/**
+ * Consume an If / Elif* / Else? chain starting at index `start`.
+ * Returns the index of the first child AFTER the chain.
+ */
+function renderConditionalChain(
+  children: ComponentNode[],
+  start: number,
+  parent: HTMLElement | DocumentFragment,
+  ctx: RenderContext,
+): number {
+  let matched = false
+  let i = start
+
+  // Evaluate the If node
+  const ifNode = children[i]
+  if (evalCondition(ifNode.condition as string, ctx)) {
+    renderBranchChildren(ifNode, parent, ctx)
+    matched = true
+  }
+  i++
+
+  // Consume consecutive Elif / Else siblings
+  while (i < children.length) {
+    const sibling = children[i]
+    if (sibling.type === 'Elif') {
+      if (!matched && evalCondition(sibling.condition as string, ctx)) {
+        renderBranchChildren(sibling, parent, ctx)
+        matched = true
+      }
+      i++
+    } else if (sibling.type === 'Else') {
+      if (!matched) {
+        renderBranchChildren(sibling, parent, ctx)
+      }
+      i++
+      break // Else always terminates the chain
+    } else {
+      break // Non-conditional sibling — chain ends
+    }
+  }
+
+  return i
+}
+
+/** Evaluate a condition string to boolean (used by the chain handler). */
+function evalCondition(condition: string, ctx: RenderContext): boolean {
+  if (!condition) return false
+  if (isRxExpression(condition)) {
+    return Boolean(evaluateTemplate(condition, ctx.store, ctx.scope))
+  }
+  return Boolean(ctx.store.get(condition))
+}
+
+/** Render a branch node's children into the parent. */
+function renderBranchChildren(
+  node: ComponentNode,
+  parent: HTMLElement | DocumentFragment,
+  ctx: RenderContext,
+): void {
+  if (!node.children) return
+  renderChildArray(node.children, parent, ctx)
 }
 
 // ── Helpers for renderers ────────────────────────────────────────────────────
