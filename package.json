@@ -34,7 +34,8 @@
     "./auto": {
       "import": "./dist/auto/index.js",
       "types": "./dist/auto/index.d.ts"
-    }
+    },
+    "./prefab.css": "./dist/prefab.css"
   },
   "sideEffects": false,
   "files": [
@@ -43,6 +44,7 @@
     "LICENSE",
     "CHANGELOG.md"
   ],
+  "style": "dist/prefab.css",
   "scripts": {
     "build": "bun run scripts/build.ts",
     "fixtures": "python test/fixtures/run_fixtures.py",

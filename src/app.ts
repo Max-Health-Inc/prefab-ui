@@ -123,15 +123,23 @@ export class PrefabApp {
    * Serialize to a self-contained HTML page.
    * The page embeds the JSON wire format and a script tag
    * that loads the prefab renderer from a CDN.
+   *
+   * @param opts.includeStyles  Inject a `<link>` to the prefab base theme CSS
+   *   from the CDN.  Defaults to `true`.  Set `false` to BYO CSS.
    */
-  toHTML(opts?: { cdnVersion?: string; pretty?: boolean }): string {
+  toHTML(opts?: { cdnVersion?: string; pretty?: boolean; includeStyles?: boolean }): string {
     const cdnVersion = opts?.cdnVersion ?? VERSION
+    const includeStyles = opts?.includeStyles !== false
     const jsonStr = opts?.pretty
       ? JSON.stringify(this.toJSON(), null, 2)
       : JSON.stringify(this.toJSON())
 
     // Escape </script> in JSON to prevent breaking out of the inline script tag
     const safeJsonStr = jsonStr.replace(/<\//g, '<\\/')
+
+    const baseStyleTag = includeStyles
+      ? `\n    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@${cdnVersion}/dist/prefab.css">`
+      : ''
 
     const stylesheetTags = (this.stylesheets ?? [])
       .map(s => s.startsWith('<') ? s : `<link rel="stylesheet" href="${escapeHtml(s)}">`)
@@ -146,7 +154,7 @@ export class PrefabApp {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${escapeHtml(this.title)}</title>
+    <title>${escapeHtml(this.title)}</title>${baseStyleTag}
     ${stylesheetTags}
     <script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@${cdnVersion}/dist/renderer.min.js"></script>
     ${scriptTags}

@@ -1101,4 +1101,41 @@ describe('PrefabApp toHTML', () => {
     const html = app.toHTML()
     expect(html).toContain('<title>My &lt;App&gt; &amp; &quot;Dashboard&quot;</title>')
   })
+
+  test('includeStyles defaults to true — injects prefab.css link', () => {
+    const app = new PrefabApp({
+      view: Text('Hello'),
+    })
+    const html = app.toHTML()
+    expect(html).toContain('/dist/prefab.css')
+    expect(html).toContain('<link rel="stylesheet"')
+  })
+
+  test('includeStyles: false omits base theme CSS', () => {
+    const app = new PrefabApp({
+      view: Text('Hello'),
+    })
+    const html = app.toHTML({ includeStyles: false })
+    expect(html).not.toContain('prefab.css')
+  })
+
+  test('includeStyles uses custom cdnVersion', () => {
+    const app = new PrefabApp({
+      view: Text('Hello'),
+    })
+    const html = app.toHTML({ cdnVersion: '2.0.0', includeStyles: true })
+    expect(html).toContain('@2.0.0/dist/prefab.css')
+    expect(html).toContain('@2.0.0/dist/renderer.min.js')
+  })
+
+  test('base CSS link appears before custom stylesheets', () => {
+    const app = new PrefabApp({
+      view: Text('Hello'),
+      stylesheets: ['https://example.com/custom.css'],
+    })
+    const html = app.toHTML()
+    const baseCssPos = html.indexOf('prefab.css')
+    const customCssPos = html.indexOf('custom.css')
+    expect(baseCssPos).toBeLessThan(customCssPos)
+  })
 })

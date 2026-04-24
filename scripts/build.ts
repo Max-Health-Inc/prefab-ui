@@ -3,7 +3,7 @@
  */
 
 import { $ } from 'bun'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync, copyFileSync } from 'node:fs'
 
 // ── Sync VERSION constant with package.json ──────────────────────────────────
 const pkg = JSON.parse(readFileSync('package.json', 'utf-8')) as { version: string }
@@ -43,3 +43,7 @@ if (!result.success) {
 
 console.log('✅ Build complete → dist/')
 console.log('✅ Renderer bundle → dist/renderer.min.js')
+
+// Copy CSS theme file to dist
+copyFileSync('src/prefab.css', 'dist/prefab.css')
+console.log('✅ Base theme → dist/prefab.css')
