@@ -9,6 +9,9 @@ import { type Component } from './core/component.js'
 import type { ComponentJSON } from './core/component.js'
 import type { Action, ActionJSON } from './actions/types.js'
 
+/** Package version — injected by build script, updated at release time. */
+export const VERSION = '0.1.5'
+
 // ── Theme ────────────────────────────────────────────────────────────────────
 
 export interface Theme {
@@ -122,7 +125,7 @@ export class PrefabApp {
    * that loads the prefab renderer from a CDN.
    */
   toHTML(opts?: { cdnVersion?: string; pretty?: boolean }): string {
-    const cdnVersion = opts?.cdnVersion ?? '0.19.1'
+    const cdnVersion = opts?.cdnVersion ?? VERSION
     const jsonStr = opts?.pretty
       ? JSON.stringify(this.toJSON(), null, 2)
       : JSON.stringify(this.toJSON())
