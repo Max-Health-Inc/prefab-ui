@@ -38,11 +38,15 @@ import { createHttpTransport, createNoopTransport } from './transport.js'
 import type { McpTransportOptions } from './transport.js'
 import { app } from './app.js'
 import { Bridge, isIframe } from './bridge.js'
+import { registerPipe, unregisterPipe, listPipes } from '../rx/pipes.js'
+import type { PipeFn } from '../rx/pipes.js'
 
 // Re-export new APIs
 export { app } from './app.js'
 export type { AppOptions, PrefabApp, MountHandle } from './app.js'
 export { Bridge, isIframe, applyHostTheme } from './bridge.js'
+export { registerPipe, unregisterPipe, listPipes } from '../rx/pipes.js'
+export type { PipeFn } from '../rx/pipes.js'
 export type {
   AppCapabilities,
   HostCapabilities,
@@ -62,6 +66,8 @@ export interface PrefabWireData {
   defs?: Record<string, ComponentNode>
   keyBindings?: Record<string, ActionJSON | ActionJSON[]>
   stylesheets?: string[]
+  /** Custom pipe source code strings — hydrated by the renderer on mount. */
+  pipes?: Record<string, string>
 }
 
 export interface PrefabUpdateData {
@@ -101,6 +107,14 @@ export const PrefabRenderer = {
   mount(root: HTMLElement, data: PrefabWireData, options?: MountOptions): MountedApp {
     // Register all built-in components (idempotent)
     registerAllComponents()
+
+    // Hydrate custom pipes from wire format (before any rendering)
+    const wirePipeNames: string[] = []
+    if (data.pipes) {
+      for (const [name, source] of Object.entries(data.pipes)) {
+        hydratePipe(name, source, wirePipeNames)
+      }
+    }
 
     // Initialize state store
     const store = new Store(data.state)
@@ -181,6 +195,8 @@ export const PrefabRenderer = {
         cleanupKeys?.()
         clearAllIntervals()
         for (const s of styleEls) s.remove()
+        // Unregister wire-hydrated pipes (scoped to this mount)
+        for (const name of wirePipeNames) unregisterPipe(name)
         root.innerHTML = ''
       },
     }
@@ -204,6 +220,42 @@ export const PrefabRenderer = {
       'update' in data
     )
   },
+}
+
+// ── Pipe hydration ───────────────────────────────────────────────────────────
+
+/** Built-in pipe names that wire pipes must never shadow. */
+const BUILTIN_PIPES = new Set([
+  'find', 'dot', 'length', 'upper', 'lower', 'truncate', 'join',
+  'first', 'last', 'abs', 'round', 'number', 'currency', 'percent',
+  'compact', 'date', 'time', 'datetime', 'pluralize', 'default',
+  'selectattr', 'rejectattr',
+])
+
+/**
+ * Safely hydrate a pipe from its source string.
+ * Registers it via registerPipe if valid; skips with a warning otherwise.
+ * Built-in pipe names are silently ignored (security).
+ */
+function hydratePipe(name: string, source: string, tracked: string[]): void {
+  if (BUILTIN_PIPES.has(name)) {
+    console.warn(`[prefab] wire pipe "${name}" ignored — shadows built-in`)
+    return
+  }
+  try {
+    // Evaluate the source string as a function expression.
+    // new Function is intentional — it's the only way to hydrate serialized pipe source from wire format.
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval, @typescript-eslint/no-unsafe-call
+    const fn = new Function('return (' + source + ')')() as PipeFn
+    if (typeof fn !== 'function') {
+      console.warn(`[prefab] wire pipe "${name}" — source did not evaluate to a function`)
+      return
+    }
+    registerPipe(name, fn)
+    tracked.push(name)
+  } catch (e) {
+    console.warn(`[prefab] wire pipe "${name}" — failed to hydrate:`, e)
+  }
 }
 
 // ── Default toast ────────────────────────────────────────────────────────────
@@ -274,6 +326,9 @@ if (typeof window !== 'undefined') {
     isPrefabUpdate: PrefabRenderer.isPrefabUpdate.bind(PrefabRenderer),
     Bridge,
     isIframe,
+    registerPipe,
+    unregisterPipe,
+    listPipes,
   }
 
   // Auto-mount if data is available

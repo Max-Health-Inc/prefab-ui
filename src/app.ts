@@ -9,9 +9,10 @@ import { type Component } from './core/component.js'
 import type { ComponentJSON } from './core/component.js'
 import type { Action, ActionJSON } from './actions/types.js'
 import { drainAutoState } from './rx/state-collector.js'
+import type { PipeFn } from './rx/pipes.js'
 
 /** Package version — injected by build script, updated at release time. */
-export const VERSION = '0.2.0'
+export const VERSION = '0.2.1'
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 
@@ -31,6 +32,8 @@ export interface PrefabWireFormat {
   keyBindings?: Record<string, ActionJSON | ActionJSON[]>
   onMount?: ActionJSON | ActionJSON[]
   stylesheets?: string[]
+  /** Custom pipe source code — hydrated by the renderer on mount. */
+  pipes?: Record<string, string>
 }
 
 // ── PrefabApp ────────────────────────────────────────────────────────────────
@@ -46,6 +49,8 @@ export interface PrefabAppOptions {
   onMount?: Action | Action[]
   keyBindings?: Record<string, Action | Action[]>
   cssClass?: string
+  /** Custom pipes to serialize in the wire format. Functions are converted to source strings. */
+  pipes?: Record<string, PipeFn>
 }
 
 export class PrefabApp {
@@ -59,6 +64,7 @@ export class PrefabApp {
   readonly onMount?: Action | Action[]
   readonly keyBindings?: Record<string, Action | Action[]>
   readonly cssClass?: string
+  readonly pipes?: Record<string, PipeFn>
 
   constructor(opts: PrefabAppOptions) {
     this.title = opts.title ?? 'Prefab'
@@ -78,6 +84,7 @@ export class PrefabApp {
     this.onMount = opts.onMount
     this.keyBindings = opts.keyBindings
     this.cssClass = opts.cssClass
+    this.pipes = opts.pipes
   }
 
   /**
@@ -122,6 +129,13 @@ export class PrefabApp {
       wire.onMount = Array.isArray(this.onMount)
         ? this.onMount.map(a => a.toJSON())
         : this.onMount.toJSON()
+    }
+
+    if (this.pipes && Object.keys(this.pipes).length > 0) {
+      wire.pipes = {}
+      for (const [name, fn] of Object.entries(this.pipes)) {
+        wire.pipes[name] = fn.toString()
+      }
     }
 
     return wire

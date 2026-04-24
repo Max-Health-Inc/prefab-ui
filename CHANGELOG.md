@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] — 2026-04-25
+
+### Bug Fix: Browser Pipe Registration
+- **Fixed**: Custom pipes registered in Node (via `registerPipe()`) were not available in the browser renderer bundle. Pipes are functions — they can't be serialized as JSON. The renderer loaded a fresh instance with zero custom pipes, causing `{{ name | humanName }}` to fall through to `[object Object]`.
+- `PrefabApp({ pipes: { humanName: fn } })` — accepts pipe functions and serializes their source code into the wire format
+- `PrefabWireFormat.pipes` — new optional field carrying pipe source strings
+- Renderer `mount()` hydrates wire pipes via `new Function()` before first render
+- `destroy()` cleans up wire-hydrated pipes (scoped to mount lifetime)
+- `window.prefab` global now exposes `registerPipe`, `unregisterPipe`, `listPipes`
+- Renderer module re-exports `registerPipe`, `unregisterPipe`, `listPipes`, `PipeFn`
+- Built-in pipes cannot be shadowed by wire pipes (security)
+- Invalid pipe source is caught gracefully (warning, no throw)
+- 12 new tests in `test/pipe-wire.test.ts` — **858 total tests**
+
 ## [0.1.10] — 2026-04-24
 
 ### Action-Builder Sugar
