@@ -512,7 +512,8 @@ function renderPieChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
     path.style.cursor = 'default'
 
     if (ttCtx) {
-      const rawSlice = (tooltipXKey ?? xAxisKey) ? data[i][(tooltipXKey ?? xAxisKey)!] : undefined
+      const sliceKey = tooltipXKey ?? xAxisKey
+      const rawSlice = sliceKey ? data[i][sliceKey] : undefined
       const sliceLabel = rawSlice != null
         ? (tooltipXFormat ? applyPipeFormat(rawSlice, tooltipXFormat, ctx) : String(rawSlice as string | number))
         : `Slice ${i + 1}`
