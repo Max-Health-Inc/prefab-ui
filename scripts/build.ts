@@ -44,6 +44,26 @@ if (!result.success) {
 console.log('✅ Build complete → dist/')
 console.log('✅ Renderer bundle → dist/renderer.min.js')
 
+// Bundle auto-mount renderer (self-executing, no inline script needed)
+const autoResult = await Bun.build({
+  entrypoints: ['src/renderer/auto.ts'],
+  outdir: 'dist',
+  naming: 'renderer.auto.min.js',
+  target: 'browser',
+  format: 'iife',
+  minify: true,
+})
+
+if (!autoResult.success) {
+  console.error('❌ Auto-mount bundle failed:')
+  for (const log of autoResult.logs) {
+    console.error(log)
+  }
+  process.exit(1)
+}
+
+console.log('✅ Auto-mount bundle → dist/renderer.auto.min.js')
+
 // Copy CSS theme file to dist
 copyFileSync('src/prefab.css', 'dist/prefab.css')
 console.log('✅ Base theme → dist/prefab.css')
