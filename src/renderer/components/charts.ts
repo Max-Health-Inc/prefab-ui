@@ -30,6 +30,7 @@ export interface SeriesEntry {
   label?: string
   color?: string
   yAxisId?: 'left' | 'right'
+  tooltipFormat?: string
 }
 
 // ── Shared axis / grid helpers ───────────────────────────────────────────────
@@ -148,6 +149,7 @@ function drawXAxisLabels(
   xAxisKey: string,
   getX: (index: number) => number,
   yBase: number,
+  format?: (raw: unknown) => string,
 ): void {
   for (let i = 0; i < data.length; i++) {
     const label = document.createElementNS('http://www.w3.org/2000/svg', 'text')
@@ -157,7 +159,7 @@ function drawXAxisLabels(
     label.setAttribute('font-size', AXIS_FONT)
     label.setAttribute('fill', AXIS_COLOR)
     const val = data[i][xAxisKey]
-    label.textContent = val == null ? '' : String(val as string | number)
+    label.textContent = val == null ? '' : (format ? format(val) : String(val as string | number))
     svg.appendChild(label)
   }
 }
@@ -177,6 +179,13 @@ function drawBaseline(
   svg.appendChild(line)
 }
 
+/** Apply a pipe expression to a value using the Rx engine. */
+function applyPipeFormat(value: unknown, pipe: string, ctx: RenderContext): string {
+  if (value == null) return ''
+  const result = resolveValue(`{{ __v | ${pipe} }}`, { ...ctx, scope: { ...ctx.scope, __v: value } })
+  return result == null ? String(value as string | number) : String(result as string | number)
+}
+
 export function formatYValue(value: number, format?: string): string {
   if (format === 'currency') return `$${value.toLocaleString()}`
   if (format === 'percent') return `${value}%`
@@ -187,11 +196,14 @@ export function formatYValue(value: number, format?: string): string {
 
 /** Create a format callback for tooltip entries that handles per-axis formats + null. */
 function makeTooltipFormatter(
+  ctx: RenderContext,
   yAxisFormat?: string,
   yAxisRightFormat?: string,
 ): (raw: unknown, s: SeriesEntry) => string {
   return (raw, s) => {
-    if (raw === null || raw === undefined) return '—'
+    if (raw === null || raw === undefined) return '\u2014'
+    // Per-series tooltipFormat overrides axis format
+    if (s.tooltipFormat) return applyPipeFormat(raw, s.tooltipFormat, ctx)
     const fmt = s.yAxisId === 'right' ? yAxisRightFormat : yAxisFormat
     return formatYValue(Number(raw), fmt)
   }
@@ -214,6 +226,8 @@ function renderBarChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const showTooltipProp = (node.showTooltip as boolean | undefined) !== false
   const xAxisKey = node.xAxis as string | undefined
   const tooltipXKey = node.tooltipXKey as string | undefined
+  const xAxisFormat = node.xAxisFormat as string | undefined
+  const tooltipXFormat = node.tooltipXFormat as string | undefined
 
   const leftSeries = series.filter(s => s.yAxisId !== 'right')
   const rightSeries = series.filter(s => s.yAxisId === 'right')
@@ -262,19 +276,22 @@ function renderBarChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
 
   // X-axis labels
   if (xAxisKey) {
+    const axisLabelFmt = xAxisFormat ? (v: unknown) => applyPipeFormat(v, xAxisFormat, ctx) : undefined
     drawXAxisLabels(svg, data, xAxisKey, (i) => {
       return layout.plotLeft + i * barGroupWidth + barGroupWidth / 2
-    }, layout.plotBottom)
+    }, layout.plotBottom, axisLabelFmt)
   }
 
   // Tooltip hit-zones (on top of bars)
   if (showTooltipProp) {
     const ttCtx = createTooltip(wrapper, svg)
     const fmt = makeTooltipFormatter(
+      ctx,
       node.yAxisFormat as string | undefined,
       node.yAxisRightFormat as string | undefined,
     )
-    addBarTooltipZones(ttCtx, svg, data, series, layout, tooltipXKey ?? xAxisKey, fmt)
+    const ttLabelFmt = tooltipXFormat ? (v: unknown) => applyPipeFormat(v, tooltipXFormat, ctx) : undefined
+    addBarTooltipZones(ttCtx, svg, data, series, layout, tooltipXKey ?? xAxisKey, fmt, ttLabelFmt)
   }
 
   addLegend(wrapper, series, node.showLegend as boolean | undefined)
@@ -299,6 +316,8 @@ function renderLineChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const showTooltipProp = (node.showTooltip as boolean | undefined) !== false
   const xAxisKey = node.xAxis as string | undefined
   const tooltipXKey = node.tooltipXKey as string | undefined
+  const xAxisFormat = node.xAxisFormat as string | undefined
+  const tooltipXFormat = node.tooltipXFormat as string | undefined
 
   // Split series by axis
   const leftSeries = allSeries.filter(s => s.yAxisId !== 'right')
@@ -416,21 +435,24 @@ function renderLineChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
 
   // X-axis labels
   if (xAxisKey) {
+    const axisLabelFmt = xAxisFormat ? (v: unknown) => applyPipeFormat(v, xAxisFormat, ctx) : undefined
     drawXAxisLabels(svg, data, xAxisKey, (i) => {
       return data.length === 1
         ? (layout.plotLeft + layout.plotRight) / 2
         : layout.plotLeft + (i / (data.length - 1)) * layout.plotWidth
-    }, layout.plotBottom)
+    }, layout.plotBottom, axisLabelFmt)
   }
 
   // Tooltip hit-zones (on top of lines)
   if (showTooltipProp) {
     const ttCtx = createTooltip(wrapper, svg)
     const fmt = makeTooltipFormatter(
+      ctx,
       node.yAxisFormat as string | undefined,
       node.yAxisRightFormat as string | undefined,
     )
-    addLineTooltipZones(ttCtx, svg, data, allSeries, layout, tooltipXKey ?? xAxisKey, fmt, crosshair, dotGroups)
+    const ttLabelFmt = tooltipXFormat ? (v: unknown) => applyPipeFormat(v, tooltipXFormat, ctx) : undefined
+    addLineTooltipZones(ttCtx, svg, data, allSeries, layout, tooltipXKey ?? xAxisKey, fmt, crosshair, dotGroups, ttLabelFmt)
   }
 
   addLegend(wrapper, allSeries, node.showLegend as boolean | undefined)
@@ -460,6 +482,7 @@ function renderPieChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const key = series[0].dataKey
   const xAxisKey = node.xAxis as string | undefined
   const tooltipXKey = node.tooltipXKey as string | undefined
+  const tooltipXFormat = node.tooltipXFormat as string | undefined
   const values = data.map(d => Number(d[key] ?? 0))
   const total = values.reduce((a, b) => a + b, 0)
 
@@ -490,7 +513,9 @@ function renderPieChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
 
     if (ttCtx) {
       const rawSlice = (tooltipXKey ?? xAxisKey) ? data[i][(tooltipXKey ?? xAxisKey)!] : undefined
-      const sliceLabel = rawSlice != null ? String(rawSlice as string | number) : `Slice ${i + 1}`
+      const sliceLabel = rawSlice != null
+        ? (tooltipXFormat ? applyPipeFormat(rawSlice, tooltipXFormat, ctx) : String(rawSlice as string | number))
+        : `Slice ${i + 1}`
       const pct = `${((values[i] / total) * 100).toFixed(1)}%`
       const midAngle = startAngle + angle / 2
       const tipX = cx + (r * 0.6) * Math.cos(midAngle)

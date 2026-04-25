@@ -619,6 +619,120 @@ describe('Chart tooltips', () => {
     const tooltip = dom.querySelector('.pf-chart-tooltip')!
     expect(tooltip.textContent).toContain('Jan')
   })
+
+  // ── Format pipe integration ──────────────────────────────────────────────
+
+  it('xAxisFormat applies pipe to axis labels (upper)', () => {
+    const ctx = makeCtx()
+    const node: ComponentNode = {
+      type: 'BarChart',
+      data: [{ name: 'alpha', v: 10 }, { name: 'beta', v: 20 }],
+      series: [{ dataKey: 'v' }],
+      xAxis: 'name',
+      xAxisFormat: 'upper',
+    }
+    const dom = renderNode(node, ctx) as HTMLElement
+    const svg = dom.querySelector('svg')!
+    const labels = Array.from(svg.querySelectorAll('text'))
+      .map(t => t.textContent)
+      .filter(t => t === 'ALPHA' || t === 'BETA')
+    expect(labels).toEqual(['ALPHA', 'BETA'])
+  })
+
+  it('tooltipXFormat applies pipe to tooltip label (upper)', () => {
+    const ctx = makeCtx()
+    const node: ComponentNode = {
+      type: 'BarChart',
+      data: [{ name: 'alpha', v: 10 }],
+      series: [{ dataKey: 'v', label: 'V' }],
+      xAxis: 'name',
+      tooltipXFormat: 'upper',
+    }
+    const dom = renderNode(node, ctx) as HTMLElement
+    const svg = dom.querySelector('svg')!
+    // Axis should be unformatted
+    const axisLabel = Array.from(svg.querySelectorAll('text')).find(t => t.textContent === 'alpha')
+    expect(axisLabel).not.toBeNull()
+    // Tooltip should be uppercased
+    const hitZone = Array.from(svg.querySelectorAll('rect')).find(
+      r => r.getAttribute('fill') === 'transparent',
+    )!
+    hitZone.dispatchEvent(new Event('mouseenter'))
+    const tooltip = dom.querySelector('.pf-chart-tooltip')!
+    expect(tooltip.textContent).toContain('ALPHA')
+  })
+
+  it('xAxisFormat + tooltipXFormat: axis and tooltip formatted differently', () => {
+    const ctx = makeCtx()
+    const node: ComponentNode = {
+      type: 'LineChart',
+      data: [
+        { name: 'hello world longname', v: 10 },
+        { name: 'another long string', v: 20 },
+      ],
+      series: [{ dataKey: 'v' }],
+      xAxis: 'name',
+      xAxisFormat: 'truncate:5',
+      tooltipXFormat: 'upper',
+    }
+    const dom = renderNode(node, ctx) as HTMLElement
+    const svg = dom.querySelector('svg')!
+    // Axis labels should be truncated
+    const truncated = Array.from(svg.querySelectorAll('text')).find(t => t.textContent === 'hello')
+    expect(truncated).not.toBeNull()
+    // Tooltip should be uppercased (not truncated)
+    const hitZone = Array.from(svg.querySelectorAll('rect')).find(
+      r => r.getAttribute('fill') === 'transparent',
+    )!
+    hitZone.dispatchEvent(new Event('mouseenter'))
+    const tooltip = dom.querySelector('.pf-chart-tooltip')!
+    expect(tooltip.textContent).toContain('HELLO WORLD LONGNAME')
+  })
+
+  it('per-series tooltipFormat overrides yAxisFormat in tooltip', () => {
+    const ctx = makeCtx()
+    const node: ComponentNode = {
+      type: 'BarChart',
+      data: [{ x: 'A', revenue: 1234.5, count: 42 }],
+      series: [
+        { dataKey: 'revenue', label: 'Revenue', tooltipFormat: 'currency' },
+        { dataKey: 'count', label: 'Count' },
+      ],
+      xAxis: 'x',
+    }
+    const dom = renderNode(node, ctx) as HTMLElement
+    const svg = dom.querySelector('svg')!
+    const hitZone = Array.from(svg.querySelectorAll('rect')).find(
+      r => r.getAttribute('fill') === 'transparent',
+    )!
+    hitZone.dispatchEvent(new Event('mouseenter'))
+    const tooltip = dom.querySelector('.pf-chart-tooltip')!
+    // Revenue should be formatted as currency via pipe
+    expect(tooltip.textContent).toContain('$')
+    expect(tooltip.textContent).toContain('1,234.50')
+    // Count should still use default formatter
+    expect(tooltip.textContent).toContain('42')
+  })
+
+  it('PieChart tooltipXFormat applies pipe to slice labels', () => {
+    const ctx = makeCtx()
+    const node: ComponentNode = {
+      type: 'PieChart',
+      data: [
+        { name: 'alpha', value: 60 },
+        { name: 'beta', value: 40 },
+      ],
+      series: [{ dataKey: 'value' }],
+      xAxis: 'name',
+      tooltipXFormat: 'upper',
+    }
+    const dom = renderNode(node, ctx) as HTMLElement
+    const svg = dom.querySelector('svg')!
+    const slices = svg.querySelectorAll('path')
+    slices[0].dispatchEvent(new Event('mouseenter'))
+    const tooltip = dom.querySelector('.pf-chart-tooltip')!
+    expect(tooltip.textContent).toContain('ALPHA')
+  })
 })
 
 describe('RadarChart (fallback)', () => {

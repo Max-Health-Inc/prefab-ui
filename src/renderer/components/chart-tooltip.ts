@@ -85,6 +85,7 @@ export function addBarTooltipZones(
   layout: ChartLayout,
   xAxisKey: string | undefined,
   formatValue: (raw: unknown, s: SeriesEntry, si: number) => string,
+  formatLabel?: (raw: unknown) => string,
 ): void {
   const groupW = layout.plotWidth / data.length
   for (let di = 0; di < data.length; di++) {
@@ -98,7 +99,9 @@ export function addBarTooltipZones(
     zone.style.cursor = 'default'
 
     const rawLabel = xAxisKey ? data[di][xAxisKey] : undefined
-    const label = rawLabel != null ? String(rawLabel as string | number) : undefined
+    const label = rawLabel != null
+      ? (formatLabel ? formatLabel(rawLabel) : String(rawLabel as string | number))
+      : undefined
     const entries: TooltipEntry[] = series.map((s, si) => ({
       label: s.label ?? s.dataKey,
       value: formatValue(data[di][s.dataKey], s, si),
@@ -127,6 +130,7 @@ export function addLineTooltipZones(
   formatValue: (raw: unknown, s: SeriesEntry, si: number) => string,
   crosshair?: SVGLineElement,
   dotGroups?: SVGCircleElement[][],
+  formatLabel?: (raw: unknown) => string,
 ): void {
   const step = data.length === 1 ? layout.plotWidth : layout.plotWidth / (data.length - 1)
   for (let di = 0; di < data.length; di++) {
@@ -145,7 +149,9 @@ export function addLineTooltipZones(
     zone.style.cursor = 'default'
 
     const rawLabel = xAxisKey ? data[di][xAxisKey] : undefined
-    const label = rawLabel != null ? String(rawLabel as string | number) : undefined
+    const label = rawLabel != null
+      ? (formatLabel ? formatLabel(rawLabel) : String(rawLabel as string | number))
+      : undefined
     const entries: TooltipEntry[] = allSeries.map((s, si) => ({
       label: s.label ?? s.dataKey,
       value: formatValue(data[di][s.dataKey], s, si),

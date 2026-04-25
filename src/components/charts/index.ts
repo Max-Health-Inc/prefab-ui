@@ -13,6 +13,8 @@ export interface ChartSeries {
   color?: string
   /** Which Y-axis this series binds to: 'left' (default) or 'right'. */
   yAxisId?: 'left' | 'right'
+  /** Pipe expression for this series' value in the tooltip (e.g. "currency:'EUR'"). Overrides yAxisFormat. */
+  tooltipFormat?: string
 }
 
 // ── Common chart props ───────────────────────────────────────────────────────
@@ -21,8 +23,12 @@ export interface BaseChartProps extends ComponentProps {
   data: unknown[]
   series: ChartSeries[]
   xAxis?: string
-  /** Data key used for the tooltip category label instead of xAxis. Useful for showing full date+time on hover while the axis shows abbreviated dates. */
+  /** Data key used for the tooltip category label instead of xAxis. */
   tooltipXKey?: string
+  /** Pipe expression applied to x-axis tick labels (e.g. "date", "truncate:10"). */
+  xAxisFormat?: string
+  /** Pipe expression applied to the category label in tooltips (e.g. "datetime"). Defaults to raw value. */
+  tooltipXFormat?: string
   height?: number
   showLegend?: boolean
   showTooltip?: boolean
@@ -41,6 +47,8 @@ function chartGetProps(props: BaseChartProps, extra?: Record<string, unknown>): 
     series: props.series,
     ...(props.xAxis && { xAxis: props.xAxis }),
     ...(props.tooltipXKey && { tooltipXKey: props.tooltipXKey }),
+    ...(props.xAxisFormat && { xAxisFormat: props.xAxisFormat }),
+    ...(props.tooltipXFormat && { tooltipXFormat: props.tooltipXFormat }),
     ...(props.height !== undefined && { height: props.height }),
     ...(props.showLegend !== undefined && { showLegend: props.showLegend }),
     ...(props.showTooltip !== undefined && { showTooltip: props.showTooltip }),
