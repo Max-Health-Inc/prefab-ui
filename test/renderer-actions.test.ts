@@ -321,3 +321,23 @@ describe('Unknown action', () => {
     // No throw = pass
   })
 })
+
+// ── callTool alias (Prefect compat) ──────────────────────────────────────────
+
+describe('callTool alias (Prefect compat)', () => {
+  it('callTool dispatches same as toolCall', async () => {
+    const transport = mockTransport({ value: 99 })
+    const ctx = makeCtx({}, transport)
+
+    await dispatchActions({
+      action: 'callTool',
+      tool: 'my_tool',
+      arguments: { x: 1 },
+      resultKey: 'out',
+    }, ctx)
+
+    expect(transport.calls).toHaveLength(1)
+    expect(transport.calls[0].name).toBe('my_tool')
+    expect(ctx.store.get('out')).toEqual({ value: 99 })
+  })
+})

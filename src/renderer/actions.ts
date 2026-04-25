@@ -67,6 +67,7 @@ async function dispatchOne(action: ActionJSON, ctx: DispatchContext): Promise<vo
     case 'setInterval':
       { handleSetInterval(action, ctx); return; }
     case 'toolCall':
+    case 'callTool':
       return handleToolCall(action, ctx)
     case 'sendMessage':
       return handleSendMessage(action, ctx)

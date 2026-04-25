@@ -11,6 +11,7 @@ export function registerControlComponents(): void {
   registerComponent('If', renderIf)
   registerComponent('Elif', renderElif)
   registerComponent('Else', renderElse)
+  registerComponent('Condition', renderCondition)
   registerComponent('Define', renderDefine)
   registerComponent('Use', renderUse)
   registerComponent('Slot', renderSlot)
@@ -100,6 +101,34 @@ function evaluateCondition(condition: string, ctx: RenderContext): boolean {
 }
 
 // ── Define / Use / Slot ──────────────────────────────────────────────────────
+
+/**
+ * Condition: Prefect-compatible conditional rendering.
+ * Evaluates `cases: [{ when, children }]` in order, renders the first match.
+ * Falls back to `else` children if no case matches.
+ */
+function renderCondition(node: ComponentNode, ctx: RenderContext): DocumentFragment {
+  const frag = document.createDocumentFragment()
+  const cases = node.cases as { when: string; children?: ComponentNode[] }[] | undefined
+  const elseChildren = node.else as ComponentNode[] | undefined
+
+  if (cases) {
+    for (const c of cases) {
+      if (evaluateCondition(c.when, ctx)) {
+        if (c.children) {
+          renderChildArray(c.children, frag, ctx)
+        }
+        return frag
+      }
+    }
+  }
+
+  // No case matched — render else branch if present
+  if (elseChildren) {
+    renderChildArray(elseChildren, frag, ctx)
+  }
+  return frag
+}
 
 /**
  * Define: stores named template children in the context defs map.

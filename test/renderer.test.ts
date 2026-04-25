@@ -344,6 +344,48 @@ describe('Render Engine', () => {
     expect(dom.textContent ?? '').not.toContain('Hidden')
   })
 
+  // ── Condition (Prefect compat) ──────────────────────────────────────────
+
+  it('renders Condition — first matching case', () => {
+    const ctx = makeCtx({ status: 'active' })
+    const node: ComponentNode = {
+      type: 'Condition',
+      cases: [
+        { when: "{{ status == 'active' }}", children: [{ type: 'Text', content: 'Active' }] },
+        { when: "{{ status == 'inactive' }}", children: [{ type: 'Text', content: 'Inactive' }] },
+      ],
+    }
+    const dom = renderNode(node, ctx)
+    expect(dom.textContent).toContain('Active')
+    expect(dom.textContent ?? '').not.toContain('Inactive')
+  })
+
+  it('renders Condition — falls through to else', () => {
+    const ctx = makeCtx({ status: 'unknown' })
+    const node: ComponentNode = {
+      type: 'Condition',
+      cases: [
+        { when: "{{ status == 'active' }}", children: [{ type: 'Text', content: 'Active' }] },
+      ],
+      else: [{ type: 'Text', content: 'Fallback' }],
+    }
+    const dom = renderNode(node, ctx)
+    expect(dom.textContent ?? '').not.toContain('Active')
+    expect(dom.textContent).toContain('Fallback')
+  })
+
+  it('renders Condition — no match, no else → empty', () => {
+    const ctx = makeCtx({ status: 'unknown' })
+    const node: ComponentNode = {
+      type: 'Condition',
+      cases: [
+        { when: "{{ status == 'active' }}", children: [{ type: 'Text', content: 'Active' }] },
+      ],
+    }
+    const dom = renderNode(node, ctx)
+    expect(dom.textContent ?? '').toBe('')
+  })
+
   it('renders DataTable', () => {
     const ctx = makeCtx({
       rows: [
