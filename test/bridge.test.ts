@@ -348,3 +348,202 @@ describe('app()', () => {
     window.removeEventListener('message', respondToInit)
   })
 })
+
+// ── Bridge (JSON-RPC ui/* protocol) ──────────────────────────────────────────
+
+describe('Bridge (JSON-RPC ui/* protocol)', () => {
+  let bridge: Bridge
+
+  beforeEach(() => {
+    bridge = new Bridge('*')
+  })
+
+  afterEach(() => {
+    bridge.disconnect()
+  })
+
+  it('initializes via ui/initialize when prefab:init times out', async () => {
+    bridge.connect()
+
+    // Simulate host responding to ui/initialize JSON-RPC request
+    const respondToJsonRpc = (event: MessageEvent): void => {
+      const msg = event.data
+      if (msg?.jsonrpc === '2.0' && msg.method === 'ui/initialize' && msg.id != null) {
+        window.postMessage({
+          jsonrpc: '2.0',
+          id: msg.id,
+          result: {
+            protocolVersion: '2026-01-26',
+            hostInfo: { name: 'VS Code', version: '1.99' },
+            hostCapabilities: { openLinks: {} },
+            hostContext: {
+              theme: 'dark',
+              styles: { variables: { '--bg': '#000' } },
+              availableDisplayModes: ['inline', 'fullscreen'],
+            },
+          },
+        }, '*')
+      }
+    }
+    window.addEventListener('message', respondToJsonRpc)
+
+    const context = await bridge.initialize({ toolInput: true })
+
+    expect(bridge.activeProtocol).toBe('jsonrpc')
+    expect(context.hostName).toBe('VS Code')
+    expect(context.hostVersion).toBe('1.99')
+    expect(context.capabilities.navigation).toBe(true)
+    expect(context.theme?.colorScheme).toBe('dark')
+    expect(context.theme?.variables?.['--bg']).toBe('#000')
+
+    window.removeEventListener('message', respondToJsonRpc)
+  })
+
+  it('dispatches ui/notifications/tool-result to prefab:tool-result', () => {
+    bridge.connect()
+    // Force jsonrpc protocol
+    ;(bridge as unknown as { protocol: string }).protocol = 'jsonrpc'
+
+    let received: Record<string, unknown> | undefined
+    bridge.on('prefab:tool-result', (payload) => { received = payload })
+
+    window.postMessage({
+      jsonrpc: '2.0',
+      method: 'ui/notifications/tool-result',
+      params: {
+        content: [{ type: 'text', text: 'hello' }],
+        structuredContent: { $prefab: { version: '0.2' }, view: { type: 'Text', content: 'Hi' } },
+      },
+    }, '*')
+
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(received).toBeDefined()
+        expect(received!.result).toBeDefined()
+        const result = received!.result as Record<string, unknown>
+        expect(result.structuredContent).toBeDefined()
+        resolve()
+      }, 50)
+    })
+  })
+
+  it('dispatches ui/notifications/tool-input to prefab:tool-input', () => {
+    bridge.connect()
+
+    let received: Record<string, unknown> | undefined
+    bridge.on('prefab:tool-input', (payload) => { received = payload })
+
+    window.postMessage({
+      jsonrpc: '2.0',
+      method: 'ui/notifications/tool-input',
+      params: { arguments: { patientId: '123' } },
+    }, '*')
+
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(received).toBeDefined()
+        expect((received!.args as Record<string, unknown>)?.patientId).toBe('123')
+        resolve()
+      }, 50)
+    })
+  })
+
+  it('dispatches ui/notifications/tool-cancelled to prefab:tool-cancelled', () => {
+    bridge.connect()
+
+    let received = false
+    bridge.on('prefab:tool-cancelled', () => { received = true })
+
+    window.postMessage({
+      jsonrpc: '2.0',
+      method: 'ui/notifications/tool-cancelled',
+      params: { reason: 'user cancelled' },
+    }, '*')
+
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(received).toBe(true)
+        resolve()
+      }, 50)
+    })
+  })
+
+  it('dispatches ui/notifications/host-context-changed to prefab:theme-update', () => {
+    bridge.connect()
+
+    let received: Record<string, unknown> | undefined
+    bridge.on('prefab:theme-update', (payload) => { received = payload })
+
+    window.postMessage({
+      jsonrpc: '2.0',
+      method: 'ui/notifications/host-context-changed',
+      params: {
+        theme: 'light',
+        styles: { variables: { '--accent': 'blue' } },
+      },
+    }, '*')
+
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(received).toBeDefined()
+        expect((received as HostTheme).colorScheme).toBe('light')
+        expect((received as HostTheme).variables?.['--accent']).toBe('blue')
+        resolve()
+      }, 50)
+    })
+  })
+
+  it('auto-acknowledges host requests with id', () => {
+    bridge.connect()
+
+    let ackReceived = false
+    const captureAck = (event: MessageEvent): void => {
+      const msg = event.data
+      if (msg?.jsonrpc === '2.0' && msg.id === 99 && msg.result != null) {
+        ackReceived = true
+      }
+    }
+    window.addEventListener('message', captureAck)
+
+    // Send a ui/resource-teardown request (has an id)
+    window.postMessage({
+      jsonrpc: '2.0',
+      id: 99,
+      method: 'ui/resource-teardown',
+      params: { reason: 'cleanup' },
+    }, '*')
+
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(ackReceived).toBe(true)
+        window.removeEventListener('message', captureAck)
+        resolve()
+      }, 50)
+    })
+  })
+
+  it('createTransport routes tools/call via JSON-RPC', () => {
+    bridge.connect()
+    ;(bridge as unknown as { protocol: string }).protocol = 'jsonrpc'
+    const transport = bridge.createTransport()
+
+    // Simulate host responding to tools/call
+    const respondToToolCall = (event: MessageEvent): void => {
+      const msg = event.data
+      if (msg?.jsonrpc === '2.0' && msg.method === 'tools/call' && msg.id != null) {
+        window.postMessage({
+          jsonrpc: '2.0',
+          id: msg.id,
+          result: { content: [{ type: 'text', text: 'result-data' }] },
+        }, '*')
+      }
+    }
+    window.addEventListener('message', respondToToolCall)
+
+    return transport.callTool('my-tool', { arg: 'val' }).then((result) => {
+      const r = result as Record<string, unknown>
+      expect(r.content).toBeDefined()
+      window.removeEventListener('message', respondToToolCall)
+    })
+  })
+})

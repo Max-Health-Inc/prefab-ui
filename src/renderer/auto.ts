@@ -9,6 +9,11 @@
  * Designed for CSP-restricted environments (VS Code webviews, sandboxed iframes)
  * where inline `<script>` blocks are forbidden.
  *
+ * Supports all three Bridge protocols:
+ *   - prefab:*   (MistralOS)
+ *   - ui/* JSON-RPC (VS Code, Claude, ChatGPT)
+ *   - ext-apps SDK (legacy)
+ *
  * The host HTML only needs:
  * ```html
  * <div id="root"></div>
@@ -30,6 +35,38 @@ function isPrefabUpdate(data: unknown): data is PrefabUpdateData {
   return PrefabRenderer.isPrefabUpdate(data)
 }
 
+/**
+ * Extract $prefab wire data from a tool result payload.
+ * Handles both direct wire data and MCP Apps tool-result envelope
+ * where the actual data is nested inside `structuredContent`.
+ */
+interface ContentItem {
+  type: string
+  text?: string
+}
+
+function extractWireData(payload: unknown): PrefabWireData | null {
+  if (isPrefabWire(payload)) return payload
+  if (payload !== null && typeof payload === 'object') {
+    const obj = payload as Record<string, unknown>
+    // MCP Apps tool-result: { content: [...], structuredContent: { $prefab, view } }
+    if (isPrefabWire(obj.structuredContent)) return obj.structuredContent
+    // Try parsing text content items
+    if (Array.isArray(obj.content)) {
+      for (const raw of obj.content) {
+        const item = raw as ContentItem
+        if (item.type === 'text' && typeof item.text === 'string') {
+          try {
+            const parsed: unknown = JSON.parse(item.text)
+            if (isPrefabWire(parsed)) return parsed
+          } catch { /* skip non-JSON */ }
+        }
+      }
+    }
+  }
+  return null
+}
+
 async function boot(): Promise<void> {
   const root = document.querySelector<HTMLElement>(ROOT_SELECTOR)
   if (!root) {
@@ -37,15 +74,21 @@ async function boot(): Promise<void> {
     return
   }
 
+  const el: HTMLElement = root
   const ui = await app()
 
   let mounted: MountedApp | undefined
 
+  function mount(data: PrefabWireData): void {
+    if (mounted) mounted.destroy()
+    mounted = ui.mount(el, data)
+  }
+
   // ── Tool result handler (structuredContent from MCP) ───────────────────
   ui.onToolResult((result) => {
-    if (isPrefabWire(result)) {
-      if (mounted) mounted.destroy()
-      mounted = ui.mount(root, result)
+    const wire = extractWireData(result)
+    if (wire) {
+      mount(wire)
     } else if (isPrefabUpdate(result) && mounted) {
       mounted.update(result)
     }
@@ -53,9 +96,9 @@ async function boot(): Promise<void> {
 
   // ── Tool input handler (initial data or dynamic args) ──────────────────
   ui.onToolInput((args) => {
-    if (isPrefabWire(args)) {
-      if (mounted) mounted.destroy()
-      mounted = ui.mount(root, args)
+    const wire = extractWireData(args)
+    if (wire) {
+      mount(wire)
     } else if (isPrefabUpdate(args) && mounted) {
       mounted.update(args)
     }

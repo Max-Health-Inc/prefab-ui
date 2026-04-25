@@ -153,3 +153,63 @@ describe('Auto-mount entry point', () => {
     handle.destroy()
   })
 })
+
+// ── extractWireData logic (mirrors auto.ts) ──────────────────────────────────
+
+describe('extractWireData logic', () => {
+  function isPrefab(d: unknown): boolean { return PrefabRenderer.isPrefabData(d) }
+
+  function extractWireData(payload: unknown): PrefabWireData | null {
+    if (isPrefab(payload)) return payload as PrefabWireData
+    if (payload && typeof payload === 'object') {
+      const obj = payload as Record<string, unknown>
+      if (isPrefab(obj.structuredContent)) return obj.structuredContent as PrefabWireData
+      if (Array.isArray(obj.content)) {
+        for (const item of obj.content) {
+          if (item && typeof item === 'object' && item.type === 'text' && typeof item.text === 'string') {
+            try {
+              const parsed: unknown = JSON.parse(item.text as string)
+              if (isPrefab(parsed)) return parsed as PrefabWireData
+            } catch { /* skip */ }
+          }
+        }
+      }
+    }
+    return null
+  }
+
+  it('extracts direct $prefab wire data', () => {
+    const wire = makeWireData('Direct')
+    expect(extractWireData(wire)).toEqual(wire)
+  })
+
+  it('extracts from structuredContent envelope', () => {
+    const wire = makeWireData('Nested')
+    const envelope = {
+      content: [{ type: 'text', text: 'fallback' }],
+      structuredContent: wire,
+    }
+    expect(extractWireData(envelope)).toEqual(wire)
+  })
+
+  it('extracts from text content item (JSON-encoded)', () => {
+    const wire = makeWireData('Parsed')
+    const envelope = {
+      content: [{ type: 'text', text: JSON.stringify(wire) }],
+    }
+    expect(extractWireData(envelope)).toEqual(wire)
+  })
+
+  it('returns null for non-prefab data', () => {
+    expect(extractWireData({ random: 'data' })).toBeNull()
+    expect(extractWireData(null)).toBeNull()
+    expect(extractWireData('string')).toBeNull()
+  })
+
+  it('returns null for text content that is not valid JSON', () => {
+    const envelope = {
+      content: [{ type: 'text', text: 'not json' }],
+    }
+    expect(extractWireData(envelope)).toBeNull()
+  })
+})
