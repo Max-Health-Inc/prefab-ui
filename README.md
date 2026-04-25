@@ -1,6 +1,6 @@
 # prefab
 
-[![CI](https://github.com/Max-Health-Inc/prefab-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Max-Health-Inc/prefab-ui/actions/workflows/ci.yml)
+[![CI](https://github.com/Max-Health-Inc/prefab/actions/workflows/ci.yml/badge.svg)](https://github.com/Max-Health-Inc/prefab/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/@maxhealth.tech/prefab)](https://www.npmjs.com/package/@maxhealth.tech/prefab)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -94,6 +94,33 @@ async function listUsers(args: any) {
 
 ### Charts
 `BarChart`, `LineChart`, `AreaChart`, `PieChart`, `RadarChart`, `ScatterChart`, `Sparkline`, `RadialChart`, `Histogram`
+
+#### Chart Formatting (Pipe Integration)
+
+Charts use the same pipe system as `{{ value | pipe }}` expressions — all formatting is declarative JSON:
+
+| Prop | Level | Effect |
+|---|---|---|
+| `xAxisFormat` | chart | Pipe applied to x-axis tick labels |
+| `tooltipXFormat` | chart | Pipe applied to tooltip category label |
+| `tooltipXKey` | chart | Read tooltip label from a different data key |
+| `tooltipFormat` | per-series | Pipe applied to that series' value in tooltip |
+
+```ts
+// Same timestamp field, two presentations:
+LineChart({
+  data: timeseries,
+  xAxis: 'timestamp',
+  xAxisFormat: 'date',          // axis: "4/25/2026"
+  tooltipXFormat: 'datetime',   // tooltip: "4/25/2026, 2:30:00 PM"
+  series: [
+    { dataKey: 'revenue', label: 'Revenue', tooltipFormat: 'currency' },
+    { dataKey: 'growth', label: 'Growth', tooltipFormat: 'percent' },
+  ],
+})
+```
+
+All built-in pipes work: `upper`, `lower`, `truncate`, `currency`, `percent`, `compact`, `date`, `time`, `datetime`, `number`, `round`, plus custom wire pipes.
 
 ### Media
 `Image`, `Audio`, `Video`, `Embed`, `Svg`, `DropZone`, `Mermaid`
@@ -388,15 +415,17 @@ import { ... } from '@maxhealth.tech/prefab'           // Everything
 import { ... } from '@maxhealth.tech/prefab/actions'    // Actions only
 import { ... } from '@maxhealth.tech/prefab/rx'         // Rx expressions only
 import { ... } from '@maxhealth.tech/prefab/charts'     // Chart components only
+import { ... } from '@maxhealth.tech/prefab/auto'       // Auto-renderers
 import { ... } from '@maxhealth.tech/prefab/mcp'        // MCP display helpers
 import { ... } from '@maxhealth.tech/prefab/renderer'   // Browser renderer
+import '@maxhealth.tech/prefab/prefab.css'              // Default stylesheet
 ```
 
 ## Development
 
 ```bash
 bun install          # Install dependencies
-bun test             # Run tests (829 passing)
+bun test             # Run tests (996 passing)
 bun run build        # TypeScript compile + IIFE bundle
 bun run lint         # ESLint
 bun run typecheck    # Type check without emitting
