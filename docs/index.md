@@ -9,6 +9,9 @@ hero:
     - theme: brand
       text: Get Started
       link: /guide/getting-started
+    - theme: brand
+      text: Try the Playground
+      link: /playground/
     - theme: alt
       text: Component Reference
       link: /reference/components
