@@ -21,6 +21,8 @@ export interface BaseChartProps extends ComponentProps {
   data: unknown[]
   series: ChartSeries[]
   xAxis?: string
+  /** Data key used for the tooltip category label instead of xAxis. Useful for showing full date+time on hover while the axis shows abbreviated dates. */
+  tooltipXKey?: string
   height?: number
   showLegend?: boolean
   showTooltip?: boolean
@@ -38,6 +40,7 @@ function chartGetProps(props: BaseChartProps, extra?: Record<string, unknown>): 
     data: props.data,
     series: props.series,
     ...(props.xAxis && { xAxis: props.xAxis }),
+    ...(props.tooltipXKey && { tooltipXKey: props.tooltipXKey }),
     ...(props.height !== undefined && { height: props.height }),
     ...(props.showLegend !== undefined && { showLegend: props.showLegend }),
     ...(props.showTooltip !== undefined && { showTooltip: props.showTooltip }),

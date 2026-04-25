@@ -519,6 +519,106 @@ describe('Chart tooltips', () => {
     expect(tooltip.innerHTML).not.toContain('<script>')
     expect(tooltip.innerHTML).toContain('&lt;script&gt;')
   })
+
+  it('BarChart tooltipXKey shows different label than x-axis', () => {
+    const ctx = makeCtx()
+    const data = [
+      { date: 'Jan 15', datetime: '2024-01-15 14:30', sales: 100 },
+      { date: 'Jan 16', datetime: '2024-01-16 09:15', sales: 200 },
+    ]
+    const node: ComponentNode = {
+      type: 'BarChart',
+      data,
+      series: [{ dataKey: 'sales', label: 'Sales' }],
+      xAxis: 'date',
+      tooltipXKey: 'datetime',
+    }
+    const dom = renderNode(node, ctx) as HTMLElement
+
+    // X-axis labels should show abbreviated dates
+    const svg = dom.querySelector('svg')!
+    const axisLabels = Array.from(svg.querySelectorAll('text')).filter(
+      t => t.textContent === 'Jan 15' || t.textContent === 'Jan 16',
+    )
+    expect(axisLabels.length).toBeGreaterThanOrEqual(2)
+
+    // Tooltip should show full datetime from tooltipXKey
+    const hitZone = Array.from(svg.querySelectorAll('rect')).find(
+      r => r.getAttribute('fill') === 'transparent',
+    )!
+    hitZone.dispatchEvent(new Event('mouseenter'))
+    const tooltip = dom.querySelector('.pf-chart-tooltip')!
+    expect(tooltip.textContent).toContain('2024-01-15 14:30')
+    expect(tooltip.textContent).not.toContain('Jan 15')
+  })
+
+  it('LineChart tooltipXKey shows different label than x-axis', () => {
+    const ctx = makeCtx()
+    const data = [
+      { date: 'Mon', datetime: 'Monday, Jan 15 2024', value: 10 },
+      { date: 'Tue', datetime: 'Tuesday, Jan 16 2024', value: 20 },
+      { date: 'Wed', datetime: 'Wednesday, Jan 17 2024', value: 30 },
+    ]
+    const node: ComponentNode = {
+      type: 'LineChart',
+      data,
+      series: [{ dataKey: 'value', label: 'Value' }],
+      xAxis: 'date',
+      tooltipXKey: 'datetime',
+    }
+    const dom = renderNode(node, ctx) as HTMLElement
+    const svg = dom.querySelector('svg')!
+
+    // Trigger tooltip on first hit zone
+    const hitZone = Array.from(svg.querySelectorAll('rect')).find(
+      r => r.getAttribute('fill') === 'transparent',
+    )!
+    hitZone.dispatchEvent(new Event('mouseenter'))
+    const tooltip = dom.querySelector('.pf-chart-tooltip')!
+    expect(tooltip.textContent).toContain('Monday, Jan 15 2024')
+  })
+
+  it('PieChart tooltipXKey uses alternate label on slice hover', () => {
+    const ctx = makeCtx()
+    const data = [
+      { abbr: 'US', country: 'United States', value: 60 },
+      { abbr: 'UK', country: 'United Kingdom', value: 40 },
+    ]
+    const node: ComponentNode = {
+      type: 'PieChart',
+      data,
+      series: [{ dataKey: 'value' }],
+      xAxis: 'abbr',
+      tooltipXKey: 'country',
+    }
+    const dom = renderNode(node, ctx) as HTMLElement
+    const svg = dom.querySelector('svg')!
+    const slices = svg.querySelectorAll('path')
+    slices[0].dispatchEvent(new Event('mouseenter'))
+    const tooltip = dom.querySelector('.pf-chart-tooltip')!
+    expect(tooltip.textContent).toContain('United States')
+  })
+
+  it('tooltipXKey falls back to xAxisKey when not set', () => {
+    const ctx = makeCtx()
+    const node: ComponentNode = {
+      type: 'BarChart',
+      data: [
+        { month: 'Jan', sales: 100 },
+        { month: 'Feb', sales: 200 },
+      ],
+      series: [{ dataKey: 'sales', label: 'Sales' }],
+      xAxis: 'month',
+    }
+    const dom = renderNode(node, ctx) as HTMLElement
+    const svg = dom.querySelector('svg')!
+    const hitZone = Array.from(svg.querySelectorAll('rect')).find(
+      r => r.getAttribute('fill') === 'transparent',
+    )!
+    hitZone.dispatchEvent(new Event('mouseenter'))
+    const tooltip = dom.querySelector('.pf-chart-tooltip')!
+    expect(tooltip.textContent).toContain('Jan')
+  })
 })
 
 describe('RadarChart (fallback)', () => {

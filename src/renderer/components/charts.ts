@@ -213,6 +213,7 @@ function renderBarChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const showYAxisRight = (node.showYAxisRight as boolean | undefined) === true
   const showTooltipProp = (node.showTooltip as boolean | undefined) !== false
   const xAxisKey = node.xAxis as string | undefined
+  const tooltipXKey = node.tooltipXKey as string | undefined
 
   const leftSeries = series.filter(s => s.yAxisId !== 'right')
   const rightSeries = series.filter(s => s.yAxisId === 'right')
@@ -273,7 +274,7 @@ function renderBarChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
       node.yAxisFormat as string | undefined,
       node.yAxisRightFormat as string | undefined,
     )
-    addBarTooltipZones(ttCtx, svg, data, series, layout, xAxisKey, fmt)
+    addBarTooltipZones(ttCtx, svg, data, series, layout, tooltipXKey ?? xAxisKey, fmt)
   }
 
   addLegend(wrapper, series, node.showLegend as boolean | undefined)
@@ -297,6 +298,7 @@ function renderLineChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const showYAxisRight = (node.showYAxisRight as boolean | undefined) === true
   const showTooltipProp = (node.showTooltip as boolean | undefined) !== false
   const xAxisKey = node.xAxis as string | undefined
+  const tooltipXKey = node.tooltipXKey as string | undefined
 
   // Split series by axis
   const leftSeries = allSeries.filter(s => s.yAxisId !== 'right')
@@ -428,7 +430,7 @@ function renderLineChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
       node.yAxisFormat as string | undefined,
       node.yAxisRightFormat as string | undefined,
     )
-    addLineTooltipZones(ttCtx, svg, data, allSeries, layout, xAxisKey, fmt, crosshair, dotGroups)
+    addLineTooltipZones(ttCtx, svg, data, allSeries, layout, tooltipXKey ?? xAxisKey, fmt, crosshair, dotGroups)
   }
 
   addLegend(wrapper, allSeries, node.showLegend as boolean | undefined)
@@ -457,6 +459,7 @@ function renderPieChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
   // Use first series key, each data point is a slice
   const key = series[0].dataKey
   const xAxisKey = node.xAxis as string | undefined
+  const tooltipXKey = node.tooltipXKey as string | undefined
   const values = data.map(d => Number(d[key] ?? 0))
   const total = values.reduce((a, b) => a + b, 0)
 
@@ -486,7 +489,7 @@ function renderPieChart(node: ComponentNode, ctx: RenderContext): HTMLElement {
     path.style.cursor = 'default'
 
     if (ttCtx) {
-      const rawSlice = xAxisKey ? data[i][xAxisKey] : undefined
+      const rawSlice = (tooltipXKey ?? xAxisKey) ? data[i][(tooltipXKey ?? xAxisKey)!] : undefined
       const sliceLabel = rawSlice != null ? String(rawSlice as string | number) : `Slice ${i + 1}`
       const pct = `${((values[i] / total) * 100).toFixed(1)}%`
       const midAngle = startAngle + angle / 2
