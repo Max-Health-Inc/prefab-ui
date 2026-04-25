@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>prefab playground — live MCP UI editor</title>
+<meta name="description" content="Type MCP tool JSON and see it render instantly. Interactive playground for @maxhealth.tech/prefab.">
+
+<!-- prefab renderer + theme -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2/dist/prefab.css">
+<script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2/dist/renderer.min.js"></script>
+
+<!-- Monaco Editor from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
+
+<!-- LZ-String for shareable URLs -->
+<script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+
+<style>
+/* ── Reset & base ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --pg-bg: #0d1117;
+  --pg-surface: #161b22;
+  --pg-border: #30363d;
+  --pg-text: #e6edf3;
+  --pg-muted: #8b949e;
+  --pg-accent: #58a6ff;
+  --pg-accent-hover: #79c0ff;
+  --pg-success: #3fb950;
+  --pg-error: #f85149;
+  --pg-toolbar: #21262d;
+  --pg-preview-bg: #ffffff;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  background: var(--pg-bg);
+  color: var(--pg-text);
+  overflow: hidden;
+}
+
+/* ── Top bar ────────────────────────────────────────────────────────── */
+.pg-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 16px;
+  background: var(--pg-surface);
+  border-bottom: 1px solid var(--pg-border);
+  flex-shrink: 0;
+}
+
+.pg-logo {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--pg-accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pg-logo span { color: var(--pg-muted); font-weight: 400; }
+
+.pg-topbar-spacer { flex: 1; }
+
+/* ── Example selector ───────────────────────────────────────────────── */
+.pg-select {
+  appearance: none;
+  background: var(--pg-toolbar);
+  color: var(--pg-text);
+  border: 1px solid var(--pg-border);
+  border-radius: 6px;
+  padding: 6px 32px 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b949e'%3E%3Cpath d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.763L10.825 4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  max-width: 220px;
+}
+
+.pg-select:hover { border-color: var(--pg-accent); }
+
+/* ── Buttons ────────────────────────────────────────────────────────── */
+.pg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--pg-border);
+  border-radius: 6px;
+  background: var(--pg-toolbar);
+  color: var(--pg-text);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.pg-btn:hover { border-color: var(--pg-accent); background: var(--pg-surface); }
+.pg-btn--primary { background: var(--pg-accent); color: #0d1117; border-color: var(--pg-accent); }
+.pg-btn--primary:hover { background: var(--pg-accent-hover); }
+
+/* ── Status indicator ───────────────────────────────────────────────── */
+.pg-status {
+  font-size: 12px;
+  color: var(--pg-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pg-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pg-success);
+  flex-shrink: 0;
+}
+
+.pg-status-dot--error { background: var(--pg-error); }
+
+/* ── Main layout ────────────────────────────────────────────────────── */
+.pg-main {
+  display: flex;
+  height: calc(100% - 48px);
+}
+
+/* ── Editor pane ────────────────────────────────────────────────────── */
+.pg-editor-pane {
+  width: 50%;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--pg-border);
+}
+
+.pg-editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  background: var(--pg-toolbar);
+  border-bottom: 1px solid var(--pg-border);
+  font-size: 12px;
+  color: var(--pg-muted);
+}
+
+.pg-editor-toolbar-spacer { flex: 1; }
+
+#editor-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Resizer ────────────────────────────────────────────────────────── */
+.pg-resizer {
+  width: 4px;
+  cursor: col-resize;
+  background: var(--pg-border);
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.pg-resizer:hover, .pg-resizer.active { background: var(--pg-accent); }
+
+/* ── Preview pane ───────────────────────────────────────────────────── */
+.pg-preview-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+}
+
+.pg-preview-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  background: var(--pg-toolbar);
+  border-bottom: 1px solid var(--pg-border);
+  font-size: 12px;
+  color: var(--pg-muted);
+}
+
+.pg-preview-toolbar-spacer { flex: 1; }
+
+#preview-root {
+  flex: 1;
+  overflow: auto;
+  padding: 24px;
+  background: var(--pg-preview-bg);
+}
+
+/* ── Toast overlay ──────────────────────────────────────────────────── */
+.pg-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--pg-surface);
+  color: var(--pg-text);
+  border: 1px solid var(--pg-border);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  z-index: 9999;
+  animation: pg-toast-in 0.2s ease;
+  max-width: 320px;
+}
+
+.pg-toast--success { border-color: var(--pg-success); }
+.pg-toast--error { border-color: var(--pg-error); }
+
+@keyframes pg-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── AI Prompt Modal ────────────────────────────────────────────────── */
+.pg-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.pg-modal {
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-border);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 640px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.pg-modal h2 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--pg-accent);
+}
+
+.pg-modal pre {
+  background: var(--pg-bg);
+  border: 1px solid var(--pg-border);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  color: var(--pg-text);
+}
+
+.pg-modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .pg-main { flex-direction: column; }
+  .pg-editor-pane { width: 100%; height: 50%; border-right: none; border-bottom: 1px solid var(--pg-border); }
+  .pg-resizer { display: none; }
+  .pg-preview-pane { min-width: 0; }
+  .pg-topbar { flex-wrap: wrap; height: auto; padding: 8px 12px; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Top bar ──────────────────────────────────────────────────────── -->
+<div class="pg-topbar">
+  <a class="pg-logo" href="../">prefab <span>playground</span></a>
+
+  <select id="example-select" class="pg-select">
+    <option value="">— choose an example —</option>
+  </select>
+
+  <div class="pg-topbar-spacer"></div>
+
+  <div id="status" class="pg-status">
+    <span class="pg-status-dot"></span>
+    <span>Ready</span>
+  </div>
+
+  <button class="pg-btn" id="btn-share" title="Copy shareable URL">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M4.715 6.542L3.343 7.914a3 3 0 104.243 4.243l1.828-1.829A3 3 0 008.586 5.5L8 6.086a1 1 0 00-.154.199 2 2 0 01.861 3.337L6.88 11.45a2 2 0 11-2.83-2.83l.793-.792a4 4 0 01-.128-1.287z"/><path d="M6.586 4.672A3 3 0 007.414 9.5l.775-.776a2 2 0 01-.896-3.346L9.12 3.55a2 2 0 112.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 10-4.243-4.243L6.586 4.672z"/></svg>
+    Share
+  </button>
+
+  <button class="pg-btn" id="btn-copy-mcp" title="Copy as MCP display() envelope">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"/></svg>
+    Copy MCP
+  </button>
+
+  <button class="pg-btn" id="btn-ai-prompt" title="Get AI system prompt for generating prefab JSON">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm.93 4.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533l1.002-4.705z"/><circle cx="8" cy="3.5" r="1"/></svg>
+    AI Prompt
+  </button>
+</div>
+
+<!-- ── Main split ───────────────────────────────────────────────────── -->
+<div class="pg-main">
+  <!-- Editor -->
+  <div class="pg-editor-pane" id="editor-pane">
+    <div class="pg-editor-toolbar">
+      <span>JSON Editor</span>
+      <div class="pg-editor-toolbar-spacer"></div>
+      <button class="pg-btn" id="btn-format" style="padding:3px 8px;font-size:11px;">Format</button>
+    </div>
+    <div id="editor-container"></div>
+  </div>
+
+  <!-- Resizer -->
+  <div class="pg-resizer" id="resizer"></div>
+
+  <!-- Preview -->
+  <div class="pg-preview-pane">
+    <div class="pg-preview-toolbar">
+      <span>Live Preview</span>
+      <div class="pg-preview-toolbar-spacer"></div>
+      <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+        <input type="checkbox" id="dark-toggle"> Dark
+      </label>
+    </div>
+    <div id="preview-root"></div>
+  </div>
+</div>
+
+<!-- ── AI Prompt modal (hidden) ─────────────────────────────────────── -->
+<div id="ai-modal" class="pg-modal-overlay" style="display:none;">
+  <div class="pg-modal">
+    <h2>AI System Prompt for prefab JSON</h2>
+    <p style="font-size:13px;color:var(--pg-muted);margin-bottom:12px;">
+      Paste this system prompt into ChatGPT, Claude, or any LLM. Then describe the UI you want.
+    </p>
+    <pre id="ai-prompt-text"></pre>
+    <div class="pg-modal-actions">
+      <button class="pg-btn" id="btn-ai-close">Close</button>
+      <button class="pg-btn pg-btn--primary" id="btn-ai-copy">Copy Prompt</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// EXAMPLES GALLERY
+// ═══════════════════════════════════════════════════════════════════════════════
+const EXAMPLES = {
+  "Hello World": {
+    "$prefab": { "version": "0.2" },
+    "view": {
+      "type": "Column", "cssClass": "gap-4",
+      "children": [
+        { "type": "Heading", "content": "Hello World", "level": 1 },
+        { "type": "Text", "content": "Welcome to the prefab playground. Edit the JSON on the left and watch the UI update in real time." },
+        { "type": "Badge", "label": "Active", "variant": "success" }
+      ]
+    }
+  },
+
+  "Counter App": {
+    "$prefab": { "version": "0.2" },
+    "view": {
+      "type": "Column", "cssClass": "gap-4",
+      "children": [
+        { "type": "Heading", "content": "Counter App", "level": 1 },
+        { "type": "Text", "content": "Count: {{ count }}" },
+        { "type": "Row", "cssClass": "gap-2", "children": [
+          { "type": "Button", "label": "+1", "onClick": { "action": "setState", "key": "count", "value": "{{ count + 1 }}" } },
+          { "type": "Button", "label": "-1", "onClick": { "action": "setState", "key": "count", "value": "{{ count - 1 }}" } },
+          { "type": "Button", "label": "Reset", "variant": "outline", "onClick": { "action": "setState", "key": "count", "value": 0 } }
+        ]}
+      ]
+    },
+    "state": { "count": 0 }
+  },
+
+  "Patient Card": {
+    "$prefab": { "version": "0.2" },
+    "view": {
+      "type": "Card",
+      "children": [
+        { "type": "CardHeader", "children": [
+          { "type": "CardTitle", "content": "Patient Summary" },
+          { "type": "CardDescription", "content": "Last updated: 2024-01-15" }
+        ]},
+        { "type": "CardContent", "children": [
+          { "type": "Column", "cssClass": "gap-3", "children": [
+            { "type": "Row", "cssClass": "gap-4", "children": [
+              { "type": "Metric", "label": "Heart Rate", "value": "72 bpm" },
+              { "type": "Metric", "label": "Blood Pressure", "value": "120/80" },
+              { "type": "Metric", "label": "Temperature", "value": "98.6°F" }
+            ]},
+            { "type": "Separator" },
+            { "type": "Text", "content": "Patient is in stable condition. No abnormalities detected in recent labs." }
+          ]}
+        ]},
+        { "type": "CardFooter", "children": [
+          { "type": "Badge", "label": "Stable", "variant": "success" },
+          { "type": "Badge", "label": "Outpatient", "variant": "secondary" }
+        ]}
+      ]
+    }
+  },
+
+  "Data Table": {
+    "$prefab": { "version": "0.2" },
+    "view": {
+      "type": "Column", "cssClass": "gap-4",
+      "children": [
+        { "type": "Heading", "content": "User Directory", "level": 2 },
+        { "type": "DataTable",
+          "columns": [
+            { "key": "name", "header": "Name", "sortable": true },
+            { "key": "role", "header": "Role", "sortable": true },
+            { "key": "department", "header": "Department" },
+            { "key": "status", "header": "Status" }
+          ],
+          "rows": [
+            { "name": "Alice Chen", "role": "Admin", "department": "Engineering", "status": "Active" },
+            { "name": "Bob Martinez", "role": "Editor", "department": "Marketing", "status": "Active" },
+            { "name": "Carol Davis", "role": "Viewer", "department": "Sales", "status": "Inactive" },
+            { "name": "Dan Wilson", "role": "Admin", "department": "Engineering", "status": "Active" },
+            { "name": "Eva Brown", "role": "Editor", "department": "Design", "status": "Active" }
+          ],
+          "search": true,
+          "paginated": false
+        }
+      ]
+    }
+  },
+
+  "Revenue Chart": {
+    "$prefab": { "version": "0.2" },
+    "view": {
+      "type": "Column", "cssClass": "gap-4",
+      "children": [
+        { "type": "Heading", "content": "Revenue Report", "level": 2 },
+        { "type": "BarChart",
+          "data": [
+            { "month": "Jan", "revenue": 4000, "costs": 2400 },
+            { "month": "Feb", "revenue": 3000, "costs": 1398 },
+            { "month": "Mar", "revenue": 5200, "costs": 3100 },
+            { "month": "Apr", "revenue": 2780, "costs": 3908 },
+            { "month": "May", "revenue": 6100, "costs": 2800 },
+            { "month": "Jun", "revenue": 4500, "costs": 2100 }
+          ],
+          "series": [
+            { "dataKey": "revenue", "label": "Revenue", "color": "#4f46e5" },
+            { "dataKey": "costs", "label": "Costs", "color": "#ef4444" }
+          ],
+          "xAxis": "month",
+          "height": 300,
+          "showLegend": true,
+          "showTooltip": true,
+          "animate": true,
+          "showGrid": true,
+          "barRadius": 4
+        }
+      ]
+    }
+  },
+
+  "Contact Form": {
+    "$prefab": { "version": "0.2" },
+    "view": {
+      "type": "Card",
+      "children": [
+        { "type": "CardHeader", "children": [
+          { "type": "CardTitle", "content": "Contact Us" },
+          { "type": "CardDescription", "content": "Send us a message and we'll get back to you." }
+        ]},
+        { "type": "CardContent", "children": [
+          { "type": "Column", "cssClass": "gap-3", "children": [
+            { "type": "Input", "name": "name", "inputType": "text", "placeholder": "Your name" },
+            { "type": "Input", "name": "email", "inputType": "email", "placeholder": "you@example.com" },
+            { "type": "Select", "name": "subject", "placeholder": "Select a subject", "options": [
+              { "label": "General Inquiry", "value": "general" },
+              { "label": "Bug Report", "value": "bug" },
+              { "label": "Feature Request", "value": "feature" },
+              { "label": "Partnership", "value": "partnership" }
+            ]},
+            { "type": "Textarea", "name": "message", "placeholder": "Your message..." },
+            { "type": "Row", "cssClass": "gap-2", "children": [
+              { "type": "Button", "label": "Send Message", "variant": "default", "onClick": { "action": "showToast", "title": "Sent!", "description": "Your message has been submitted." } },
+              { "type": "Button", "label": "Clear", "variant": "outline", "onClick": [
+                { "action": "setState", "key": "name", "value": "" },
+                { "action": "setState", "key": "email", "value": "" },
+                { "action": "setState", "key": "message", "value": "" }
+              ]}
+            ]}
+          ]}
+        ]}
+      ]
+    },
+    "state": { "name": "", "email": "", "subject": "", "message": "" }
+  },
+
+  "Tabs & Alerts": {
+    "$prefab": { "version": "0.2" },
+    "view": {
+      "type": "Column", "cssClass": "gap-4",
+      "children": [
+        { "type": "Heading", "content": "Settings", "level": 2 },
+        { "type": "Tabs", "name": "settings_tabs", "children": [
+          { "type": "Tab", "title": "General", "children": [
+            { "type": "Column", "cssClass": "gap-3", "children": [
+              { "type": "Alert", "variant": "default", "children": [
+                { "type": "AlertTitle", "content": "Heads up" },
+                { "type": "AlertDescription", "content": "These settings affect your entire workspace." }
+              ]},
+              { "type": "Input", "name": "workspace_name", "inputType": "text", "placeholder": "Workspace name" },
+              { "type": "Checkbox", "name": "notifications", "label": "Enable notifications" }
+            ]}
+          ]},
+          { "type": "Tab", "title": "Security", "children": [
+            { "type": "Column", "cssClass": "gap-3", "children": [
+              { "type": "Alert", "variant": "destructive", "children": [
+                { "type": "AlertTitle", "content": "Warning" },
+                { "type": "AlertDescription", "content": "Changing security settings may log out all users." }
+              ]},
+              { "type": "Checkbox", "name": "2fa", "label": "Require two-factor authentication" },
+              { "type": "Select", "name": "session_timeout", "placeholder": "Session timeout", "options": [
+                { "label": "15 minutes", "value": "15" },
+                { "label": "1 hour", "value": "60" },
+                { "label": "8 hours", "value": "480" },
+                { "label": "Never", "value": "0" }
+              ]}
+            ]}
+          ]},
+          { "type": "Tab", "title": "Notifications", "children": [
+            { "type": "Column", "cssClass": "gap-3", "children": [
+              { "type": "Checkbox", "name": "email_notif", "label": "Email notifications" },
+              { "type": "Checkbox", "name": "push_notif", "label": "Push notifications" },
+              { "type": "Checkbox", "name": "sms_notif", "label": "SMS notifications" }
+            ]}
+          ]}
+        ]}
+      ]
+    },
+    "state": { "workspace_name": "", "notifications": true, "2fa": false, "session_timeout": "60", "email_notif": true, "push_notif": true, "sms_notif": false }
+  },
+
+  "Dashboard Layout": {
+    "$prefab": { "version": "0.2" },
+    "view": {
+      "type": "Column", "cssClass": "gap-4",
+      "children": [
+        { "type": "Row", "cssClass": "gap-4", "children": [
+          { "type": "Heading", "content": "Analytics Dashboard", "level": 2 },
+          { "type": "Badge", "label": "Live", "variant": "success" }
+        ]},
+        { "type": "Row", "cssClass": "gap-4", "children": [
+          { "type": "Card", "children": [
+            { "type": "CardContent", "children": [
+              { "type": "Metric", "label": "Total Users", "value": "12,847" }
+            ]}
+          ]},
+          { "type": "Card", "children": [
+            { "type": "CardContent", "children": [
+              { "type": "Metric", "label": "Revenue", "value": "$48,290" }
+            ]}
+          ]},
+          { "type": "Card", "children": [
+            { "type": "CardContent", "children": [
+              { "type": "Metric", "label": "Conversion", "value": "3.2%" }
+            ]}
+          ]},
+          { "type": "Card", "children": [
+            { "type": "CardContent", "children": [
+              { "type": "Metric", "label": "Avg. Session", "value": "4m 32s" }
+            ]}
+          ]}
+        ]},
+        { "type": "Row", "cssClass": "gap-4", "children": [
+          { "type": "Card", "children": [
+            { "type": "CardHeader", "children": [
+              { "type": "CardTitle", "content": "Traffic" }
+            ]},
+            { "type": "CardContent", "children": [
+              { "type": "LineChart",
+                "data": [
+                  { "day": "Mon", "visitors": 1200 },
+                  { "day": "Tue", "visitors": 1800 },
+                  { "day": "Wed", "visitors": 1400 },
+                  { "day": "Thu", "visitors": 2200 },
+                  { "day": "Fri", "visitors": 1900 },
+                  { "day": "Sat", "visitors": 800 },
+                  { "day": "Sun", "visitors": 600 }
+                ],
+                "series": [{ "dataKey": "visitors", "label": "Visitors", "color": "#4f46e5" }],
+                "xAxis": "day",
+                "height": 200,
+                "showGrid": true,
+                "animate": true
+              }
+            ]}
+          ]},
+          { "type": "Card", "children": [
+            { "type": "CardHeader", "children": [
+              { "type": "CardTitle", "content": "Top Pages" }
+            ]},
+            { "type": "CardContent", "children": [
+              { "type": "DataTable",
+                "columns": [
+                  { "key": "page", "header": "Page" },
+                  { "key": "views", "header": "Views", "sortable": true },
+                  { "key": "bounce", "header": "Bounce Rate" }
+                ],
+                "rows": [
+                  { "page": "/home", "views": "4,280", "bounce": "32%" },
+                  { "page": "/pricing", "views": "2,190", "bounce": "45%" },
+                  { "page": "/docs", "views": "1,890", "bounce": "22%" },
+                  { "page": "/blog", "views": "1,420", "bounce": "38%" }
+                ],
+                "search": false, "paginated": false
+              }
+            ]}
+          ]}
+        ]}
+      ]
+    }
+  },
+
+  "Interactive Todo": {
+    "$prefab": { "version": "0.2" },
+    "view": {
+      "type": "Card",
+      "children": [
+        { "type": "CardHeader", "children": [
+          { "type": "CardTitle", "content": "Todo List" },
+          { "type": "CardDescription", "content": "Tasks: {{ tasks | length }}" }
+        ]},
+        { "type": "CardContent", "children": [
+          { "type": "Column", "cssClass": "gap-3", "children": [
+            { "type": "Row", "cssClass": "gap-2", "children": [
+              { "type": "Input", "name": "newTask", "placeholder": "What needs to be done?" },
+              { "type": "Button", "label": "Add", "onClick": [
+                { "action": "appendState", "key": "tasks", "item": "{{ newTask }}" },
+                { "action": "setState", "key": "newTask", "value": "" }
+              ]}
+            ]},
+            { "type": "Separator" },
+            { "type": "DataTable",
+              "columns": [
+                { "key": "value", "header": "Task" }
+              ],
+              "rows": "{{ tasks }}",
+              "search": false,
+              "paginated": false
+            }
+          ]}
+        ]}
+      ]
+    },
+    "state": {
+      "newTask": "",
+      "tasks": ["Review pull requests", "Update documentation", "Deploy v2.0"]
+    }
+  },
+
+  "Conditional UI": {
+    "$prefab": { "version": "0.2" },
+    "view": {
+      "type": "Column", "cssClass": "gap-4",
+      "children": [
+        { "type": "Heading", "content": "Dynamic Content", "level": 2 },
+        { "type": "Row", "cssClass": "gap-2", "children": [
+          { "type": "Button", "label": "Show Success", "onClick": { "action": "setState", "key": "status", "value": "success" } },
+          { "type": "Button", "label": "Show Error", "onClick": { "action": "setState", "key": "status", "value": "error" } },
+          { "type": "Button", "label": "Show Loading", "onClick": { "action": "setState", "key": "status", "value": "loading" } }
+        ]},
+        { "type": "If", "condition": "{{ status == 'success' }}", "then": [
+          { "type": "Alert", "variant": "default", "children": [
+            { "type": "AlertTitle", "content": "Success!" },
+            { "type": "AlertDescription", "content": "Operation completed successfully." }
+          ]}
+        ]},
+        { "type": "If", "condition": "{{ status == 'error' }}", "then": [
+          { "type": "Alert", "variant": "destructive", "children": [
+            { "type": "AlertTitle", "content": "Error" },
+            { "type": "AlertDescription", "content": "Something went wrong. Please try again." }
+          ]}
+        ]},
+        { "type": "If", "condition": "{{ status == 'loading' }}", "then": [
+          { "type": "Card", "children": [
+            { "type": "CardContent", "children": [
+              { "type": "Progress", "value": 65, "max": 100 },
+              { "type": "Muted", "content": "Loading data..." }
+            ]}
+          ]}
+        ]}
+      ]
+    },
+    "state": { "status": "success" }
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// AI SYSTEM PROMPT
+// ═══════════════════════════════════════════════════════════════════════════════
+const AI_PROMPT = `You are a UI generator that outputs JSON in the prefab wire format.
+
+WIRE FORMAT:
+{
+  "$prefab": { "version": "0.2" },
+  "view": { ... component tree ... },
+  "state": { ... reactive state ... },
+  "theme": { "light": { ... }, "dark": { ... } }
+}
+
+AVAILABLE COMPONENTS:
+Layout: Column, Row, Div, Card (CardHeader, CardTitle, CardDescription, CardContent, CardFooter), Tabs (Tab), MasterDetail, Detail, Grid
+Typography: Heading (level 1-6), Text, Muted, Code, Blockquote, Badge (variant: default|secondary|success|warning|destructive|outline)
+Data: DataTable (columns, rows, search, paginated), Metric (label, value), KeyValue (items), Progress (value, max)
+Form: Input (name, inputType, placeholder), Textarea, Select (options), Checkbox, Switch, Slider, RadioGroup (options)
+Charts: BarChart, LineChart, PieChart, AreaChart (data, series, xAxis, height)
+Interactive: Button (label, variant, onClick), Accordion (AccordionItem), Dialog, Popover, Tooltip
+Alert: Alert (AlertTitle, AlertDescription, variant: default|destructive)
+Media: Image, Avatar, Icon, Separator, Spacer
+
+REACTIVE EXPRESSIONS:
+Use {{ expression }} for dynamic values. State keys are global variables.
+Examples: "{{ count }}", "{{ count + 1 }}", "{{ items | length }}", "{{ name | upper }}"
+
+ACTIONS (for onClick, onChange):
+- { "action": "setState", "key": "...", "value": ... }
+- { "action": "toggleState", "key": "..." }
+- { "action": "appendState", "key": "...", "item": ... }
+- { "action": "popState", "key": "...", "value": ... }
+- { "action": "showToast", "title": "...", "description": "..." }
+- { "action": "callHandler", "handler": "..." }
+- Multiple actions: use an array
+
+RULES:
+1. Always include "$prefab": { "version": "0.2" } at the root
+2. Use "cssClass": "gap-N" on Column/Row for spacing (gap-2, gap-3, gap-4)
+3. Return ONLY valid JSON, no explanation
+4. Use state for interactive elements (forms, counters, toggles)
+5. Prefer Card wrapping for polished UIs`;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// APP STATE
+// ═══════════════════════════════════════════════════════════════════════════════
+let editor = null;
+let currentMount = null;
+let renderTimer = null;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  // Populate example dropdown
+  const select = document.getElementById('example-select');
+  for (const name of Object.keys(EXAMPLES)) {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    select.appendChild(opt);
+  }
+
+  // Init Monaco
+  require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs' } });
+  require(['vs/editor/editor.main'], function (monaco) {
+    // Configure JSON defaults for better DX
+    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+      validate: true,
+      allowComments: false,
+      trailingCommas: 'error',
+    });
+
+    const initialJson = getInitialJson();
+
+    editor = monaco.editor.create(document.getElementById('editor-container'), {
+      value: initialJson,
+      language: 'json',
+      theme: 'vs-dark',
+      minimap: { enabled: false },
+      fontSize: 13,
+      lineNumbers: 'on',
+      scrollBeyondLastLine: false,
+      automaticLayout: true,
+      tabSize: 2,
+      wordWrap: 'on',
+      padding: { top: 12 },
+      renderLineHighlight: 'gutter',
+      bracketPairColorization: { enabled: true },
+      suggest: { showWords: false },
+    });
+
+    // Live re-render on change (debounced)
+    editor.onDidChangeModelContent(() => {
+      clearTimeout(renderTimer);
+      renderTimer = setTimeout(() => renderPreview(), 300);
+    });
+
+    // Initial render
+    renderPreview();
+  });
+
+  // Example selector
+  select.addEventListener('change', (e) => {
+    const name = e.target.value;
+    if (name && EXAMPLES[name]) {
+      const json = JSON.stringify(EXAMPLES[name], null, 2);
+      editor.setValue(json);
+    }
+  });
+
+  // Share button
+  document.getElementById('btn-share').addEventListener('click', shareUrl);
+
+  // Copy MCP button
+  document.getElementById('btn-copy-mcp').addEventListener('click', copyAsMcp);
+
+  // Format button
+  document.getElementById('btn-format').addEventListener('click', formatJson);
+
+  // Dark mode toggle
+  document.getElementById('dark-toggle').addEventListener('change', (e) => {
+    const root = document.getElementById('preview-root');
+    if (e.target.checked) {
+      root.style.background = '#09090b';
+      root.classList.add('dark');
+    } else {
+      root.style.background = '#ffffff';
+      root.classList.remove('dark');
+    }
+  });
+
+  // AI prompt modal
+  document.getElementById('btn-ai-prompt').addEventListener('click', () => {
+    document.getElementById('ai-prompt-text').textContent = AI_PROMPT;
+    document.getElementById('ai-modal').style.display = 'flex';
+  });
+  document.getElementById('btn-ai-close').addEventListener('click', () => {
+    document.getElementById('ai-modal').style.display = 'none';
+  });
+  document.getElementById('btn-ai-copy').addEventListener('click', () => {
+    navigator.clipboard.writeText(AI_PROMPT).then(() => showToast('Copied!', 'System prompt copied to clipboard.', 'success'));
+  });
+  document.getElementById('ai-modal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) e.currentTarget.style.display = 'none';
+  });
+
+  // Resizer
+  initResizer();
+
+  // Load from URL hash if present
+  loadFromHash();
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════════════════════
+function renderPreview() {
+  const root = document.getElementById('preview-root');
+  const statusDot = document.querySelector('.pg-status-dot');
+  const statusText = document.querySelector('.pg-status span:last-child');
+
+  let json;
+  try {
+    json = JSON.parse(editor.getValue());
+  } catch (e) {
+    statusDot.className = 'pg-status-dot pg-status-dot--error';
+    statusText.textContent = 'Invalid JSON';
+    return;
+  }
+
+  // Validate wire format
+  if (!json.$prefab || !json.view) {
+    statusDot.className = 'pg-status-dot pg-status-dot--error';
+    statusText.textContent = 'Missing $prefab or view';
+    return;
+  }
+
+  // Destroy previous mount
+  if (currentMount) {
+    try { currentMount.destroy(); } catch (_) { /* ignore */ }
+    currentMount = null;
+  }
+
+  try {
+    currentMount = PrefabRenderer.mount(root, json, {
+      onToast: (t) => showToast(t.title || 'Toast', t.description || '', t.variant || 'default'),
+    });
+    statusDot.className = 'pg-status-dot';
+    statusText.textContent = 'Rendered';
+  } catch (e) {
+    statusDot.className = 'pg-status-dot pg-status-dot--error';
+    statusText.textContent = 'Render error: ' + e.message;
+    root.innerHTML = '<div style="color:#f85149;padding:16px;font-size:13px;"><strong>Render Error</strong><br>' +
+      e.message.replace(/</g, '&lt;') + '</div>';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SHAREABLE URLs
+// ═══════════════════════════════════════════════════════════════════════════════
+function shareUrl() {
+  const json = editor.getValue();
+  const compressed = LZString.compressToEncodedURIComponent(json);
+  const url = window.location.origin + window.location.pathname + '#json=' + compressed;
+
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('Link copied!', 'Shareable URL is in your clipboard.', 'success');
+  }).catch(() => {
+    // Fallback: select URL bar
+    window.location.hash = '#json=' + compressed;
+    showToast('URL updated', 'Copy the URL from your address bar.', 'default');
+  });
+}
+
+function loadFromHash() {
+  const hash = window.location.hash;
+  if (hash.startsWith('#json=')) {
+    try {
+      const compressed = hash.slice(6);
+      const json = LZString.decompressFromEncodedURIComponent(compressed);
+      if (json && editor) {
+        editor.setValue(json);
+      } else if (json) {
+        // Editor not ready yet — store for later
+        window._pendingJson = json;
+      }
+    } catch (_) { /* ignore bad hashes */ }
+  }
+}
+
+window.addEventListener('hashchange', loadFromHash);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COPY AS MCP
+// ═══════════════════════════════════════════════════════════════════════════════
+function copyAsMcp() {
+  try {
+    const data = JSON.parse(editor.getValue());
+    const envelope = {
+      content: [
+        { type: 'text', text: 'Here is the UI:' },
+        { type: 'resource', resource: {
+          uri: 'prefab://ui',
+          mimeType: 'application/json',
+          text: JSON.stringify(data)
+        }}
+      ]
+    };
+    navigator.clipboard.writeText(JSON.stringify(envelope, null, 2)).then(() => {
+      showToast('Copied!', 'MCP tool result envelope copied.', 'success');
+    });
+  } catch (_) {
+    showToast('Error', 'Fix your JSON first.', 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FORMAT JSON
+// ═══════════════════════════════════════════════════════════════════════════════
+function formatJson() {
+  try {
+    const data = JSON.parse(editor.getValue());
+    editor.setValue(JSON.stringify(data, null, 2));
+  } catch (_) {
+    showToast('Error', 'Cannot format invalid JSON.', 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════════════════════
+function showToast(title, description, variant) {
+  const el = document.createElement('div');
+  el.className = 'pg-toast' + (variant === 'success' ? ' pg-toast--success' : variant === 'error' ? ' pg-toast--error' : '');
+  el.innerHTML = '<strong>' + title.replace(/</g, '&lt;') + '</strong>' +
+    (description ? '<br><span style="opacity:0.8">' + description.replace(/</g, '&lt;') + '</span>' : '');
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 200); }, 2500);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INITIAL JSON
+// ═══════════════════════════════════════════════════════════════════════════════
+function getInitialJson() {
+  // Check for pending hash JSON
+  if (window._pendingJson) {
+    const j = window._pendingJson;
+    delete window._pendingJson;
+    return j;
+  }
+  return JSON.stringify(EXAMPLES['Hello World'], null, 2);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RESIZER
+// ═══════════════════════════════════════════════════════════════════════════════
+function initResizer() {
+  const resizer = document.getElementById('resizer');
+  const editorPane = document.getElementById('editor-pane');
+  let startX, startWidth;
+
+  resizer.addEventListener('mousedown', (e) => {
+    startX = e.clientX;
+    startWidth = editorPane.offsetWidth;
+    resizer.classList.add('active');
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+    e.preventDefault();
+  });
+
+  function onMouseMove(e) {
+    const dx = e.clientX - startX;
+    const newWidth = Math.max(250, Math.min(window.innerWidth - 300, startWidth + dx));
+    editorPane.style.width = newWidth + 'px';
+  }
+
+  function onMouseUp() {
+    resizer.classList.remove('active');
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  }
+}
+</script>
+</body>
+</html>
