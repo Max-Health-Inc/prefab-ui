@@ -229,4 +229,67 @@ describe('autoTable', () => {
     const columns = table.columns as { sortable?: boolean }[]
     expect(columns[0].sortable).toBe(false)
   })
+
+  it('column keys match serialized row keys for snake_case input', () => {
+    const rows = [
+      { proposed_start: '2026-03-27T16:00:00Z', duration_minutes: 30, patient_name: 'Alice' },
+    ]
+    const result = autoTable(rows, { title: 'Meetings' })
+    const json = result.toJSON()
+    const table = json.children!.find(c => c.type === 'DataTable')!
+    const columns = table.columns as { key: string; header: string }[]
+    const rowData = table.rows as Record<string, unknown>[]
+
+    // After serialization, row keys are camelCase
+    expect(rowData[0]).toHaveProperty('proposedStart')
+    expect(rowData[0]).toHaveProperty('durationMinutes')
+    expect(rowData[0]).toHaveProperty('patientName')
+
+    // Column keys must match the serialized row keys
+    const colKeys = columns.map(c => c.key)
+    expect(colKeys).toContain('proposedStart')
+    expect(colKeys).toContain('durationMinutes')
+    expect(colKeys).toContain('patientName')
+
+    // Headers should still be humanized
+    const headers = columns.map(c => c.header)
+    expect(headers).toContain('Proposed start')
+    expect(headers).toContain('Duration minutes')
+    expect(headers).toContain('Patient name')
+  })
+
+  it('column keys match serialized row keys for camelCase input', () => {
+    const rows = [
+      { proposedStart: '2026-03-27T16:00:00Z', durationMinutes: 30 },
+    ]
+    const result = autoTable(rows)
+    const json = result.toJSON()
+    const table = json.children!.find(c => c.type === 'DataTable')!
+    const columns = table.columns as { key: string }[]
+    const rowData = table.rows as Record<string, unknown>[]
+
+    // camelCase stays camelCase
+    expect(rowData[0]).toHaveProperty('proposedStart')
+    expect(columns[0].key).toBe('proposedStart')
+  })
+
+  it('column keys match serialized row keys for mixed-case input', () => {
+    const rows = [
+      { first_name: 'Alice', lastName: 'Smith', zip_code: '10001' },
+    ]
+    const result = autoTable(rows)
+    const json = result.toJSON()
+    const table = json.children!.find(c => c.type === 'DataTable')!
+    const columns = table.columns as { key: string }[]
+    const rowData = table.rows as Record<string, unknown>[]
+
+    // All keys should be camelCase after serialization
+    const rowKeys = Object.keys(rowData[0])
+    const colKeys = columns.map(c => c.key)
+
+    // Every column key must exist as a row key
+    for (const ck of colKeys) {
+      expect(rowKeys).toContain(ck)
+    }
+  })
 })

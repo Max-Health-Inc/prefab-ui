@@ -7,6 +7,7 @@
  */
 
 import { type Component, type ContainerComponent } from '../core/component.js'
+import { toCamelCase } from '../core/index.js'
 import { Column, Row } from '../components/layout/index.js'
 import { Heading, Text, Muted } from '../components/typography/index.js'
 import { Card, CardContent } from '../components/card/index.js'
@@ -306,7 +307,7 @@ function inferColumns(
     // Skip nested objects and arrays — they don't render well in tables
     if (typeof value === 'object' && value !== null) continue
 
-    columns.push(col(key, humanizeKey(key), sortable ? { sortable: true } : undefined))
+    columns.push(col(toCamelCase(key), humanizeKey(key), sortable ? { sortable: true } : undefined))
   }
 
   return columns

@@ -59,6 +59,18 @@ async function listUsers(args: any) {
 
 ### Client-side (browser ext-app)
 
+The auto-mount bundle handles the full lifecycle — bridge handshake,
+tool-result rendering, and DOM mounting — with a single `<script>` tag:
+
+```html
+<div id="root"></div>
+<script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab/dist/renderer.auto.min.js"></script>
+```
+
+Works in VS Code, Claude Desktop, ChatGPT, MistralOS, and any MCP Apps host.
+
+For manual control, use `renderer.min.js` instead:
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab/dist/renderer.min.js"></script>
 <script>
@@ -325,16 +337,30 @@ return display_error('User not found', { code: 404 })
 
 ## Browser Renderer
 
-The renderer is a 54KB IIFE bundle with zero external dependencies:
+Two bundles, zero external dependencies:
+
+| Bundle | Size | Use case |
+|--------|------|----------|
+| `renderer.auto.min.js` | ~58KB | **Recommended.** Self-boots bridge, mounts `$prefab` into `#root` automatically |
+| `renderer.min.js` | ~54KB | Library only — defines `window.prefab`, you wire the bridge yourself |
+
+### Auto-mount (recommended)
+
+```html
+<div id="root"></div>
+<script src="renderer.auto.min.js"></script>
+```
+
+Races all three bridge protocols (`prefab:*`, `ui/*` JSON-RPC, `ext-apps`) in parallel.
+First host to respond wins. Buffers tool results that arrive before the handler is wired.
+
+### Manual mount
 
 ```html
 <script src="renderer.min.js"></script>
 <script>
   // Mount from wire format data
   const app = PrefabRenderer.mount(document.getElementById('root'), wireData);
-
-  // Or auto-mount from embedded data
-  // (set window.__PREFAB_DATA__ before loading the script)
 </script>
 ```
 

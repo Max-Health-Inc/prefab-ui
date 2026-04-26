@@ -33,7 +33,7 @@ export interface ComponentJSON {
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 /** Convert snake_case or camelCase prop name to JSON camelCase */
-function toCamelCase(key: string): string {
+export function toCamelCase(key: string): string {
   return key.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())
 }
 
