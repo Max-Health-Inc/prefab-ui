@@ -200,7 +200,7 @@ ChatGPT, MistralOS, and any other MCP Apps host.
 
 ### Option A: `renderer.auto.min.js` (recommended)
 
-Since **v0.2.0**, the auto-mount bundle handles all three bridge
+Since **v0.2.8**, the auto-mount bundle handles all three bridge
 protocols (`prefab:*`, `ui/*` JSON-RPC, `ext-apps`) with zero inline
 script. It races the handshakes in parallel, buffers tool results
 that arrive before the handler is wired, and defers boot until the DOM
@@ -214,12 +214,12 @@ is interactive.
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prefab</title>
   <link rel="stylesheet" crossorigin
-        href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.0/dist/prefab.css">
+        href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.8/dist/prefab.css">
 </head>
 <body>
   <div id="root"></div>
   <script crossorigin
-          src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.0/dist/renderer.auto.min.js"></script>
+          src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.8/dist/renderer.auto.min.js"></script>
 </body>
 </html>
 ```
@@ -233,14 +233,14 @@ auto bundle:
 3. Registers `onToolResult` and `onToolInput` handlers
 4. Mounts `$prefab` wire data into `#root` when a tool result arrives
 
-> **Requires `≥ 0.2.0`.** Earlier versions used a sequential waterfall
+> **Requires `≥ 0.2.8`.** Earlier versions used a sequential waterfall
 > (prefab → JSON-RPC → ext-apps) that wasted 1.5s on every JSON-RPC
 > host and could miss early tool results.
 
 ### Option B: `renderer.min.js` + inline adapter
 
 If you need full control over the JSON-RPC handshake, or you're using
-a pre-0.2.0 version, load the library-only bundle and wire the
+a pre-0.2.8 version, load the library-only bundle and wire the
 protocol yourself:
 
 ```html
@@ -251,12 +251,12 @@ protocol yourself:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prefab</title>
   <link rel="stylesheet" crossorigin
-        href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.0/dist/prefab.css">
+        href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.8/dist/prefab.css">
 </head>
 <body>
   <div id="root"></div>
   <script crossorigin
-          src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.0/dist/renderer.min.js"></script>
+          src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.8/dist/renderer.min.js"></script>
   <script>
     (function () {
       var api = typeof acquireVsCodeApi === 'function' ? acquireVsCodeApi() : null;
@@ -325,7 +325,7 @@ protocol yourself:
         params: {
           protocolVersion: '2026-01-26',
           capabilities: {},
-          clientInfo: { name: 'prefab-renderer', version: '0.2.0' }
+          clientInfo: { name: 'prefab-renderer', version: '0.2.8' }
         }
       });
     })();
@@ -347,17 +347,17 @@ Fix: add `_meta` to each entry of the `contents` array returned by
 
 ### `Cannot read properties of undefined (reading 'startsWith')`
 
-Cause: you're using `renderer.auto.min.js` **before v0.2.0**. Older
+Cause: you're using `renderer.auto.min.js` **before v0.2.8**. Older
 versions used a sequential handshake waterfall that races against
 VS Code's own initialization.
 
-Fix: upgrade to `@maxhealth.tech/prefab@0.2.0` or later. The auto
+Fix: upgrade to `@maxhealth.tech/prefab@0.2.8` or later. The auto
 bundle now works correctly in VS Code.
 
 ### `prefab:init timeout` followed by `ext-apps init timeout`
 
-Same root cause — pre-0.2.0 `app()` tried protocols sequentially.
-Upgrade to v0.2.0+ which races them in parallel.
+Same root cause — pre-0.2.8 `app()` tried protocols sequentially.
+Upgrade to v0.2.8+ which races them in parallel.
 
 ### Iframe loads but shows raw JSON
 
