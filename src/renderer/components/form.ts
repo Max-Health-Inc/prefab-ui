@@ -188,7 +188,7 @@ function renderSelect(node: ComponentNode, ctx: RenderContext): HTMLElement {
   }
 
   // Support shorthand `options` array: [{label, value}]
-  const opts = node.options as Array<{ label?: string; value?: string }> | undefined
+  const opts = node.options as { label?: string; value?: string }[] | undefined
   if (Array.isArray(opts)) {
     for (const o of opts) {
       const option = document.createElement('option')

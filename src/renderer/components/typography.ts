@@ -113,7 +113,7 @@ function renderInline(line: string): string {
   const codeSpans: string[] = []
   out = out.replace(/`([^`]+)`/g, (_m, content: string) => {
     codeSpans.push(`<code>${content}</code>`)
-    return `\x00CODE${codeSpans.length - 1}\x00`
+    return `\uFDD0CODE${codeSpans.length - 1}\uFDD0`
   })
 
   // Images: ![alt](src)
@@ -144,7 +144,7 @@ function renderInline(line: string): string {
   out = out.replace(/~~(.+?)~~/g, '<del>$1</del>')
 
   // Restore inline code spans
-  out = out.replace(/\x00CODE(\d+)\x00/g, (_m, idx: string) => codeSpans[parseInt(idx)])
+  out = out.replace(/\uFDD0CODE(\d+)\uFDD0/g, (_m, idx: string) => codeSpans[parseInt(idx)])
 
   return out
 }
@@ -181,7 +181,7 @@ function renderMarkdownToHtml(md: string): string {
     }
 
     // Heading: # ... ######
-    const headingMatch = line.match(/^(#{1,6})\s+(.+)$/)
+    const headingMatch = /^(#{1,6})\s+(.+)$/.exec(line)
     if (headingMatch) {
       const level = headingMatch[1].length
       html.push(`<h${level}>${renderInline(headingMatch[2])}</h${level}>`)
