@@ -84,6 +84,10 @@ jobs:
           git tag "v${NEXT}"
           git push origin main --tags
 
+      # ── Package skill ─────────────────────────────
+      - name: Zip prefab-ui skill
+        run: cd skills && zip -r ../prefab-ui-skill.zip prefab-ui/
+
       # ── GitHub Release ──────────────────────────────
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -95,6 +99,7 @@ jobs:
             dist/renderer.min.js
             dist/renderer.auto.min.js
             dist/prefab.css
+            prefab-ui-skill.zip
 
       # Trigger publish.yml explicitly (GITHUB_TOKEN tag pushes don't trigger other workflows)
       - name: Trigger publish workflow

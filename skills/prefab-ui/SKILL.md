@@ -1,18 +1,11 @@
 ---
 name: prefab-ui
-description: >
-  Generate rich, interactive UIs as JSON using the @maxhealth.tech/prefab wire format.
-  Use when building MCP tool UIs, dashboards, forms, data tables, charts, patient cards,
-  settings panels, or any structured UI that an LLM should return as JSON.
-  Covers the $prefab v0.2 protocol: components, actions, reactive state, expressions, and theming.
-compatibility: Works with any MCP-compatible host (VS Code, Claude Desktop, custom clients). Requires a prefab renderer (CDN or npm).
-metadata:
-  author: maxhealth-tech
-  version: "0.2"
-  npm: "@maxhealth.tech/prefab"
+description: Generate rich, interactive UIs as JSON using the prefab wire format. Use when building MCP tool UIs, dashboards, forms, data tables, charts, patient cards, settings panels, or any structured UI that an LLM should return as JSON. Covers the prefab v0.2 protocol, components, actions, reactive state, expressions, and theming.
 ---
 
 # Prefab UI — Wire Format Skill
+
+> **Package:** `@maxhealth.tech/prefab` - protocol v0.2 | **Compatibility:** Any MCP-compatible host (VS Code, Claude Desktop, custom clients). The renderer is included in the npm package.
 
 Generate valid `$prefab` wire-format JSON that renders into themed, interactive UIs.
 
