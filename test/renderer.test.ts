@@ -186,6 +186,12 @@ describe('Actions', () => {
     expect(store.get('items')).toEqual(['hello'])
   })
 
+  it('appendState supports "item" alias for "value"', async () => {
+    store.set('tasks', ['existing'])
+    await dispatchActions({ action: 'appendState', key: 'tasks', item: 'new task' }, ctx)
+    expect(store.get('tasks')).toEqual(['existing', 'new task'])
+  })
+
   it('popState removes from array', async () => {
     store.set('items', ['a', 'b', 'c'])
     await dispatchActions({ action: 'popState', key: 'items', index: 1 }, ctx)

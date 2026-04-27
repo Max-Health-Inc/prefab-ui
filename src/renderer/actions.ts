@@ -105,7 +105,7 @@ function handleToggleState(action: ActionJSON, ctx: DispatchContext): void {
 }
 
 function handleAppendState(action: ActionJSON, ctx: DispatchContext): void {
-  let value = action.value
+  let value = action.value ?? action.item
   if (isRxExpression(value)) {
     value = evaluateTemplate(value, ctx.store, ctx.scope)
   }
