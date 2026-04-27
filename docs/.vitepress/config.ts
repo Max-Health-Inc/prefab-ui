@@ -21,7 +21,7 @@ export default defineConfig({
   },
 
   head: [
-    ['link', { rel: 'icon', href: '/prefab/brand/favicon.ico' }],
+    ['link', { rel: 'icon', href: '/prefab/favicon.ico' }],
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/prefab/brand/logo.svg' }],
   ],
 
