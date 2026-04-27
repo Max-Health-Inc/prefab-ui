@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>prefab demo</title>
+<meta name="description" content="See how an LLM prompt becomes a live rendered UI with @maxhealth.tech/prefab.">
+
+<!-- prefab renderer + theme -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2/dist/prefab.css">
+<script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2/dist/renderer.min.js"></script>
+
+<style>
+/* ── Reset ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Dark theme (default) ───────────────────────────────────────────── */
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-hover: #79c0ff;
+  --user-bg: #1c3a5f;
+  --user-border: #264b78;
+  --assistant-bg: #161b22;
+  --assistant-border: #30363d;
+  --preview-bg: #1c1c1c;
+  --preview-text: #e6edf3;
+  --toolbar: #21262d;
+  --radius: 12px;
+  --chevron-fill: %238b949e;
+  color-scheme: dark;
+}
+
+/* ── Light theme ────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --surface: #f6f8fa;
+    --border: #d1d9e0;
+    --text: #1f2328;
+    --muted: #656d76;
+    --accent: #0969da;
+    --accent-hover: #0550ae;
+    --user-bg: #ddf4ff;
+    --user-border: #a8d8f0;
+    --assistant-bg: #f6f8fa;
+    --assistant-border: #d1d9e0;
+    --preview-bg: #ffffff;
+    --preview-text: #1f2328;
+    --toolbar: #eaeef2;
+    --chevron-fill: %23656d76;
+    color-scheme: light;
+  }
+}
+
+/* ── Manual overrides via [data-theme] ──────────────────────────────── */
+[data-theme="dark"] {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-hover: #79c0ff;
+  --user-bg: #1c3a5f;
+  --user-border: #264b78;
+  --assistant-bg: #161b22;
+  --assistant-border: #30363d;
+  --preview-bg: #1c1c1c;
+  --preview-text: #e6edf3;
+  --toolbar: #21262d;
+  --chevron-fill: %238b949e;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --border: #d1d9e0;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-hover: #0550ae;
+  --user-bg: #ddf4ff;
+  --user-border: #a8d8f0;
+  --assistant-bg: #f6f8fa;
+  --assistant-border: #d1d9e0;
+  --preview-bg: #ffffff;
+  --preview-text: #1f2328;
+  --toolbar: #eaeef2;
+  --chevron-fill: %23656d76;
+  color-scheme: light;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ── Top bar ────────────────────────────────────────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 52px;
+  padding: 0 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.logo span { color: var(--muted); font-weight: 400; }
+
+.topbar-spacer { flex: 1; }
+
+.example-select {
+  appearance: none;
+  background: var(--toolbar);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 34px 7px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='var(--chevron-fill)'%3E%3Cpath d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.763L10.825 4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  max-width: 260px;
+  transition: border-color 0.15s;
+}
+.example-select:hover { border-color: var(--accent); }
+
+.theme-toggle {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--toolbar);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover { border-color: var(--accent); }
+.theme-toggle svg { width: 16px; height: 16px; }
+
+.back-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.15s;
+}
+.back-link:hover { color: var(--accent); }
+
+/* ── Chat area ──────────────────────────────────────────────────────── */
+.chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 0;
+  scroll-behavior: smooth;
+}
+
+.chat-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Message bubbles ────────────────────────────────────────────────── */
+.msg {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.msg--user {
+  flex-direction: row-reverse !important;
+}
+
+.msg--user .msg-body {
+  text-align: right;
+  flex: 0 1 auto;
+}
+
+.msg--user .msg-meta {
+  justify-content: flex-end !important;
+}
+
+.msg-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.msg-avatar--user { background: #3b82f6; }
+.msg-avatar--assistant { background: #8b5cf6; }
+
+.msg-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.msg-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.msg-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.msg-time {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.msg-bubble {
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.msg--user .msg-bubble {
+  background: var(--user-bg);
+  border: 1px solid var(--user-border);
+  display: inline-block;
+}
+
+.msg--assistant .msg-bubble {
+  background: var(--assistant-bg);
+  border: 1px solid var(--assistant-border);
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ── Assistant text preamble ────────────────────────────────────────── */
+.assistant-text {
+  padding: 14px 16px 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+/* ── Rendered UI container ──────────────────────────────────────────── */
+.prefab-render {
+  background: var(--preview-bg);
+  color: var(--preview-text);
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 20px;
+  overflow: hidden;
+}
+
+.prefab-render-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: var(--toolbar);
+  border-top: 1px solid var(--border);
+}
+
+.prefab-render-label::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3fb950;
+}
+
+/* ── Bottom input (fake) ────────────────────────────────────────────── */
+.input-bar {
+  padding: 12px 20px 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.input-bar-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fake-input {
+  flex: 1;
+  background: var(--toolbar);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: default;
+}
+
+.send-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #0d1117;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.4;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────── */
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .topbar { padding: 0 12px; }
+  .chat-inner { padding: 0 12px; }
+  .example-select { max-width: 180px; font-size: 12px; }
+  .msg-avatar { width: 28px; height: 28px; font-size: 12px; }
+}
+</style>
+</head>
+
+<body>
+<div class="layout">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <a href="/prefab/" class="logo">maxhealth.tech/prefab/mcp <span>demo</span></a>
+    <div class="topbar-spacer"></div>
+    <select id="example-select" class="example-select" aria-label="Choose example"></select>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark">
+      <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/></svg>
+      <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/></svg>
+    </button>
+    <a href="/prefab/playground/" class="back-link">Playground →</a>
+  </div>
+
+  <!-- Theme toggle (isolated script so CDN failures can't break it) -->
+  <script>
+  (function() {
+    var toggle = document.getElementById('theme-toggle');
+    var sun = document.getElementById('theme-icon-sun');
+    var moon = document.getElementById('theme-icon-moon');
+    function apply(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      sun.style.display = t === 'dark' ? 'none' : 'block';
+      moon.style.display = t === 'dark' ? 'block' : 'none';
+      try { localStorage.setItem('prefab-demo-theme', t); } catch(e) {}
+    }
+    var s = null;
+    try { s = localStorage.getItem('prefab-demo-theme'); } catch(e) {}
+    var os = window.matchMedia('(prefers-color-scheme: light)').matches;
+    apply(s || (os ? 'light' : 'dark'));
+    toggle.addEventListener('click', function() {
+      var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+      apply(cur === 'dark' ? 'light' : 'dark');
+    });
+  })();
+  </script>
+
+  <!-- Chat messages -->
+  <div class="chat" id="chat">
+    <div class="chat-inner" id="chat-inner"></div>
+  </div>
+
+  <!-- Fake input bar -->
+  <div class="input-bar">
+    <div class="input-bar-inner">
+      <div class="fake-input">Ask the LLM to build a UI…</div>
+      <div class="send-btn">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M1.724 1.053a.5.5 0 0 1 .543-.07l12 6a.5.5 0 0 1 0 .894l-12 6A.5.5 0 0 1 1.5 13.5v-5l7-1-7-1v-5a.5.5 0 0 1 .224-.447z"/></svg>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// DEMO EXAMPLES
+// ═══════════════════════════════════════════════════════════════════════════════
+const EXAMPLES = [
+  {
+    id: 'dashboard',
+    label: 'Analytics Dashboard',
+    user: 'Build me an analytics dashboard with key metrics, a traffic line chart, and a top pages table.',
+    assistant: 'Here\'s your analytics dashboard with live metrics, a weekly traffic chart, and a top-pages breakdown:',
+    prefab: {
+      "$prefab": { "version": "0.2" },
+      "view": {
+        "type": "Column", "gap": 16,
+        "children": [
+          { "type": "Row", "children": [
+            { "type": "Heading", "content": "Analytics Dashboard", "level": 2 },
+            { "type": "Badge", "label": "Live", "variant": "success" }
+          ]},
+          { "type": "Row", "gap": 16, "children": [
+            { "type": "Card", "children": [{ "type": "CardContent", "children": [{ "type": "Metric", "label": "Total Users", "value": "12,847" }]}]},
+            { "type": "Card", "children": [{ "type": "CardContent", "children": [{ "type": "Metric", "label": "Revenue", "value": "$48,290" }]}]},
+            { "type": "Card", "children": [{ "type": "CardContent", "children": [{ "type": "Metric", "label": "Conversion", "value": "3.2%" }]}]},
+            { "type": "Card", "children": [{ "type": "CardContent", "children": [{ "type": "Metric", "label": "Avg. Session", "value": "4m 32s" }]}]}
+          ]},
+          { "type": "Row", "gap": 16, "children": [
+            { "type": "Card", "children": [
+              { "type": "CardHeader", "children": [{ "type": "CardTitle", "content": "Weekly Traffic" }]},
+              { "type": "CardContent", "children": [
+                { "type": "LineChart",
+                  "data": [
+                    { "day": "Mon", "visitors": 1200 }, { "day": "Tue", "visitors": 1800 },
+                    { "day": "Wed", "visitors": 1400 }, { "day": "Thu", "visitors": 2200 },
+                    { "day": "Fri", "visitors": 1900 }, { "day": "Sat", "visitors": 800 },
+                    { "day": "Sun", "visitors": 600 }
+                  ],
+                  "series": [{ "dataKey": "visitors", "label": "Visitors", "color": "#4f46e5" }],
+                  "xAxis": "day", "height": 220, "showGrid": true, "animate": true
+                }
+              ]}
+            ]},
+            { "type": "Card", "children": [
+              { "type": "CardHeader", "children": [{ "type": "CardTitle", "content": "Top Pages" }]},
+              { "type": "CardContent", "children": [
+                { "type": "DataTable",
+                  "columns": [
+                    { "key": "page", "header": "Page" },
+                    { "key": "views", "header": "Views", "sortable": true },
+                    { "key": "bounce", "header": "Bounce Rate" }
+                  ],
+                  "rows": [
+                    { "page": "/home", "views": "4,280", "bounce": "32%" },
+                    { "page": "/pricing", "views": "2,190", "bounce": "45%" },
+                    { "page": "/docs", "views": "1,890", "bounce": "22%" },
+                    { "page": "/blog", "views": "1,420", "bounce": "38%" }
+                  ],
+                  "search": false, "paginated": false
+                }
+              ]}
+            ]}
+          ]}
+        ]
+      }
+    }
+  },
+
+  {
+    id: 'patient-card',
+    label: 'Patient Summary',
+    user: 'Show me a patient summary card for Sarah Connor with vitals and status badges.',
+    assistant: 'Here\'s the patient summary card with current vitals and clinical status:',
+    prefab: {
+      "$prefab": { "version": "0.2" },
+      "view": {
+        "type": "Card",
+        "children": [
+          { "type": "CardHeader", "children": [
+            { "type": "CardTitle", "content": "Sarah Connor" },
+            { "type": "CardDescription", "content": "DOB: 1965-02-28 · MRN: 00482917" }
+          ]},
+          { "type": "CardContent", "children": [
+            { "type": "Column", "gap": 12, "children": [
+              { "type": "Row", "gap": 16, "children": [
+                { "type": "Metric", "label": "Heart Rate", "value": "72 bpm" },
+                { "type": "Metric", "label": "Blood Pressure", "value": "120/80" },
+                { "type": "Metric", "label": "Temperature", "value": "98.6°F" },
+                { "type": "Metric", "label": "SpO₂", "value": "98%" }
+              ]},
+              { "type": "Separator" },
+              { "type": "Text", "content": "Patient is in stable condition. No abnormalities detected in recent labs. Follow-up scheduled in 2 weeks." }
+            ]}
+          ]},
+          { "type": "CardFooter", "children": [
+            { "type": "Badge", "label": "Stable", "variant": "success" },
+            { "type": "Badge", "label": "Outpatient", "variant": "secondary" },
+            { "type": "Badge", "label": "Lab results pending", "variant": "warning" }
+          ]}
+        ]
+      }
+    }
+  },
+
+  {
+    id: 'revenue-chart',
+    label: 'Revenue Report',
+    user: 'Create a revenue vs costs bar chart for the first half of the year.',
+    assistant: 'Here\'s your H1 revenue report with a side-by-side bar chart comparing revenue and costs:',
+    prefab: {
+      "$prefab": { "version": "0.2" },
+      "view": {
+        "type": "Column", "gap": 16,
+        "children": [
+          { "type": "Heading", "content": "Revenue Report — H1 2026", "level": 2 },
+          { "type": "Row", "gap": 16, "children": [
+            { "type": "Card", "children": [{ "type": "CardContent", "children": [{ "type": "Metric", "label": "Total Revenue", "value": "$25,580" }]}]},
+            { "type": "Card", "children": [{ "type": "CardContent", "children": [{ "type": "Metric", "label": "Total Costs", "value": "$15,706" }]}]},
+            { "type": "Card", "children": [{ "type": "CardContent", "children": [{ "type": "Metric", "label": "Net Profit", "value": "$9,874" }]}]}
+          ]},
+          { "type": "Card", "children": [
+            { "type": "CardContent", "children": [
+              { "type": "BarChart",
+                "data": [
+                  { "month": "Jan", "revenue": 4000, "costs": 2400 },
+                  { "month": "Feb", "revenue": 3000, "costs": 1398 },
+                  { "month": "Mar", "revenue": 5200, "costs": 3100 },
+                  { "month": "Apr", "revenue": 2780, "costs": 3908 },
+                  { "month": "May", "revenue": 6100, "costs": 2800 },
+                  { "month": "Jun", "revenue": 4500, "costs": 2100 }
+                ],
+                "series": [
+                  { "dataKey": "revenue", "label": "Revenue", "color": "#4f46e5" },
+                  { "dataKey": "costs", "label": "Costs", "color": "#ef4444" }
+                ],
+                "xAxis": "month", "height": 300,
+                "showLegend": true, "showTooltip": true, "animate": true, "showGrid": true, "barRadius": 4
+              }
+            ]}
+          ]}
+        ]
+      }
+    }
+  },
+
+  {
+    id: 'contact-form',
+    label: 'Contact Form',
+    user: 'Make a contact form with name, email, subject dropdown, and a message field.',
+    assistant: 'Here\'s an interactive contact form with validation-ready fields and action buttons:',
+    prefab: {
+      "$prefab": { "version": "0.2" },
+      "view": {
+        "type": "Card",
+        "children": [
+          { "type": "CardHeader", "children": [
+            { "type": "CardTitle", "content": "Contact Us" },
+            { "type": "CardDescription", "content": "Send us a message and we'll get back to you within 24 hours." }
+          ]},
+          { "type": "CardContent", "children": [
+            { "type": "Column", "gap": 12, "children": [
+              { "type": "Input", "name": "name", "inputType": "text", "placeholder": "Your name" },
+              { "type": "Input", "name": "email", "inputType": "email", "placeholder": "you@example.com" },
+              { "type": "Select", "name": "subject", "placeholder": "Select a subject", "options": [
+                { "label": "General Inquiry", "value": "general" },
+                { "label": "Bug Report", "value": "bug" },
+                { "label": "Feature Request", "value": "feature" },
+                { "label": "Partnership", "value": "partnership" }
+              ]},
+              { "type": "Textarea", "name": "message", "placeholder": "Your message…", "rows": 4 },
+              { "type": "Row", "gap": 8, "children": [
+                { "type": "Button", "label": "Send Message", "variant": "default",
+                  "onClick": { "action": "showToast", "title": "Sent!", "description": "Your message has been submitted." }},
+                { "type": "Button", "label": "Clear", "variant": "outline",
+                  "onClick": [
+                    { "action": "setState", "key": "name", "value": "" },
+                    { "action": "setState", "key": "email", "value": "" },
+                    { "action": "setState", "key": "message", "value": "" }
+                  ]}
+              ]}
+            ]}
+          ]}
+        ]
+      },
+      "state": { "name": "", "email": "", "subject": "", "message": "" }
+    }
+  },
+
+  {
+    id: 'settings-tabs',
+    label: 'Settings Panel',
+    user: 'Create a settings panel with tabs for General, Security, and Notifications.',
+    assistant: 'Here\'s a tabbed settings panel with alerts and interactive controls in each section:',
+    prefab: {
+      "$prefab": { "version": "0.2" },
+      "view": {
+        "type": "Column", "gap": 16,
+        "children": [
+          { "type": "Heading", "content": "Settings", "level": 2 },
+          { "type": "Tabs", "name": "settings_tabs", "children": [
+            { "type": "Tab", "title": "General", "children": [
+              { "type": "Column", "gap": 12, "children": [
+                { "type": "Alert", "variant": "default", "children": [
+                  { "type": "AlertTitle", "content": "Heads up" },
+                  { "type": "AlertDescription", "content": "These settings affect your entire workspace." }
+                ]},
+                { "type": "Input", "name": "workspace_name", "inputType": "text", "placeholder": "Workspace name" },
+                { "type": "Checkbox", "name": "notifications", "label": "Enable notifications" }
+              ]}
+            ]},
+            { "type": "Tab", "title": "Security", "children": [
+              { "type": "Column", "gap": 12, "children": [
+                { "type": "Alert", "variant": "destructive", "children": [
+                  { "type": "AlertTitle", "content": "Warning" },
+                  { "type": "AlertDescription", "content": "Changing security settings may log out all users." }
+                ]},
+                { "type": "Checkbox", "name": "2fa", "label": "Require two-factor authentication" },
+                { "type": "Select", "name": "session_timeout", "placeholder": "Session timeout", "options": [
+                  { "label": "15 minutes", "value": "15" },
+                  { "label": "1 hour", "value": "60" },
+                  { "label": "8 hours", "value": "480" },
+                  { "label": "Never", "value": "0" }
+                ]}
+              ]}
+            ]},
+            { "type": "Tab", "title": "Notifications", "children": [
+              { "type": "Column", "gap": 12, "children": [
+                { "type": "Checkbox", "name": "email_notif", "label": "Email notifications" },
+                { "type": "Checkbox", "name": "push_notif", "label": "Push notifications" },
+                { "type": "Checkbox", "name": "sms_notif", "label": "SMS notifications" }
+              ]}
+            ]}
+          ]}
+        ]
+      },
+      "state": { "workspace_name": "", "notifications": true, "2fa": false, "session_timeout": "60", "email_notif": true, "push_notif": true, "sms_notif": false }
+    }
+  },
+
+  {
+    id: 'user-directory',
+    label: 'User Directory',
+    user: 'Show me a searchable user directory table with name, role, department, and status.',
+    assistant: 'Here\'s a searchable user directory with sortable columns:',
+    prefab: {
+      "$prefab": { "version": "0.2" },
+      "view": {
+        "type": "Column", "gap": 16,
+        "children": [
+          { "type": "Heading", "content": "User Directory", "level": 2 },
+          { "type": "DataTable",
+            "columns": [
+              { "key": "name", "header": "Name", "sortable": true },
+              { "key": "role", "header": "Role", "sortable": true },
+              { "key": "department", "header": "Department" },
+              { "key": "status", "header": "Status" }
+            ],
+            "rows": [
+              { "name": "Alice Chen", "role": "Admin", "department": "Engineering", "status": "Active" },
+              { "name": "Bob Martinez", "role": "Editor", "department": "Marketing", "status": "Active" },
+              { "name": "Carol Davis", "role": "Viewer", "department": "Sales", "status": "Inactive" },
+              { "name": "Dan Wilson", "role": "Admin", "department": "Engineering", "status": "Active" },
+              { "name": "Eva Brown", "role": "Editor", "department": "Design", "status": "Active" },
+              { "name": "Frank Lee", "role": "Viewer", "department": "Support", "status": "Active" },
+              { "name": "Grace Kim", "role": "Admin", "department": "Operations", "status": "Active" }
+            ],
+            "search": true, "paginated": false
+          }
+        ]
+      }
+    }
+  },
+
+  {
+    id: 'todo-app',
+    label: 'Interactive Todo',
+    user: 'Build a todo list app where I can add tasks and see them in a table.',
+    assistant: 'Here\'s a fully interactive todo list — type a task and click Add to see it appear:',
+    prefab: {
+      "$prefab": { "version": "0.2" },
+      "view": {
+        "type": "Card",
+        "children": [
+          { "type": "CardHeader", "children": [
+            { "type": "CardTitle", "content": "Todo List" },
+            { "type": "CardDescription", "content": "Tasks: {{ tasks | length }}" }
+          ]},
+          { "type": "CardContent", "children": [
+            { "type": "Column", "gap": 12, "children": [
+              { "type": "Row", "gap": 8, "children": [
+                { "type": "Input", "name": "newTask", "placeholder": "What needs to be done?" },
+                { "type": "Button", "label": "Add", "onClick": [
+                  { "action": "appendState", "key": "tasks", "item": "{{ newTask }}" },
+                  { "action": "setState", "key": "newTask", "value": "" }
+                ]}
+              ]},
+              { "type": "Separator" },
+              { "type": "DataTable",
+                "columns": [{ "key": "value", "header": "Task" }],
+                "rows": "{{ tasks }}",
+                "search": false, "paginated": false
+              }
+            ]}
+          ]}
+        ]
+      },
+      "state": {
+        "newTask": "",
+        "tasks": ["Review pull requests", "Update documentation", "Deploy v2.0"]
+      }
+    }
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RENDER LOGIC
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const selectEl = document.getElementById('example-select');
+const chatInner = document.getElementById('chat-inner');
+const chatScroll = document.getElementById('chat');
+
+// Populate dropdown
+EXAMPLES.forEach((ex, i) => {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = ex.label;
+  selectEl.appendChild(opt);
+});
+
+// Render the selected example
+let currentRenderers = [];
+
+function renderExample(index) {
+  const ex = EXAMPLES[index];
+
+  // Destroy previous prefab renderers
+  currentRenderers.forEach(r => { try { r.destroy(); } catch {} });
+  currentRenderers = [];
+
+  // Clear chat
+  chatInner.innerHTML = '';
+
+  // User message
+  chatInner.appendChild(createMessage('user', ex.user));
+
+  // Assistant message with rendered prefab
+  chatInner.appendChild(createAssistantMessage(ex.assistant, ex.prefab));
+
+  // Scroll to top
+  chatScroll.scrollTop = 0;
+}
+
+function createMessage(role, text) {
+  const isUser = role === 'user';
+  const msg = document.createElement('div');
+  msg.className = `msg msg--${role}`;
+  msg.innerHTML = `
+    <div class="msg-avatar msg-avatar--${role}">${isUser ? 'U' : 'AI'}</div>
+    <div class="msg-body">
+      <div class="msg-meta">
+        <span class="msg-name">${isUser ? 'You' : 'Assistant'}</span>
+        <span class="msg-time">just now</span>
+      </div>
+      <div class="msg-bubble">${escapeHtml(text)}</div>
+    </div>
+  `;
+  return msg;
+}
+
+function createAssistantMessage(text, wireData) {
+  const msg = document.createElement('div');
+  msg.className = 'msg msg--assistant';
+
+  const renderTarget = document.createElement('div');
+  renderTarget.className = 'prefab-render';
+
+  msg.innerHTML = `
+    <div class="msg-avatar msg-avatar--assistant">AI</div>
+    <div class="msg-body">
+      <div class="msg-meta">
+        <span class="msg-name">Assistant</span>
+        <span class="msg-time">just now</span>
+      </div>
+      <div class="msg-bubble">
+        <div class="assistant-text">${escapeHtml(text)}</div>
+        <div class="prefab-render-label">Rendered UI</div>
+      </div>
+    </div>
+  `;
+
+  // Append render target inside the bubble
+  const bubble = msg.querySelector('.msg-bubble');
+  bubble.appendChild(renderTarget);
+
+  // Mount prefab after DOM insertion
+  requestAnimationFrame(() => {
+    try {
+      const r = PrefabRenderer.mount(renderTarget, wireData);
+      currentRenderers.push(r);
+    } catch (err) {
+      renderTarget.innerHTML = '<p style="color:#ef4444;padding:12px;">Render error: ' + escapeHtml(String(err)) + '</p>';
+    }
+  });
+
+  return msg;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// Wire up dropdown
+selectEl.addEventListener('change', () => renderExample(+selectEl.value));
+
+// Initial render
+renderExample(0);
+</script>
+</body>
+</html>
