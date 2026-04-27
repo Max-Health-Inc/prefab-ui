@@ -38,6 +38,10 @@ prefab has three usage modes:
 | **Client-side** | Browser (ext-app iframe) | `dist/renderer.min.js` script tag |
 | **Hybrid** | Node/Bun backend → HTML response | `PrefabApp.toHTML()` |
 
+::: tip See it in action
+The [interactive demo](/demo/) shows how an LLM prompt becomes a fully rendered UI — dashboards, forms, charts, and more — powered by the client-side renderer.
+:::
+
 ---
 
 ## Server-Side: Build UIs in MCP Tool Handlers
@@ -83,7 +87,7 @@ The `display()` function serializes the tree to `$prefab` wire JSON and wraps it
 
 ## Client-Side: Browser ext-app
 
-Load the renderer bundle and use the `app()` factory:
+Load the renderer bundle and use the `app()` factory. See the [live demo](/demo/) for a complete working example.
 
 ```html
 <!DOCTYPE html>
@@ -161,6 +165,7 @@ import '@maxhealth.tech/prefab/prefab.css'              // Base theme CSS
 
 ## Next Steps
 
+- [Live Demo](/demo/) — see LLM prompts rendered as live UIs
 - [Components](./components) — full reference for all 115+ components
 - [Signals & Collections](./rx#signals--collections) — reactive data layer
 - [Actions](./actions) — client-side and MCP actions
