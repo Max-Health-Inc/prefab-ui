@@ -1,0 +1,3096 @@
+{
+  "inputs": {
+    "src/renderer/index.ts": {
+      "bytes": 11737,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\state.ts",
+          "kind": "import-statement",
+          "original": "./state.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\engine.ts",
+          "kind": "import-statement",
+          "original": "./engine.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\index.ts",
+          "kind": "import-statement",
+          "original": "./components/index.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\theme.ts",
+          "kind": "import-statement",
+          "original": "./theme.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\actions.ts",
+          "kind": "import-statement",
+          "original": "./actions.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\transport.ts",
+          "kind": "import-statement",
+          "original": "./transport.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\app.ts",
+          "kind": "import-statement",
+          "original": "./app.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\bridge.ts",
+          "kind": "import-statement",
+          "original": "./bridge.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\rx\\pipes.ts",
+          "kind": "import-statement",
+          "original": "../rx/pipes.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\engine.ts",
+          "kind": "import-statement",
+          "original": "./engine.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\app.ts",
+          "kind": "import-statement",
+          "original": "./app.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\bridge.ts",
+          "kind": "import-statement",
+          "original": "./bridge.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\rx\\pipes.ts",
+          "kind": "import-statement",
+          "original": "../rx/pipes.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\engine.ts",
+          "kind": "import-statement",
+          "original": "./engine.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/state.ts": {
+      "bytes": 4639,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "src/renderer/engine.ts": {
+      "bytes": 7898,
+      "imports": [
+        {
+          "path": "./rx.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./actions.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/index.ts": {
+      "bytes": 1135,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\layout.ts",
+          "kind": "import-statement",
+          "original": "./layout.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\typography.ts",
+          "kind": "import-statement",
+          "original": "./typography.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\card.ts",
+          "kind": "import-statement",
+          "original": "./card.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\data.ts",
+          "kind": "import-statement",
+          "original": "./data.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\form.ts",
+          "kind": "import-statement",
+          "original": "./form.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\interactive.ts",
+          "kind": "import-statement",
+          "original": "./interactive.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\control.ts",
+          "kind": "import-statement",
+          "original": "./control.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\alert.ts",
+          "kind": "import-statement",
+          "original": "./alert.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\media.ts",
+          "kind": "import-statement",
+          "original": "./media.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\charts.ts",
+          "kind": "import-statement",
+          "original": "./charts.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\table.ts",
+          "kind": "import-statement",
+          "original": "./table.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/bridge.ts": {
+      "bytes": 24976,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\@modelcontextprotocol\\ext-apps\\dist\\src\\app.js",
+          "kind": "dynamic-import",
+          "original": "@modelcontextprotocol/ext-apps"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/transport.ts": {
+      "bytes": 3209,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "src/rx/pipes.ts": {
+      "bytes": 1331,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "src/renderer/actions.ts": {
+      "bytes": 11306,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\rx.ts",
+          "kind": "import-statement",
+          "original": "./rx.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/app.ts": {
+      "bytes": 9924,
+      "imports": [
+        {
+          "path": "./index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./bridge.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./transport.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./components/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./state.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./engine.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/theme.ts": {
+      "bytes": 2767,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/media.ts": {
+      "bytes": 5051,
+      "imports": [
+        {
+          "path": "../engine.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/typography.ts": {
+      "bytes": 8923,
+      "imports": [
+        {
+          "path": "../engine.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/card.ts": {
+      "bytes": 1540,
+      "imports": [
+        {
+          "path": "../engine.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/form.ts": {
+      "bytes": 24287,
+      "imports": [
+        {
+          "path": "../engine.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../actions.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/alert.ts": {
+      "bytes": 1723,
+      "imports": [
+        {
+          "path": "../engine.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/charts.ts": {
+      "bytes": 25378,
+      "imports": [
+        {
+          "path": "../engine.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\src\\renderer\\components\\chart-tooltip.ts",
+          "kind": "import-statement",
+          "original": "./chart-tooltip.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/layout.ts": {
+      "bytes": 6009,
+      "imports": [
+        {
+          "path": "../engine.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/control.ts": {
+      "bytes": 5988,
+      "imports": [
+        {
+          "path": "../engine.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../rx.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/data.ts": {
+      "bytes": 13058,
+      "imports": [
+        {
+          "path": "../engine.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../actions.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/interactive.ts": {
+      "bytes": 12981,
+      "imports": [
+        {
+          "path": "../engine.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/table.ts": {
+      "bytes": 3964,
+      "imports": [
+        {
+          "path": "../engine.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/rx.ts": {
+      "bytes": 17065,
+      "imports": [
+        {
+          "path": "../rx/pipes.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/@modelcontextprotocol/ext-apps/dist/src/app.js": {
+      "bytes": 27755,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\@modelcontextprotocol\\sdk\\dist\\esm\\types.js",
+          "kind": "import-statement",
+          "original": "@modelcontextprotocol/sdk/types.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\@modelcontextprotocol\\sdk\\dist\\esm\\shared\\protocol.js",
+          "kind": "import-statement",
+          "original": "@modelcontextprotocol/sdk/shared/protocol.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\@modelcontextprotocol\\sdk\\dist\\esm\\types.js",
+          "kind": "import-statement",
+          "original": "@modelcontextprotocol/sdk/types.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\index.js",
+          "kind": "import-statement",
+          "original": "zod/v4"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\@modelcontextprotocol\\sdk\\dist\\esm\\types.js",
+          "kind": "import-statement",
+          "original": "@modelcontextprotocol/sdk/types.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/renderer/components/chart-tooltip.ts": {
+      "bytes": 7026,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js": {
+      "bytes": 51762,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\@modelcontextprotocol\\sdk\\dist\\esm\\server\\zod-compat.js",
+          "kind": "import-statement",
+          "original": "../server/zod-compat.js"
+        },
+        {
+          "path": "../types.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\@modelcontextprotocol\\sdk\\dist\\esm\\experimental\\tasks\\interfaces.js",
+          "kind": "import-statement",
+          "original": "../experimental/tasks/interfaces.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\@modelcontextprotocol\\sdk\\dist\\esm\\server\\zod-json-schema-compat.js",
+          "kind": "import-statement",
+          "original": "../server/zod-json-schema-compat.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/index.js": {
+      "bytes": 92,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\index.js",
+          "kind": "import-statement",
+          "original": "./classic/index.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\index.js",
+          "kind": "import-statement",
+          "original": "./classic/index.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/@modelcontextprotocol/sdk/dist/esm/types.js": {
+      "bytes": 73271,
+      "imports": [
+        {
+          "path": "zod/v4",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/classic/index.js": {
+      "bytes": 99,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\external.js",
+          "kind": "import-statement",
+          "original": "./external.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\external.js",
+          "kind": "import-statement",
+          "original": "./external.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/classic/external.js": {
+      "bytes": 907,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\index.js",
+          "kind": "import-statement",
+          "original": "../core/index.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\schemas.js",
+          "kind": "import-statement",
+          "original": "./schemas.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\checks.js",
+          "kind": "import-statement",
+          "original": "./checks.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\errors.js",
+          "kind": "import-statement",
+          "original": "./errors.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\parse.js",
+          "kind": "import-statement",
+          "original": "./parse.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\compat.js",
+          "kind": "import-statement",
+          "original": "./compat.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\index.js",
+          "kind": "import-statement",
+          "original": "../core/index.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\en.js",
+          "kind": "import-statement",
+          "original": "../locales/en.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\index.js",
+          "kind": "import-statement",
+          "original": "../core/index.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\json-schema-processors.js",
+          "kind": "import-statement",
+          "original": "../core/json-schema-processors.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\from-json-schema.js",
+          "kind": "import-statement",
+          "original": "./from-json-schema.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\index.js",
+          "kind": "import-statement",
+          "original": "../locales/index.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\iso.js",
+          "kind": "import-statement",
+          "original": "./iso.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\iso.js",
+          "kind": "import-statement",
+          "original": "./iso.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\classic\\coerce.js",
+          "kind": "import-statement",
+          "original": "./coerce.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/index.js": {
+      "bytes": 594,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\core.js",
+          "kind": "import-statement",
+          "original": "./core.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\parse.js",
+          "kind": "import-statement",
+          "original": "./parse.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\errors.js",
+          "kind": "import-statement",
+          "original": "./errors.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\schemas.js",
+          "kind": "import-statement",
+          "original": "./schemas.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\checks.js",
+          "kind": "import-statement",
+          "original": "./checks.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\versions.js",
+          "kind": "import-statement",
+          "original": "./versions.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\util.js",
+          "kind": "import-statement",
+          "original": "./util.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\regexes.js",
+          "kind": "import-statement",
+          "original": "./regexes.js"
+        },
+        {
+          "path": "../locales/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\registries.js",
+          "kind": "import-statement",
+          "original": "./registries.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\doc.js",
+          "kind": "import-statement",
+          "original": "./doc.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\api.js",
+          "kind": "import-statement",
+          "original": "./api.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\to-json-schema.js",
+          "kind": "import-statement",
+          "original": "./to-json-schema.js"
+        },
+        {
+          "path": "./json-schema-processors.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\json-schema-generator.js",
+          "kind": "import-statement",
+          "original": "./json-schema-generator.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\core\\json-schema.js",
+          "kind": "import-statement",
+          "original": "./json-schema.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/index.js": {
+      "bytes": 2026,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ar.js",
+          "kind": "import-statement",
+          "original": "./ar.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\az.js",
+          "kind": "import-statement",
+          "original": "./az.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\be.js",
+          "kind": "import-statement",
+          "original": "./be.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\bg.js",
+          "kind": "import-statement",
+          "original": "./bg.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ca.js",
+          "kind": "import-statement",
+          "original": "./ca.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\cs.js",
+          "kind": "import-statement",
+          "original": "./cs.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\da.js",
+          "kind": "import-statement",
+          "original": "./da.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\de.js",
+          "kind": "import-statement",
+          "original": "./de.js"
+        },
+        {
+          "path": "./en.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\eo.js",
+          "kind": "import-statement",
+          "original": "./eo.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\es.js",
+          "kind": "import-statement",
+          "original": "./es.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\fa.js",
+          "kind": "import-statement",
+          "original": "./fa.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\fi.js",
+          "kind": "import-statement",
+          "original": "./fi.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\fr.js",
+          "kind": "import-statement",
+          "original": "./fr.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\fr-CA.js",
+          "kind": "import-statement",
+          "original": "./fr-CA.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\he.js",
+          "kind": "import-statement",
+          "original": "./he.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\hu.js",
+          "kind": "import-statement",
+          "original": "./hu.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\hy.js",
+          "kind": "import-statement",
+          "original": "./hy.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\id.js",
+          "kind": "import-statement",
+          "original": "./id.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\is.js",
+          "kind": "import-statement",
+          "original": "./is.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\it.js",
+          "kind": "import-statement",
+          "original": "./it.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ja.js",
+          "kind": "import-statement",
+          "original": "./ja.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ka.js",
+          "kind": "import-statement",
+          "original": "./ka.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\kh.js",
+          "kind": "import-statement",
+          "original": "./kh.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\km.js",
+          "kind": "import-statement",
+          "original": "./km.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ko.js",
+          "kind": "import-statement",
+          "original": "./ko.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\lt.js",
+          "kind": "import-statement",
+          "original": "./lt.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\mk.js",
+          "kind": "import-statement",
+          "original": "./mk.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ms.js",
+          "kind": "import-statement",
+          "original": "./ms.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\nl.js",
+          "kind": "import-statement",
+          "original": "./nl.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\no.js",
+          "kind": "import-statement",
+          "original": "./no.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ota.js",
+          "kind": "import-statement",
+          "original": "./ota.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ps.js",
+          "kind": "import-statement",
+          "original": "./ps.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\pl.js",
+          "kind": "import-statement",
+          "original": "./pl.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\pt.js",
+          "kind": "import-statement",
+          "original": "./pt.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ru.js",
+          "kind": "import-statement",
+          "original": "./ru.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\sl.js",
+          "kind": "import-statement",
+          "original": "./sl.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\sv.js",
+          "kind": "import-statement",
+          "original": "./sv.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ta.js",
+          "kind": "import-statement",
+          "original": "./ta.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\th.js",
+          "kind": "import-statement",
+          "original": "./th.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\tr.js",
+          "kind": "import-statement",
+          "original": "./tr.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ua.js",
+          "kind": "import-statement",
+          "original": "./ua.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\uk.js",
+          "kind": "import-statement",
+          "original": "./uk.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\ur.js",
+          "kind": "import-statement",
+          "original": "./ur.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\uz.js",
+          "kind": "import-statement",
+          "original": "./uz.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\vi.js",
+          "kind": "import-statement",
+          "original": "./vi.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\zh-CN.js",
+          "kind": "import-statement",
+          "original": "./zh-CN.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\zh-TW.js",
+          "kind": "import-statement",
+          "original": "./zh-TW.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\locales\\yo.js",
+          "kind": "import-statement",
+          "original": "./yo.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/json-schema-processors.js": {
+      "bytes": 20882,
+      "imports": [
+        {
+          "path": "./to-json-schema.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/classic/checks.js": {
+      "bytes": 663,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/en.js": {
+      "bytes": 4533,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/classic/schemas.js": {
+      "bytes": 45601,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../core/json-schema-processors.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../core/to-json-schema.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./checks.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./iso.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parse.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/classic/coerce.js": {
+      "bytes": 550,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./schemas.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/classic/compat.js": {
+      "bytes": 1090,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/classic/errors.js": {
+      "bytes": 1581,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/classic/from-json-schema.js": {
+      "bytes": 23172,
+      "imports": [
+        {
+          "path": "../core/registries.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./checks.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./iso.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./schemas.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/classic/iso.js": {
+      "bytes": 1151,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./schemas.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/classic/parse.js": {
+      "bytes": 997,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./errors.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js": {
+      "bytes": 1833,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4-mini\\index.js",
+          "kind": "import-statement",
+          "original": "zod/v4-mini"
+        },
+        {
+          "path": "./zod-compat.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\index.js",
+          "kind": "import-statement",
+          "original": "zod-to-json-schema"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js": {
+      "bytes": 6942,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v3\\index.js",
+          "kind": "import-statement",
+          "original": "zod/v3"
+        },
+        {
+          "path": "zod/v4-mini",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js": {
+      "bytes": 568,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/json-schema.js": {
+      "bytes": 11,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/json-schema-generator.js": {
+      "bytes": 3218,
+      "imports": [
+        {
+          "path": "./json-schema-processors.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./to-json-schema.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/core.js": {
+      "bytes": 2459,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/regexes.js": {
+      "bytes": 8840,
+      "imports": [
+        {
+          "path": "./util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/versions.js": {
+      "bytes": 70,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/util.js": {
+      "bytes": 21335,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/errors.js": {
+      "bytes": 6123,
+      "imports": [
+        {
+          "path": "./core.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/checks.js": {
+      "bytes": 20005,
+      "imports": [
+        {
+          "path": "./core.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./regexes.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/api.js": {
+      "bytes": 27841,
+      "imports": [
+        {
+          "path": "./checks.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./registries.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./schemas.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/doc.js": {
+      "bytes": 1088,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/to-json-schema.js": {
+      "bytes": 16397,
+      "imports": [
+        {
+          "path": "./registries.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/schemas.js": {
+      "bytes": 76984,
+      "imports": [
+        {
+          "path": "./checks.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./core.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./doc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parse.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./regexes.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./util.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./versions.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/parse.js": {
+      "bytes": 4528,
+      "imports": [
+        {
+          "path": "./core.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./errors.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/core/registries.js": {
+      "bytes": 1512,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/da.js": {
+      "bytes": 4804,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ua.js": {
+      "bytes": 111,
+      "imports": [
+        {
+          "path": "./uk.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/id.js": {
+      "bytes": 4577,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/pt.js": {
+      "bytes": 4568,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/uk.js": {
+      "bytes": 5430,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ca.js": {
+      "bytes": 4710,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/es.js": {
+      "bytes": 5439,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ps.js": {
+      "bytes": 4909,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ka.js": {
+      "bytes": 6274,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/it.js": {
+      "bytes": 4572,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/kh.js": {
+      "bytes": 111,
+      "imports": [
+        {
+          "path": "./km.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ko.js": {
+      "bytes": 4929,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/bg.js": {
+      "bytes": 5785,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/lt.js": {
+      "bytes": 8082,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ar.js": {
+      "bytes": 5188,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/mk.js": {
+      "bytes": 5157,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/pl.js": {
+      "bytes": 4966,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/be.js": {
+      "bytes": 6619,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/he.js": {
+      "bytes": 12005,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/hu.js": {
+      "bytes": 4696,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/no.js": {
+      "bytes": 4506,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/sl.js": {
+      "bytes": 4567,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ta.js": {
+      "bytes": 6369,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/fr.js": {
+      "bytes": 4585,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/sv.js": {
+      "bytes": 4663,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/tr.js": {
+      "bytes": 4454,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/zh-CN.js": {
+      "bytes": 4452,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ota.js": {
+      "bytes": 4525,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ms.js": {
+      "bytes": 4491,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/fi.js": {
+      "bytes": 4818,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/zh-TW.js": {
+      "bytes": 4498,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/eo.js": {
+      "bytes": 4603,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/is.js": {
+      "bytes": 4635,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ur.js": {
+      "bytes": 5271,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/uz.js": {
+      "bytes": 4681,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/nl.js": {
+      "bytes": 4762,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/az.js": {
+      "bytes": 4511,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/cs.js": {
+      "bytes": 4772,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/fr-CA.js": {
+      "bytes": 4554,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/hy.js": {
+      "bytes": 6390,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ja.js": {
+      "bytes": 4851,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/km.js": {
+      "bytes": 6242,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/th.js": {
+      "bytes": 6290,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/ru.js": {
+      "bytes": 6714,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/vi.js": {
+      "bytes": 4772,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/de.js": {
+      "bytes": 4588,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/yo.js": {
+      "bytes": 4665,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/locales/fa.js": {
+      "bytes": 5131,
+      "imports": [
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4-mini/index.js": {
+      "bytes": 99,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\mini\\external.js",
+          "kind": "import-statement",
+          "original": "../v4/mini/external.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\mini\\external.js",
+          "kind": "import-statement",
+          "original": "../v4/mini/external.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/index.js": {
+      "bytes": 1474,
+      "imports": [
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\Options.js",
+          "kind": "import-statement",
+          "original": "./Options.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\Refs.js",
+          "kind": "import-statement",
+          "original": "./Refs.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\errorMessages.js",
+          "kind": "import-statement",
+          "original": "./errorMessages.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\getRelativePath.js",
+          "kind": "import-statement",
+          "original": "./getRelativePath.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parseDef.js",
+          "kind": "import-statement",
+          "original": "./parseDef.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parseTypes.js",
+          "kind": "import-statement",
+          "original": "./parseTypes.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\any.js",
+          "kind": "import-statement",
+          "original": "./parsers/any.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\array.js",
+          "kind": "import-statement",
+          "original": "./parsers/array.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\bigint.js",
+          "kind": "import-statement",
+          "original": "./parsers/bigint.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\boolean.js",
+          "kind": "import-statement",
+          "original": "./parsers/boolean.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\branded.js",
+          "kind": "import-statement",
+          "original": "./parsers/branded.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\catch.js",
+          "kind": "import-statement",
+          "original": "./parsers/catch.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\date.js",
+          "kind": "import-statement",
+          "original": "./parsers/date.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\default.js",
+          "kind": "import-statement",
+          "original": "./parsers/default.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\effects.js",
+          "kind": "import-statement",
+          "original": "./parsers/effects.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\enum.js",
+          "kind": "import-statement",
+          "original": "./parsers/enum.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\intersection.js",
+          "kind": "import-statement",
+          "original": "./parsers/intersection.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\literal.js",
+          "kind": "import-statement",
+          "original": "./parsers/literal.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\map.js",
+          "kind": "import-statement",
+          "original": "./parsers/map.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\nativeEnum.js",
+          "kind": "import-statement",
+          "original": "./parsers/nativeEnum.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\never.js",
+          "kind": "import-statement",
+          "original": "./parsers/never.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\null.js",
+          "kind": "import-statement",
+          "original": "./parsers/null.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\nullable.js",
+          "kind": "import-statement",
+          "original": "./parsers/nullable.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\number.js",
+          "kind": "import-statement",
+          "original": "./parsers/number.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\object.js",
+          "kind": "import-statement",
+          "original": "./parsers/object.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\optional.js",
+          "kind": "import-statement",
+          "original": "./parsers/optional.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\pipeline.js",
+          "kind": "import-statement",
+          "original": "./parsers/pipeline.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\promise.js",
+          "kind": "import-statement",
+          "original": "./parsers/promise.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\readonly.js",
+          "kind": "import-statement",
+          "original": "./parsers/readonly.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\record.js",
+          "kind": "import-statement",
+          "original": "./parsers/record.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\set.js",
+          "kind": "import-statement",
+          "original": "./parsers/set.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\string.js",
+          "kind": "import-statement",
+          "original": "./parsers/string.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\tuple.js",
+          "kind": "import-statement",
+          "original": "./parsers/tuple.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\undefined.js",
+          "kind": "import-statement",
+          "original": "./parsers/undefined.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\union.js",
+          "kind": "import-statement",
+          "original": "./parsers/union.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\parsers\\unknown.js",
+          "kind": "import-statement",
+          "original": "./parsers/unknown.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\selectParser.js",
+          "kind": "import-statement",
+          "original": "./selectParser.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\zodToJsonSchema.js",
+          "kind": "import-statement",
+          "original": "./zodToJsonSchema.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod-to-json-schema\\dist\\esm\\zodToJsonSchema.js",
+          "kind": "import-statement",
+          "original": "./zodToJsonSchema.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/mini/external.js": {
+      "bytes": 708,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\mini\\parse.js",
+          "kind": "import-statement",
+          "original": "./parse.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\mini\\schemas.js",
+          "kind": "import-statement",
+          "original": "./schemas.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\mini\\checks.js",
+          "kind": "import-statement",
+          "original": "./checks.js"
+        },
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../core/json-schema-processors.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../locales/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\mini\\iso.js",
+          "kind": "import-statement",
+          "original": "./iso.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\mini\\iso.js",
+          "kind": "import-statement",
+          "original": "./iso.js"
+        },
+        {
+          "path": "C:\\Users\\MaximilianNussbaumer\\Workspace\\prefab-ui\\node_modules\\zod\\v4\\mini\\coerce.js",
+          "kind": "import-statement",
+          "original": "./coerce.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/nativeEnum.js": {
+      "bytes": 576,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/branded.js": {
+      "bytes": 134,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/number.js": {
+      "bytes": 2021,
+      "imports": [
+        {
+          "path": "../errorMessages.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/date.js": {
+      "bytes": 1388,
+      "imports": [
+        {
+          "path": "../errorMessages.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/pipeline.js": {
+      "bytes": 611,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/object.js": {
+      "bytes": 2309,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/array.js": {
+      "bytes": 1013,
+      "imports": [
+        {
+          "path": "zod/v3",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../errorMessages.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/default.js": {
+      "bytes": 197,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/union.js": {
+      "bytes": 3142,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/optional.js": {
+      "bytes": 623,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./any.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/enum.js": {
+      "bytes": 120,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/Options.js": {
+      "bytes": 1281,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/bigint.js": {
+      "bytes": 1877,
+      "imports": [
+        {
+          "path": "../errorMessages.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/effects.js": {
+      "bytes": 246,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./any.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/literal.js": {
+      "bytes": 609,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/getRelativePath.js": {
+      "bytes": 258,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/null.js": {
+      "bytes": 204,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/catch.js": {
+      "bytes": 139,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parseDef.js": {
+      "bytes": 2420,
+      "imports": [
+        {
+          "path": "./Options.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./selectParser.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./getRelativePath.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/any.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/map.js": {
+      "bytes": 789,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./record.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./any.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/nullable.js": {
+      "bytes": 1183,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./union.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/set.js": {
+      "bytes": 650,
+      "imports": [
+        {
+          "path": "../errorMessages.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parseTypes.js": {
+      "bytes": 11,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/intersection.js": {
+      "bytes": 1894,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/selectParser.js": {
+      "bytes": 4925,
+      "imports": [
+        {
+          "path": "zod/v3",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/any.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/array.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/bigint.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/boolean.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/branded.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/catch.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/date.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/default.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/effects.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/enum.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/intersection.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/literal.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/map.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/nativeEnum.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/never.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/null.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/nullable.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/number.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/object.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/optional.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/pipeline.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/promise.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/record.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/set.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/string.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/tuple.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/undefined.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/union.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/unknown.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/readonly.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/readonly.js": {
+      "bytes": 142,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/Refs.js": {
+      "bytes": 880,
+      "imports": [
+        {
+          "path": "./Options.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/string.js": {
+      "bytes": 14954,
+      "imports": [
+        {
+          "path": "../errorMessages.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/undefined.js": {
+      "bytes": 136,
+      "imports": [
+        {
+          "path": "./any.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/zodToJsonSchema.js": {
+      "bytes": 3188,
+      "imports": [
+        {
+          "path": "./parseDef.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./Refs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parsers/any.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/errorMessages.js": {
+      "bytes": 404,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/boolean.js": {
+      "bytes": 83,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/never.js": {
+      "bytes": 290,
+      "imports": [
+        {
+          "path": "./any.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/tuple.js": {
+      "bytes": 1066,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/unknown.js": {
+      "bytes": 112,
+      "imports": [
+        {
+          "path": "./any.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/promise.js": {
+      "bytes": 132,
+      "imports": [
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/record.js": {
+      "bytes": 2275,
+      "imports": [
+        {
+          "path": "zod/v3",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../parseDef.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./string.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./branded.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./any.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod-to-json-schema/dist/esm/parsers/any.js": {
+      "bytes": 509,
+      "imports": [
+        {
+          "path": "../getRelativePath.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/mini/checks.js": {
+      "bytes": 676,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/mini/coerce.js": {
+      "bytes": 690,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./schemas.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/mini/schemas.js": {
+      "bytes": 29703,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../core/util.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./parse.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/mini/iso.js": {
+      "bytes": 1311,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "./schemas.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v4/mini/parse.js": {
+      "bytes": 182,
+      "imports": [
+        {
+          "path": "../core/index.js",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    }
+  },
+  "outputs": {
+    "./index.js": {
+      "bytes": 414299,
+      "inputs": {
+        "src/renderer/state.ts": {
+          "bytesInOutput": 1559
+        },
+        "src/rx/pipes.ts": {
+          "bytesInOutput": 225
+        },
+        "src/renderer/rx.ts": {
+          "bytesInOutput": 6155
+        },
+        "src/renderer/actions.ts": {
+          "bytesInOutput": 4130
+        },
+        "src/renderer/engine.ts": {
+          "bytesInOutput": 1666
+        },
+        "src/renderer/components/layout.ts": {
+          "bytesInOutput": 2634
+        },
+        "src/renderer/components/typography.ts": {
+          "bytesInOutput": 4031
+        },
+        "src/renderer/components/card.ts": {
+          "bytesInOutput": 662
+        },
+        "src/renderer/components/data.ts": {
+          "bytesInOutput": 7030
+        },
+        "src/renderer/components/form.ts": {
+          "bytesInOutput": 11485
+        },
+        "src/renderer/components/interactive.ts": {
+          "bytesInOutput": 7559
+        },
+        "src/renderer/components/control.ts": {
+          "bytesInOutput": 1576
+        },
+        "src/renderer/components/alert.ts": {
+          "bytesInOutput": 839
+        },
+        "src/renderer/components/media.ts": {
+          "bytesInOutput": 2542
+        },
+        "src/renderer/components/chart-tooltip.ts": {
+          "bytesInOutput": 3197
+        },
+        "src/renderer/components/charts.ts": {
+          "bytesInOutput": 10739
+        },
+        "src/renderer/components/table.ts": {
+          "bytesInOutput": 1935
+        },
+        "src/renderer/components/index.ts": {
+          "bytesInOutput": 98
+        },
+        "src/renderer/theme.ts": {
+          "bytesInOutput": 1119
+        },
+        "src/renderer/transport.ts": {
+          "bytesInOutput": 1095
+        },
+        "node_modules/zod/v4/core/core.js": {
+          "bytesInOutput": 1153
+        },
+        "node_modules/zod/v4/core/util.js": {
+          "bytesInOutput": 10795
+        },
+        "node_modules/zod/v4/core/errors.js": {
+          "bytesInOutput": 2215
+        },
+        "node_modules/zod/v4/core/parse.js": {
+          "bytesInOutput": 1803
+        },
+        "node_modules/zod/v4/core/regexes.js": {
+          "bytesInOutput": 5367
+        },
+        "node_modules/zod/v4/core/checks.js": {
+          "bytesInOutput": 8717
+        },
+        "node_modules/zod/v4/core/doc.js": {
+          "bytesInOutput": 532
+        },
+        "node_modules/zod/v4/core/versions.js": {
+          "bytesInOutput": 52
+        },
+        "node_modules/zod/v4/core/schemas.js": {
+          "bytesInOutput": 31048
+        },
+        "node_modules/zod/v4/locales/ar.js": {
+          "bytesInOutput": 3200
+        },
+        "node_modules/zod/v4/locales/az.js": {
+          "bytesInOutput": 2552
+        },
+        "node_modules/zod/v4/locales/be.js": {
+          "bytesInOutput": 3709
+        },
+        "node_modules/zod/v4/locales/bg.js": {
+          "bytesInOutput": 3427
+        },
+        "node_modules/zod/v4/locales/ca.js": {
+          "bytesInOutput": 2619
+        },
+        "node_modules/zod/v4/locales/cs.js": {
+          "bytesInOutput": 2737
+        },
+        "node_modules/zod/v4/locales/da.js": {
+          "bytesInOutput": 2635
+        },
+        "node_modules/zod/v4/locales/de.js": {
+          "bytesInOutput": 2589
+        },
+        "node_modules/zod/v4/locales/en.js": {
+          "bytesInOutput": 2361
+        },
+        "node_modules/zod/v4/locales/eo.js": {
+          "bytesInOutput": 2584
+        },
+        "node_modules/zod/v4/locales/es.js": {
+          "bytesInOutput": 3062
+        },
+        "node_modules/zod/v4/locales/fa.js": {
+          "bytesInOutput": 3012
+        },
+        "node_modules/zod/v4/locales/fi.js": {
+          "bytesInOutput": 2759
+        },
+        "node_modules/zod/v4/locales/fr.js": {
+          "bytesInOutput": 2566
+        },
+        "node_modules/zod/v4/locales/fr-CA.js": {
+          "bytesInOutput": 2547
+        },
+        "node_modules/zod/v4/locales/he.js": {
+          "bytesInOutput": 6227
+        },
+        "node_modules/zod/v4/locales/hu.js": {
+          "bytesInOutput": 2697
+        },
+        "node_modules/zod/v4/locales/hy.js": {
+          "bytesInOutput": 3574
+        },
+        "node_modules/zod/v4/locales/id.js": {
+          "bytesInOutput": 2598
+        },
+        "node_modules/zod/v4/locales/is.js": {
+          "bytesInOutput": 2616
+        },
+        "node_modules/zod/v4/locales/it.js": {
+          "bytesInOutput": 2563
+        },
+        "node_modules/zod/v4/locales/ja.js": {
+          "bytesInOutput": 2872
+        },
+        "node_modules/zod/v4/locales/ka.js": {
+          "bytesInOutput": 4217
+        },
+        "node_modules/zod/v4/locales/km.js": {
+          "bytesInOutput": 4223
+        },
+        "node_modules/zod/v4/locales/kh.js": {
+          "bytesInOutput": 47
+        },
+        "node_modules/zod/v4/locales/ko.js": {
+          "bytesInOutput": 2776
+        },
+        "node_modules/zod/v4/locales/lt.js": {
+          "bytesInOutput": 4129
+        },
+        "node_modules/zod/v4/locales/mk.js": {
+          "bytesInOutput": 3138
+        },
+        "node_modules/zod/v4/locales/ms.js": {
+          "bytesInOutput": 2502
+        },
+        "node_modules/zod/v4/locales/nl.js": {
+          "bytesInOutput": 2608
+        },
+        "node_modules/zod/v4/locales/no.js": {
+          "bytesInOutput": 2507
+        },
+        "node_modules/zod/v4/locales/ota.js": {
+          "bytesInOutput": 2516
+        },
+        "node_modules/zod/v4/locales/ps.js": {
+          "bytesInOutput": 2790
+        },
+        "node_modules/zod/v4/locales/pl.js": {
+          "bytesInOutput": 2941
+        },
+        "node_modules/zod/v4/locales/pt.js": {
+          "bytesInOutput": 2559
+        },
+        "node_modules/zod/v4/locales/ru.js": {
+          "bytesInOutput": 3813
+        },
+        "node_modules/zod/v4/locales/sl.js": {
+          "bytesInOutput": 2548
+        },
+        "node_modules/zod/v4/locales/sv.js": {
+          "bytesInOutput": 2616
+        },
+        "node_modules/zod/v4/locales/ta.js": {
+          "bytesInOutput": 4337
+        },
+        "node_modules/zod/v4/locales/th.js": {
+          "bytesInOutput": 4271
+        },
+        "node_modules/zod/v4/locales/tr.js": {
+          "bytesInOutput": 2495
+        },
+        "node_modules/zod/v4/locales/uk.js": {
+          "bytesInOutput": 3421
+        },
+        "node_modules/zod/v4/locales/ua.js": {
+          "bytesInOutput": 47
+        },
+        "node_modules/zod/v4/locales/ur.js": {
+          "bytesInOutput": 3242
+        },
+        "node_modules/zod/v4/locales/uz.js": {
+          "bytesInOutput": 2664
+        },
+        "node_modules/zod/v4/locales/vi.js": {
+          "bytesInOutput": 2773
+        },
+        "node_modules/zod/v4/locales/zh-CN.js": {
+          "bytesInOutput": 2453
+        },
+        "node_modules/zod/v4/locales/zh-TW.js": {
+          "bytesInOutput": 2499
+        },
+        "node_modules/zod/v4/locales/yo.js": {
+          "bytesInOutput": 2698
+        },
+        "node_modules/zod/v4/locales/index.js": {
+          "bytesInOutput": 777
+        },
+        "node_modules/zod/v4/core/registries.js": {
+          "bytesInOutput": 775
+        },
+        "node_modules/zod/v4/core/api.js": {
+          "bytesInOutput": 10241
+        },
+        "node_modules/zod/v4/core/to-json-schema.js": {
+          "bytesInOutput": 5817
+        },
+        "node_modules/zod/v4/core/json-schema-processors.js": {
+          "bytesInOutput": 8763
+        },
+        "node_modules/zod/v4/core/json-schema-generator.js": {
+          "bytesInOutput": 916
+        },
+        "node_modules/zod/v4/core/json-schema.js": {
+          "bytesInOutput": 24
+        },
+        "node_modules/zod/v4/core/index.js": {
+          "bytesInOutput": 5018
+        },
+        "node_modules/zod/v4/classic/checks.js": {
+          "bytesInOutput": 484
+        },
+        "node_modules/zod/v4/classic/iso.js": {
+          "bytesInOutput": 541
+        },
+        "node_modules/zod/v4/classic/errors.js": {
+          "bytesInOutput": 434
+        },
+        "node_modules/zod/v4/classic/parse.js": {
+          "bytesInOutput": 186
+        },
+        "node_modules/zod/v4/classic/schemas.js": {
+          "bytesInOutput": 21186
+        },
+        "node_modules/zod/v4/classic/compat.js": {
+          "bytesInOutput": 446
+        },
+        "node_modules/zod/v4/classic/from-json-schema.js": {
+          "bytesInOutput": 7956
+        },
+        "node_modules/zod/v4/classic/coerce.js": {
+          "bytesInOutput": 269
+        },
+        "node_modules/zod/v4/classic/external.js": {
+          "bytesInOutput": 3891
+        },
+        "node_modules/zod/v4/classic/index.js": {
+          "bytesInOutput": 26
+        },
+        "node_modules/zod/v4/index.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/@modelcontextprotocol/sdk/dist/esm/types.js": {
+          "bytesInOutput": 12519
+        },
+        "node_modules/zod/v4/mini/parse.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod/v4/mini/schemas.js": {
+          "bytesInOutput": 14
+        },
+        "node_modules/zod/v4/mini/checks.js": {
+          "bytesInOutput": 14
+        },
+        "node_modules/zod/v4/mini/iso.js": {
+          "bytesInOutput": 14
+        },
+        "node_modules/zod/v4/mini/coerce.js": {
+          "bytesInOutput": 14
+        },
+        "node_modules/zod/v4/mini/external.js": {
+          "bytesInOutput": 51
+        },
+        "node_modules/zod/v4-mini/index.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js": {
+          "bytesInOutput": 581
+        },
+        "node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js": {
+          "bytesInOutput": 69
+        },
+        "node_modules/zod-to-json-schema/dist/esm/Options.js": {
+          "bytesInOutput": 86
+        },
+        "node_modules/zod-to-json-schema/dist/esm/Refs.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/errorMessages.js": {
+          "bytesInOutput": 0
+        },
+        "node_modules/zod-to-json-schema/dist/esm/getRelativePath.js": {
+          "bytesInOutput": 0
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/any.js": {
+          "bytesInOutput": 14
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/array.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/bigint.js": {
+          "bytesInOutput": 14
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/boolean.js": {
+          "bytesInOutput": 0
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/branded.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/catch.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/date.js": {
+          "bytesInOutput": 14
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/default.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/effects.js": {
+          "bytesInOutput": 26
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/enum.js": {
+          "bytesInOutput": 0
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/intersection.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/literal.js": {
+          "bytesInOutput": 0
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/string.js": {
+          "bytesInOutput": 98
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/record.js": {
+          "bytesInOutput": 36
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/map.js": {
+          "bytesInOutput": 31
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/nativeEnum.js": {
+          "bytesInOutput": 0
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/never.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/null.js": {
+          "bytesInOutput": 0
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/union.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/nullable.js": {
+          "bytesInOutput": 26
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/number.js": {
+          "bytesInOutput": 14
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/object.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/optional.js": {
+          "bytesInOutput": 26
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/pipeline.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/promise.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/set.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/tuple.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/undefined.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/unknown.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parsers/readonly.js": {
+          "bytesInOutput": 21
+        },
+        "node_modules/zod-to-json-schema/dist/esm/selectParser.js": {
+          "bytesInOutput": 141
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parseDef.js": {
+          "bytesInOutput": 31
+        },
+        "node_modules/zod-to-json-schema/dist/esm/parseTypes.js": {
+          "bytesInOutput": 14
+        },
+        "node_modules/zod-to-json-schema/dist/esm/zodToJsonSchema.js": {
+          "bytesInOutput": 31
+        },
+        "node_modules/zod-to-json-schema/dist/esm/index.js": {
+          "bytesInOutput": 176
+        },
+        "node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js": {
+          "bytesInOutput": 288
+        },
+        "node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js": {
+          "bytesInOutput": 15983
+        },
+        "node_modules/@modelcontextprotocol/ext-apps/dist/src/app.js": {
+          "bytesInOutput": 27479
+        },
+        "src/renderer/bridge.ts": {
+          "bytesInOutput": 8422
+        },
+        "src/renderer/app.ts": {
+          "bytesInOutput": 1772
+        },
+        "src/renderer/index.ts": {
+          "bytesInOutput": 3243
+        }
+      },
+      "imports": [
+      ],
+      "exports": [
+        "unregisterPipe",
+        "registerPipe",
+        "registerComponent",
+        "listPipes",
+        "isIframe",
+        "applyHostTheme",
+        "app",
+        "PrefabRenderer",
+        "Bridge"
+      ],
+      "entryPoint": "src/renderer/index.ts"
+    }
+  }
+}

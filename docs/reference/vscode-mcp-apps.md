@@ -196,7 +196,7 @@ Methods (per the MCP Apps spec):
 
 Two options for rendering `@maxhealth.tech/prefab` `$prefab` JSON
 inside a `ui://` resource. Both work in VS Code, Claude Desktop,
-ChatGPT, MistralOS, and any other MCP Apps host.
+ChatGPT, and any other MCP Apps host.
 
 ### Option A: `renderer.auto.min.js` (recommended)
 

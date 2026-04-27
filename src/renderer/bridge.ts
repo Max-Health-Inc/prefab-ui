@@ -2,14 +2,12 @@
  * Bridge -- PostMessage-based communication between a prefab app
  * (running in an iframe) and its host (the parent window).
  *
- * Triple protocol:
- *   1. prefab:*   — custom protocol (MistralOS, self-hosted)
+ * Dual protocol:
+ *   1. prefab:*   — custom protocol (self-hosted, any postMessage host)
  *   2. ui/*       — MCP Apps JSON-RPC 2.0 (VS Code, Claude, ChatGPT, Goose)
- *   3. ext-apps   — @modelcontextprotocol/ext-apps SDK (legacy fallback)
  *
  * Protocol detection: races prefab:init and ui/initialize JSON-RPC
- * in parallel — whichever responds first wins. Falls back to ext-apps
- * SDK only if both time out (2s).
+ * in parallel — whichever responds first wins.
  *
  * prefab:* messages:
  *   App  → Host: prefab:init, prefab:tool-call, prefab:send-message,
@@ -27,7 +25,6 @@
  */
 
 import type { McpTransport } from './actions.js'
-import type { App as ExtAppsApp, PostMessageTransport as ExtAppsPostMessageTransport } from '@modelcontextprotocol/ext-apps'
 
 // ── Public types ─────────────────────────────────────────────────────────────
 
@@ -86,11 +83,6 @@ interface JsonRpcResponse {
 
 type JsonRpcMessage = JsonRpcRequest | JsonRpcResponse
 
-// ── Lazy ext-apps types ──────────────────────────────────────────────────────
-
-type ExtApp = InstanceType<typeof ExtAppsApp>
-type ExtTransportClass = typeof ExtAppsPostMessageTransport
-
 /** Type guard: is this a JSON-RPC 2.0 envelope? */
 function isJsonRpcEnvelope(msg: unknown): msg is JsonRpcMessage {
   return (
@@ -105,7 +97,7 @@ function isJsonRpcEnvelope(msg: unknown): msg is JsonRpcMessage {
 export class Bridge {
   private hostOrigin: string
   private listeners = new Map<string, Set<(payload: Record<string, unknown>) => void>>()
-  private protocol: 'prefab' | 'jsonrpc' | 'ext-apps' = 'prefab'
+  private protocol: 'prefab' | 'jsonrpc' = 'prefab'
   private cleanup: (() => void) | undefined
 
   // prefab:* state
@@ -117,9 +109,6 @@ export class Bridge {
   private rpcIdCounter = 0
   private sentRpcIds = new Set<number | string>()
   private postFn: ((msg: unknown) => void) | undefined
-
-  // ext-apps state (lazy)
-  private extApp: ExtApp | undefined
 
   constructor(hostOrigin = '*') {
     this.hostOrigin = hostOrigin
@@ -176,29 +165,19 @@ export class Bridge {
 
   /**
    * Init handshake. Races prefab:init and ui/initialize JSON-RPC in parallel.
-   * Whichever protocol responds first wins. Falls back to ext-apps SDK
-   * only if both time out.
+   * Whichever protocol responds first wins.
    */
   async initialize(appCapabilities: AppCapabilities): Promise<HostContext> {
-    // Race prefab:* and JSON-RPC in parallel — first response wins
-    try {
-      return await Promise.any([
-        this.initPrefab(appCapabilities),
-        this.initJsonRpc(appCapabilities),
-      ])
-    } catch {
-      // Both timed out — fall back to ext-apps SDK
-      return this.initExtApps(appCapabilities)
-    }
+    return Promise.any([
+      this.initPrefab(appCapabilities),
+      this.initJsonRpc(appCapabilities),
+    ])
   }
 
   /** Create an McpTransport that routes through the active protocol. */
   createTransport(): McpTransport {
     if (this.protocol === 'jsonrpc') {
       return this.createJsonRpcTransport()
-    }
-    if (this.protocol === 'ext-apps' && this.extApp) {
-      return this.createExtAppsTransport()
     }
     return this.createPrefabTransport()
   }
@@ -207,8 +186,6 @@ export class Bridge {
   requestMode(mode: DisplayMode): void {
     if (this.protocol === 'jsonrpc') {
       void this.sendRpcRequest('ui/request-display-mode', { mode })
-    } else if (this.protocol === 'ext-apps' && this.extApp) {
-      void this.extApp.requestDisplayMode({ mode })
     } else {
       this.sendPrefab('prefab:request-mode', { mode })
     }
@@ -218,8 +195,6 @@ export class Bridge {
   openLink(url: string, target?: string): void {
     if (this.protocol === 'jsonrpc') {
       void this.sendRpcRequest('ui/open-link', { url, target })
-    } else if (this.protocol === 'ext-apps' && this.extApp) {
-      void this.extApp.openLink({ url })
     } else {
       this.sendPrefab('prefab:open-link', { url, target })
     }
@@ -229,8 +204,6 @@ export class Bridge {
   updateContext(context: Record<string, unknown>): void {
     if (this.protocol === 'jsonrpc') {
       void this.sendRpcRequest('ui/update-model-context', { structuredContent: context })
-    } else if (this.protocol === 'ext-apps' && this.extApp) {
-      void this.extApp.updateModelContext({ structuredContent: context })
     } else {
       this.sendPrefab('prefab:update-context', { context })
     }
@@ -253,7 +226,6 @@ export class Bridge {
   /** Disconnect and clean up. */
   disconnect(): void {
     this.cleanup?.()
-    this.extApp = undefined
     this.listeners.clear()
     for (const [, p] of this.pending) {
       p.reject(new Error('Bridge disconnected'))
@@ -267,7 +239,7 @@ export class Bridge {
   }
 
   /** Which protocol is active after initialize(). */
-  get activeProtocol(): 'prefab' | 'jsonrpc' | 'ext-apps' {
+  get activeProtocol(): 'prefab' | 'jsonrpc' {
     return this.protocol
   }
 
@@ -505,11 +477,6 @@ export class Bridge {
     })
   }
 
-  /** Send a JSON-RPC notification (no id, no response expected). */
-  private sendRpcNotification(method: string, params: Record<string, unknown>): void {
-    this.postJsonRpc({ jsonrpc: '2.0', method, params })
-  }
-
   /** Low-level: post a JSON-RPC envelope. Uses acquireVsCodeApi if available. */
   private postJsonRpc(msg: Record<string, unknown>): void {
     if (typeof window === 'undefined') return
@@ -525,96 +492,6 @@ export class Bridge {
     }
   }
 
-  // ── ext-apps fallback ──────────────────────────────────────────────────
-
-  private async initExtApps(appCapabilities: AppCapabilities): Promise<HostContext> {
-    const { App, PostMessageTransport } = await import('@modelcontextprotocol/ext-apps')
-    const Transport = PostMessageTransport as unknown as ExtTransportClass
-    const transport = new Transport(
-      window.parent,
-      window.parent,
-    )
-    const extApp = new App(
-      { name: 'prefab', version: '0.2' },
-      {
-        ...(appCapabilities.displayModes && {
-          availableDisplayModes: appCapabilities.displayModes,
-        }),
-      },
-    )
-
-    this.wireExtAppsEvents(extApp)
-
-    await Promise.race([
-      extApp.connect(transport),
-      rejectAfter(3000, 'ext-apps init timeout'),
-    ])
-
-    this.extApp = extApp
-    this.protocol = 'ext-apps'
-
-    const hostInfo = extApp.getHostVersion()
-    const hostCaps = extApp.getHostCapabilities()
-    const hostCtx = extApp.getHostContext()
-
-    return {
-      hostName: hostInfo?.name,
-      hostVersion: hostInfo?.version,
-      capabilities: {
-        toast: true,
-        navigation: hostCaps?.openLinks != null,
-        messaging: true,
-      },
-      theme: hostCtx?.theme
-        ? { colorScheme: hostCtx.theme as 'light' | 'dark' | 'auto' }
-        : undefined,
-      // ext-apps delivers tool args via ui/notifications/tool-input, not in hostContext
-      toolInput: undefined,
-      meta: hostCtx as unknown as Record<string, unknown>,
-    }
-  }
-
-  private wireExtAppsEvents(extApp: ExtApp): void {
-    extApp.addEventListener('toolinput', (params) => {
-      this.dispatch('prefab:tool-input', { args: params.arguments ?? {} })
-    })
-    extApp.addEventListener('toolinputpartial', (params) => {
-      this.dispatch('prefab:tool-input-partial', { args: params.arguments ?? {} })
-    })
-    extApp.addEventListener('toolresult', (params) => {
-      this.dispatch('prefab:tool-result', { result: params })
-    })
-    extApp.addEventListener('toolcancelled', () => {
-      this.dispatch('prefab:tool-cancelled', {})
-    })
-    extApp.addEventListener('hostcontextchanged', (params) => {
-      const theme: HostTheme = {}
-      if (params.theme) {
-        theme.colorScheme = params.theme as 'light' | 'dark' | 'auto'
-      }
-      this.dispatch('prefab:theme-update', theme as Record<string, unknown>)
-    })
-  }
-
-  private createExtAppsTransport(): McpTransport {
-    const extApp = this.extApp
-    if (!extApp) throw new Error('ext-apps not initialized')
-    return {
-      callTool: async (name: string, args: Record<string, unknown>): Promise<unknown> => {
-        const result = await extApp.callServerTool({ name, arguments: args })
-        const texts = (result.content as { type: string; text?: string }[])
-          .filter(c => c.type === 'text')
-          .map(c => c.text)
-        return texts.length === 1 ? texts[0] : texts
-      },
-      sendMessage: async (message: string): Promise<void> => {
-        await extApp.sendMessage({
-          role: 'user',
-          content: [{ type: 'text', text: message }],
-        })
-      },
-    }
-  }
 
   // ── Shared ─────────────────────────────────────────────────────────────
 
@@ -628,9 +505,6 @@ export class Bridge {
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function rejectAfter(ms: number, message: string): Promise<never> {
-  return new Promise<never>((_, reject) => setTimeout(() => reject(new Error(message)), ms))
-}
 
 // ── Host Theme → CSS Variables ───────────────────────────────────────────────
 

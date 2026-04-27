@@ -67,7 +67,7 @@ tool-result rendering, and DOM mounting — with a single `<script>` tag:
 <script src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab/dist/renderer.auto.min.js"></script>
 ```
 
-Works in VS Code, Claude Desktop, ChatGPT, MistralOS, and any MCP Apps host.
+Works in VS Code, Claude Desktop, ChatGPT, and any MCP Apps host.
 
 For manual control, use `renderer.min.js` instead:
 

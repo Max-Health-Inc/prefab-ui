@@ -10,7 +10,7 @@
  * where inline `<script>` blocks are forbidden.
  *
  * Supports all three Bridge protocols:
- *   - prefab:*   (MistralOS)
+ *   - prefab:*   (self-hosted, custom hosts)
  *   - ui/* JSON-RPC (VS Code, Claude, ChatGPT)
  *   - ext-apps SDK (legacy)
  *

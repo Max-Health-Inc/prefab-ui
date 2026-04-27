@@ -84,7 +84,5 @@
     "typescript-eslint": "^8.58.2",
     "vitepress": "1.6.4"
   },
-  "dependencies": {
-    "@modelcontextprotocol/ext-apps": "^1.6.0"
-  }
+  "dependencies": {}
 }

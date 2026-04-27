@@ -1,6 +1,6 @@
 # ext-apps Bridge
 
-The bridge enables prefab apps running in iframes to communicate with their host via PostMessage. This is the integration layer for MCP ext-apps in hosts like MistralOS, Claude, ChatGPT, or VS Code.
+The bridge enables prefab apps running in iframes to communicate with their host via PostMessage. This is the integration layer for MCP ext-apps in hosts like VS Code, Claude, ChatGPT, or any MCP Apps host.
 
 ## Quick Start
 
@@ -218,7 +218,7 @@ The bridge applies these as `--property: value` on `document.documentElement`.
 
 ```ts
 const ui = await prefab.app({
-  hostOrigin: 'https://app.mistralos.com',
+  hostOrigin: 'https://your-host.example.com',
 });
 ```
 

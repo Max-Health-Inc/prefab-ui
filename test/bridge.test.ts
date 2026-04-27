@@ -592,7 +592,7 @@ describe('Bridge (JSON-RPC ui/* protocol)', () => {
           type: 'prefab:init-response',
           payload: {
             capabilities: { toast: true },
-            hostName: 'MistralOS',
+            hostName: 'TestHost',
           },
         } satisfies BridgeMessage, '*')
       }
@@ -604,7 +604,7 @@ describe('Bridge (JSON-RPC ui/* protocol)', () => {
     const elapsed = Date.now() - start
 
     expect(bridge.activeProtocol).toBe('prefab')
-    expect(context.hostName).toBe('MistralOS')
+    expect(context.hostName).toBe('TestHost')
     expect(elapsed).toBeLessThan(500)
 
     window.removeEventListener('message', respondToPrefab)

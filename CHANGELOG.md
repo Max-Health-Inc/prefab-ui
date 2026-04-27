@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [0.2.0] — 2026-04-25
 
 ### Universal MCP Apps Bridge
-- **Fixed**: `renderer.auto.min.js` now works in VS Code, Claude Desktop, ChatGPT, MistralOS, and all MCP Apps hosts without any inline adapter code
+- **Fixed**: `renderer.auto.min.js` now works in VS Code, Claude Desktop, ChatGPT, and all MCP Apps hosts without any inline adapter code
 - `Bridge.initialize()` races `prefab:init` and `ui/initialize` JSON-RPC **in parallel** — whichever host protocol responds first wins. Eliminates the 1.5s dead time on JSON-RPC hosts (VS Code, Claude, ChatGPT)
 - `app()` now buffers `tool-result` events (same as existing `tool-input` buffering) — host can send results before `onToolResult` is registered without data loss
 - `auto.ts` defers `boot()` to `DOMContentLoaded` (or microtask if already loaded), ensuring the sandbox proxy is wired before sending `ui/initialize`
