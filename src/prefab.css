@@ -61,7 +61,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --background: #09090b;
     --foreground: #fafafa;
 
@@ -96,6 +96,80 @@
     --input: #27272a;
     --ring: #60a5fa;
   }
+}
+
+/* Explicit dark override via data-theme attribute */
+[data-theme="dark"] {
+  --background: #09090b;
+  --foreground: #fafafa;
+
+  --card: #111113;
+  --card-foreground: #fafafa;
+
+  --popover: #111113;
+  --popover-foreground: #fafafa;
+
+  --primary: #60a5fa;
+  --primary-foreground: #09090b;
+
+  --secondary: #1f2937;
+  --secondary-foreground: #f3f4f6;
+
+  --muted: #1f2937;
+  --muted-foreground: #9ca3af;
+
+  --accent: #1e3a5f;
+  --accent-foreground: #93c5fd;
+
+  --destructive: #f87171;
+  --destructive-foreground: #09090b;
+
+  --success: #4ade80;
+  --success-foreground: #09090b;
+
+  --warning: #fbbf24;
+  --warning-foreground: #09090b;
+
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #60a5fa;
+}
+
+/* Explicit light override via data-theme attribute */
+[data-theme="light"] {
+  --background: #ffffff;
+  --foreground: #09090b;
+
+  --card: #ffffff;
+  --card-foreground: #09090b;
+
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f3f4f6;
+  --secondary-foreground: #1f2937;
+
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+
+  --accent: #eff6ff;
+  --accent-foreground: #1e40af;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --success: #22c55e;
+  --success-foreground: #ffffff;
+
+  --warning: #f59e0b;
+  --warning-foreground: #ffffff;
+
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #3b82f6;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

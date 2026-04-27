@@ -1,0 +1,54 @@
+{
+  "$prefab": { "version": "0.2" },
+  "view": {
+    "type": "Column", "gap": 16,
+    "children": [
+      { "type": "Row", "children": [
+        { "type": "Heading", "content": "Analytics Dashboard", "level": 2 },
+        { "type": "Badge", "label": "Live", "variant": "success" }
+      ]},
+      { "type": "Row", "gap": 16, "children": [
+        { "type": "Card", "children": [{ "type": "CardContent", "children": [{ "type": "Metric", "label": "Total Users", "value": "12,847" }]}]},
+        { "type": "Card", "children": [{ "type": "CardContent", "children": [{ "type": "Metric", "label": "Revenue", "value": "$48,290" }]}]},
+        { "type": "Card", "children": [{ "type": "CardContent", "children": [{ "type": "Metric", "label": "Conversion", "value": "3.2%" }]}]},
+        { "type": "Card", "children": [{ "type": "CardContent", "children": [{ "type": "Metric", "label": "Avg. Session", "value": "4m 32s" }]}]}
+      ]},
+      { "type": "Row", "gap": 16, "children": [
+        { "type": "Card", "children": [
+          { "type": "CardHeader", "children": [{ "type": "CardTitle", "content": "Weekly Traffic" }]},
+          { "type": "CardContent", "children": [
+            { "type": "LineChart",
+              "data": [
+                { "day": "Mon", "visitors": 1200 }, { "day": "Tue", "visitors": 1800 },
+                { "day": "Wed", "visitors": 1400 }, { "day": "Thu", "visitors": 2200 },
+                { "day": "Fri", "visitors": 1900 }, { "day": "Sat", "visitors": 800 },
+                { "day": "Sun", "visitors": 600 }
+              ],
+              "series": [{ "dataKey": "visitors", "label": "Visitors", "color": "#4f46e5" }],
+              "xAxis": "day", "height": 220, "showGrid": true, "animate": true
+            }
+          ]}
+        ]},
+        { "type": "Card", "children": [
+          { "type": "CardHeader", "children": [{ "type": "CardTitle", "content": "Top Pages" }]},
+          { "type": "CardContent", "children": [
+            { "type": "DataTable",
+              "columns": [
+                { "key": "page", "header": "Page" },
+                { "key": "views", "header": "Views", "sortable": true },
+                { "key": "bounce", "header": "Bounce Rate" }
+              ],
+              "rows": [
+                { "page": "/home", "views": "4,280", "bounce": "32%" },
+                { "page": "/pricing", "views": "2,190", "bounce": "45%" },
+                { "page": "/docs", "views": "1,890", "bounce": "22%" },
+                { "page": "/blog", "views": "1,420", "bounce": "38%" }
+              ],
+              "search": false, "paginated": false
+            }
+          ]}
+        ]}
+      ]}
+    ]
+  }
+}

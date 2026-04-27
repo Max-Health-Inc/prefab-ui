@@ -1,0 +1,27 @@
+{
+  "$prefab": { "version": "0.2" },
+  "view": {
+    "type": "Column", "gap": 16,
+    "children": [
+      { "type": "Heading", "content": "User Directory", "level": 2 },
+      { "type": "DataTable",
+        "columns": [
+          { "key": "name", "header": "Name", "sortable": true },
+          { "key": "role", "header": "Role", "sortable": true },
+          { "key": "department", "header": "Department" },
+          { "key": "status", "header": "Status" }
+        ],
+        "rows": [
+          { "name": "Alice Chen", "role": "Admin", "department": "Engineering", "status": "Active" },
+          { "name": "Bob Martinez", "role": "Editor", "department": "Marketing", "status": "Active" },
+          { "name": "Carol Davis", "role": "Viewer", "department": "Sales", "status": "Inactive" },
+          { "name": "Dan Wilson", "role": "Admin", "department": "Engineering", "status": "Active" },
+          { "name": "Eva Brown", "role": "Editor", "department": "Design", "status": "Active" },
+          { "name": "Frank Lee", "role": "Viewer", "department": "Support", "status": "Active" },
+          { "name": "Grace Kim", "role": "Admin", "department": "Operations", "status": "Active" }
+        ],
+        "search": true, "paginated": false
+      }
+    ]
+  }
+}

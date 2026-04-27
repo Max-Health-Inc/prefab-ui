@@ -43,7 +43,7 @@ export function applyTheme(root: HTMLElement, theme?: ThemeConfig): void {
     const props = Object.entries(theme.dark)
       .map(([key, value]) => `  --${sanitizeCssIdent(key)}: ${sanitizeCssValue(value)};`)
       .join('\n')
-    styleEl.textContent = `@media (prefers-color-scheme: dark) {\n  :root {\n${props}\n  }\n}`
+    styleEl.textContent = `[data-theme="dark"] {\n${props}\n}\n@media (prefers-color-scheme: dark) {\n  :root:not([data-theme="light"]) {\n${props}\n  }\n}`
   }
 }
 

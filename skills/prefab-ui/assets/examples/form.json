@@ -1,0 +1,38 @@
+{
+  "$prefab": { "version": "0.2" },
+  "view": {
+    "type": "Card",
+    "children": [
+      { "type": "CardHeader", "children": [
+        { "type": "CardTitle", "content": "Contact Us" },
+        { "type": "CardDescription", "content": "Send us a message and we'll get back to you within 24 hours." }
+      ]},
+      { "type": "CardContent", "children": [
+        { "type": "Column", "gap": 12, "children": [
+          { "type": "Input", "name": "name", "inputType": "text", "placeholder": "Your name" },
+          { "type": "Input", "name": "email", "inputType": "email", "placeholder": "you@example.com" },
+          { "type": "Select", "name": "subject", "placeholder": "Select a subject",
+            "options": [
+              { "label": "General Inquiry", "value": "general" },
+              { "label": "Bug Report", "value": "bug" },
+              { "label": "Feature Request", "value": "feature" },
+              { "label": "Partnership", "value": "partnership" }
+            ]
+          },
+          { "type": "Textarea", "name": "message", "placeholder": "Your message…", "rows": 4 },
+          { "type": "Row", "gap": 8, "children": [
+            { "type": "Button", "label": "Send Message", "variant": "default",
+              "onClick": { "action": "showToast", "title": "Sent!", "description": "Your message has been submitted." }},
+            { "type": "Button", "label": "Clear", "variant": "outline",
+              "onClick": [
+                { "action": "setState", "key": "name", "value": "" },
+                { "action": "setState", "key": "email", "value": "" },
+                { "action": "setState", "key": "message", "value": "" }
+              ]}
+          ]}
+        ]}
+      ]}
+    ]
+  },
+  "state": { "name": "", "email": "", "subject": "", "message": "" }
+}
