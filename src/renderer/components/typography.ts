@@ -108,8 +108,13 @@ function escapeHtml(s: string): string {
 function renderInline(line: string): string {
   let out = escapeHtml(line)
 
-  // Inline code (must come first to protect contents from further parsing)
-  out = out.replace(/`([^`]+)`/g, '<code>$1</code>')
+  // Extract inline code spans first to protect their contents from formatting.
+  // Replace with placeholders, process other inline formatting, then restore.
+  const codeSpans: string[] = []
+  out = out.replace(/`([^`]+)`/g, (_m, content: string) => {
+    codeSpans.push(`<code>${content}</code>`)
+    return `\x00CODE${codeSpans.length - 1}\x00`
+  })
 
   // Images: ![alt](src)
   out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_m, alt: string, src: string) => {
@@ -138,12 +143,15 @@ function renderInline(line: string): string {
   // Strikethrough: ~~text~~
   out = out.replace(/~~(.+?)~~/g, '<del>$1</del>')
 
+  // Restore inline code spans
+  out = out.replace(/\x00CODE(\d+)\x00/g, (_m, idx: string) => codeSpans[parseInt(idx)])
+
   return out
 }
 
 /** Convert a markdown string to sanitized HTML. */
 function renderMarkdownToHtml(md: string): string {
-  const lines = md.split('\n')
+  const lines = md.replace(/\r\n?/g, '\n').split('\n')
   const html: string[] = []
   let i = 0
 
