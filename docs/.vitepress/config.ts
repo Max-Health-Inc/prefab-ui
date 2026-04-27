@@ -21,7 +21,8 @@ export default defineConfig({
   },
 
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
+    ['link', { rel: 'icon', href: '/prefab/brand/favicon.ico' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/prefab/brand/logo.svg' }],
   ],
 
   // Ensure static public/ apps (demo, playground) are served in dev mode.
@@ -43,7 +44,7 @@ export default defineConfig({
   },
 
   themeConfig: {
-    logo: '/logo.svg',
+    logo: { light: '/brand/logo.svg', dark: '/brand/logo-light.svg' },
 
     nav: [
       { text: 'Guide', link: '/guide/getting-started' },
