@@ -10,6 +10,9 @@ hero:
       text: Get Started
       link: /guide/getting-started
     - theme: brand
+      text: See the Demo
+      link: /demo/
+    - theme: brand
       text: Try the Playground
       link: /playground/
     - theme: alt

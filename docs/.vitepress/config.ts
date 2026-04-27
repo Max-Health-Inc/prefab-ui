@@ -24,12 +24,31 @@ export default defineConfig({
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
   ],
 
+  // Ensure static public/ apps (demo, playground) are served in dev mode.
+  // VitePress's SPA router intercepts /demo/ and /playground/ as client routes;
+  // this middleware rewrites them to the actual index.html before that happens.
+  vite: {
+    plugins: [{
+      name: 'serve-public-apps',
+      configureServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          const publicApps = ['/prefab/demo/', '/prefab/playground/']
+          if (req.url && publicApps.includes(req.url)) {
+            req.url = req.url.replace(/\/$/, '/index.html')
+          }
+          next()
+        })
+      },
+    }],
+  },
+
   themeConfig: {
     logo: '/logo.svg',
 
     nav: [
       { text: 'Guide', link: '/guide/getting-started' },
       { text: 'Reference', link: '/reference/components' },
+      { text: 'Demo', link: '/demo/', target: '_blank' },
       { text: 'Playground', link: '/playground/', target: '_blank' },
       {
         text: 'Links',
