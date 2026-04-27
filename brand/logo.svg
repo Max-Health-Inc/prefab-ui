@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     viewBox="0 0 252 252" 
+     width="252" 
+     height="252">
+  <title>M Logo</title>
+  <rect x="0" y="0" width="252" height="252" fill="#000000"/>
+  <path d="M83.60 197L44.40 197L44.40 55L96.00 55L126.00 145.20L156 55L207.60 55L207.60 197L168.40 197L168.40 117L139.80 196.40L112.00 196.40L83.60 117L83.60 197Z" fill="#ffffff"/>
+  <rect x="2" y="2" width="248" height="248" fill="none" stroke="#ffffff" stroke-width="4"/>
+</svg>
