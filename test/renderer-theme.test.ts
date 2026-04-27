@@ -533,3 +533,126 @@ describe('Theme: Sparkline', () => {
     expect(polylines[0].getAttribute('stroke')).toContain('var(--primary')
   })
 })
+
+// ── Theme Toggle ─────────────────────────────────────────────────────────────
+
+import { createThemeToggle } from '../src/renderer/theme'
+
+describe('Theme Toggle', () => {
+  it('should inject a toggle button into the root element', () => {
+    const root = document.createElement('div')
+    document.body.appendChild(root)
+    const cleanup = createThemeToggle(root)
+    const btn = root.querySelector('.pf-theme-toggle')
+    expect(btn).not.toBeNull()
+    expect(btn?.tagName).toBe('BUTTON')
+    cleanup()
+    root.remove()
+  })
+
+  it('should set data-theme on root and documentElement', () => {
+    const root = document.createElement('div')
+    document.body.appendChild(root)
+    const cleanup = createThemeToggle(root, { storageKey: 'test-theme-toggle-1' })
+    const theme = root.getAttribute('data-theme')
+    expect(theme === 'light' || theme === 'dark').toBe(true)
+    expect(document.documentElement.getAttribute('data-theme')).toBe(theme)
+    cleanup()
+    root.remove()
+  })
+
+  it('should toggle between light and dark on click', () => {
+    const root = document.createElement('div')
+    document.body.appendChild(root)
+    const cleanup = createThemeToggle(root, { storageKey: 'test-theme-toggle-2' })
+    const btn = root.querySelector('.pf-theme-toggle') as HTMLElement
+    const initial = root.getAttribute('data-theme')!
+    btn.click()
+    const toggled = root.getAttribute('data-theme')
+    expect(toggled).toBe(initial === 'dark' ? 'light' : 'dark')
+    btn.click()
+    expect(root.getAttribute('data-theme')).toBe(initial)
+    cleanup()
+    root.remove()
+  })
+
+  it('should sync when document.documentElement data-theme changes externally', async () => {
+    const root = document.createElement('div')
+    document.body.appendChild(root)
+    const cleanup = createThemeToggle(root, { storageKey: 'test-theme-toggle-3' })
+    // Force a known state via the built-in toggle click path
+    const btn = root.querySelector('.pf-theme-toggle') as HTMLElement
+    // Click until we're at dark
+    while (root.getAttribute('data-theme') !== 'dark') btn.click()
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark')
+
+    // Simulate external change on <html> — MutationObserver may be async in happy-dom
+    document.documentElement.setAttribute('data-theme', 'light')
+    // Wait a tick for MutationObserver
+    await new Promise(r => setTimeout(r, 0))
+    expect(root.getAttribute('data-theme')).toBe('light')
+    cleanup()
+    root.remove()
+  })
+
+  it('should not sync document when syncDocument is false', () => {
+    const root = document.createElement('div')
+    document.body.appendChild(root)
+    document.documentElement.removeAttribute('data-theme')
+    const cleanup = createThemeToggle(root, { syncDocument: false, storageKey: 'test-theme-toggle-4' })
+    // The toggle should set data-theme on root but NOT on documentElement
+    const rootTheme = root.getAttribute('data-theme')
+    expect(rootTheme === 'light' || rootTheme === 'dark').toBe(true)
+    // documentElement should not have been set by the toggle
+    // (it may have been set by earlier tests, so just verify the click doesn't sync)
+    const btn = root.querySelector('.pf-theme-toggle') as HTMLElement
+    const before = document.documentElement.getAttribute('data-theme')
+    btn.click()
+    expect(document.documentElement.getAttribute('data-theme')).toBe(before)
+    cleanup()
+    root.remove()
+  })
+
+  it('should remove button and observer on cleanup', () => {
+    const root = document.createElement('div')
+    document.body.appendChild(root)
+    const cleanup = createThemeToggle(root, { storageKey: 'test-theme-toggle-5' })
+    expect(root.querySelector('.pf-theme-toggle')).not.toBeNull()
+    cleanup()
+    expect(root.querySelector('.pf-theme-toggle')).toBeNull()
+    root.remove()
+  })
+
+  it('should show moon icon for dark and sun icon for light', () => {
+    const root = document.createElement('div')
+    document.body.appendChild(root)
+    const cleanup = createThemeToggle(root, { storageKey: 'test-theme-toggle-6' })
+    const btn = root.querySelector('.pf-theme-toggle') as HTMLElement
+
+    // Force dark
+    root.setAttribute('data-theme', 'light')
+    btn.click() // toggles from the current root theme
+    // After clicking from light → dark, should show moon
+    if (root.getAttribute('data-theme') === 'dark') {
+      expect(btn.innerHTML).toContain('21.752') // moon path fragment
+    }
+    btn.click() // dark → light, should show sun
+    if (root.getAttribute('data-theme') === 'light') {
+      expect(btn.innerHTML).toContain('M12 3v2.25') // sun path fragment
+    }
+
+    cleanup()
+    root.remove()
+  })
+
+  it('should respect position option', () => {
+    const root = document.createElement('div')
+    document.body.appendChild(root)
+    const cleanup = createThemeToggle(root, { position: 'bottom-left', storageKey: 'test-theme-toggle-7' })
+    const btn = root.querySelector('.pf-theme-toggle') as HTMLElement
+    expect(btn.style.bottom).toBe('8px')
+    expect(btn.style.left).toBe('8px')
+    cleanup()
+    root.remove()
+  })
+})

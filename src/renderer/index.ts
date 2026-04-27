@@ -31,7 +31,8 @@ import { Store } from './state.js'
 import { renderNode } from './engine.js'
 import type { ComponentNode, RenderContext } from './engine.js'
 import { registerAllComponents } from './components/index.js'
-import { applyTheme, applyKeyBindings } from './theme.js'
+import { applyTheme, applyKeyBindings, createThemeToggle } from './theme.js'
+import type { ThemeToggleOptions } from './theme.js'
 import { dispatchActions, clearAllIntervals } from './actions.js'
 import type { McpTransport, ToastEvent, ActionJSON } from './actions.js'
 import { createHttpTransport, createNoopTransport } from './transport.js'
@@ -58,6 +59,8 @@ export type {
   DisplayMode,
   BridgeMessage,
 } from './bridge.js'
+export { createThemeToggle } from './theme.js'
+export type { ThemeToggleOptions } from './theme.js'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -83,6 +86,8 @@ export interface MountOptions {
   transport?: McpTransport | McpTransportOptions
   /** Toast notification handler. */
   onToast?: (toast: ToastEvent) => void
+  /** Show a built-in theme toggle. Default: true. Set false to suppress. */
+  themeToggle?: boolean | ThemeToggleOptions
 }
 
 export interface MountedApp {
@@ -174,11 +179,22 @@ export const PrefabRenderer = {
       })
     }
 
+    // Theme toggle
+    let cleanupToggle: (() => void) | undefined
+    const toggleOpt = options?.themeToggle ?? true
+    if (toggleOpt !== false) {
+      const toggleCfg = typeof toggleOpt === 'object' ? toggleOpt : undefined
+      cleanupToggle = createThemeToggle(root, toggleCfg)
+    }
+
     // Render function
     function render(): void {
+      // Preserve the toggle button across re-renders
+      const toggleBtn = root.querySelector('.pf-theme-toggle')
       root.innerHTML = ''
       const dom = renderNode(data.view, ctx)
       root.appendChild(dom)
+      if (toggleBtn) root.appendChild(toggleBtn)
     }
 
     // Initial render
@@ -195,6 +211,7 @@ export const PrefabRenderer = {
       },
       store,
       destroy() {
+        cleanupToggle?.()
         cleanupKeys?.()
         clearAllIntervals()
         for (const s of styleEls) s.remove()
@@ -333,6 +350,7 @@ if (typeof window !== 'undefined') {
     unregisterPipe,
     listPipes,
     registerComponent,
+    createThemeToggle,
   }
 
   // Auto-mount if data is available

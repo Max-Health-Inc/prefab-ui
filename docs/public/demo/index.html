@@ -1068,7 +1068,7 @@
       // Mount prefab after DOM insertion
       requestAnimationFrame(() => {
         try {
-          const r = PrefabRenderer.mount(renderTarget, wireData);
+          const r = PrefabRenderer.mount(renderTarget, wireData, { themeToggle: false });
           currentRenderers.push(r);
         } catch (err) {
           renderTarget.innerHTML = '<p style="color:#ef4444;padding:12px;">Render error: ' + escapeHtml(String(err)) + '</p>';
