@@ -23,7 +23,6 @@ function renderTabs(node: ComponentNode, ctx: RenderContext): HTMLElement {
   tabBar.setAttribute('role', 'tablist')
   tabBar.style.display = 'flex'
   tabBar.style.gap = '4px'
-  tabBar.style.borderBottom = '2px solid var(--border, #e5e7eb)'
   tabBar.style.marginBottom = '12px'
 
   const panels: HTMLElement[] = []
@@ -65,7 +64,7 @@ function renderTabs(node: ComponentNode, ctx: RenderContext): HTMLElement {
       })
 
       if (i === 0) {
-        btn.style.borderBottomColor = 'var(--primary, #3b82f6)'
+        btn.classList.add('pf-tab-active')
         btn.style.fontWeight = '600'
       }
 
@@ -81,11 +80,12 @@ function renderTabs(node: ComponentNode, ctx: RenderContext): HTMLElement {
     buttons.forEach(b => {
       b.style.borderBottomColor = 'transparent'
       b.style.fontWeight = 'normal'
+      b.classList.remove('pf-tab-active')
       b.setAttribute('aria-selected', 'false')
       b.tabIndex = -1
     })
     panels[index].style.display = 'block'
-    buttons[index].style.borderBottomColor = 'var(--primary, #3b82f6)'
+    buttons[index].classList.add('pf-tab-active')
     buttons[index].style.fontWeight = '600'
     buttons[index].setAttribute('aria-selected', 'true')
     buttons[index].tabIndex = 0
@@ -126,7 +126,6 @@ function renderAccordion(node: ComponentNode, ctx: RenderContext): HTMLElement {
 
 function renderAccordionItem(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const wrapper = el('div', 'pf-accordion-item')
-  wrapper.style.borderBottom = '1px solid var(--border, #e5e7eb)'
 
   const contentId = `pf-acc-${Math.random().toString(36).slice(2, 8)}`
 
@@ -181,8 +180,6 @@ function renderDialog(node: ComponentNode, ctx: RenderContext): HTMLElement {
   dialog.setAttribute('aria-modal', 'true')
   dialog.style.maxWidth = '500px'
   dialog.style.width = '100%'
-  dialog.style.border = '1px solid var(--border, #e5e7eb)'
-  dialog.style.borderRadius = 'var(--radius, 8px)'
   dialog.style.padding = '24px'
 
   if (node.title != null) {
@@ -196,7 +193,6 @@ function renderDialog(node: ComponentNode, ctx: RenderContext): HTMLElement {
   if (node.description != null) {
     const desc = el('p', 'pf-dialog-desc')
     desc.textContent = resolveStr(node.description, ctx)
-    desc.style.color = 'var(--muted-foreground, #6b7280)'
     dialog.appendChild(desc)
   }
 
@@ -227,9 +223,6 @@ function renderPopover(node: ComponentNode, ctx: RenderContext): HTMLElement {
   content.style.position = 'absolute'
   content.style.zIndex = '50'
   content.style.padding = '12px'
-  content.style.border = '1px solid var(--border, #e5e7eb)'
-  content.style.borderRadius = 'var(--radius, 8px)'
-  content.style.backgroundColor = 'var(--popover, #fff)'
   content.style.boxShadow = '0 4px 6px -1px rgb(0 0 0 / 0.1)'
 
   if (node.title != null) {
@@ -269,7 +262,6 @@ function renderTooltip(node: ComponentNode, ctx: RenderContext): HTMLElement {
   tip.style.transform = 'translateX(-50%)'
   tip.style.padding = '4px 8px'
   tip.style.borderRadius = '4px'
-  tip.style.backgroundColor = 'var(--popover, #1f2937)'
   tip.style.color = '#fff'
   tip.style.fontSize = '12px'
   tip.style.whiteSpace = 'nowrap'
@@ -298,9 +290,6 @@ function renderHoverCard(node: ComponentNode, ctx: RenderContext): HTMLElement {
   content.style.position = 'absolute'
   content.style.zIndex = '50'
   content.style.padding = '16px'
-  content.style.border = '1px solid var(--border, #e5e7eb)'
-  content.style.borderRadius = 'var(--radius, 8px)'
-  content.style.backgroundColor = 'var(--card, #fff)'
   content.style.boxShadow = '0 4px 6px -1px rgb(0 0 0 / 0.1)'
   content.style.minWidth = '200px'
 

@@ -47,7 +47,6 @@ function renderTableHeader(node: ComponentNode, ctx: RenderContext): HTMLElement
   th.className = 'pf-table-header'
   th.style.textAlign = 'left'
   th.style.padding = '8px 12px'
-  th.style.borderBottom = '2px solid var(--border, #e5e7eb)'
   th.style.fontWeight = '600'
   th.textContent = resolveStr(node.content, ctx)
   return th
@@ -57,7 +56,6 @@ function renderTableCell(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const td = document.createElement('td')
   td.className = 'pf-table-cell'
   td.style.padding = '8px 12px'
-  td.style.borderBottom = '1px solid var(--border, #e5e7eb)'
   if (node.colSpan != null) td.colSpan = node.colSpan as number
   if (node.rowSpan != null) td.rowSpan = node.rowSpan as number
   renderChildren(node, td, ctx)
@@ -68,7 +66,6 @@ function renderTableCaption(node: ComponentNode, ctx: RenderContext): HTMLElemen
   const caption = document.createElement('caption')
   caption.className = 'pf-table-caption'
   caption.style.padding = '8px'
-  caption.style.color = 'var(--muted-foreground, #6b7280)'
   caption.style.fontSize = '14px'
   caption.textContent = resolveStr(node.content, ctx)
   return caption

@@ -334,8 +334,6 @@ function renderSlider(node: ComponentNode, ctx: RenderContext): HTMLElement {
 
 function applyInputStyle(e: HTMLElement): void {
   e.style.padding = '8px 12px'
-  e.style.border = '1px solid var(--border, #d1d5db)'
-  e.style.borderRadius = 'var(--radius, 6px)'
   e.style.fontSize = '14px'
   e.style.width = '100%'
   e.style.boxSizing = 'border-box'
@@ -343,24 +341,18 @@ function applyInputStyle(e: HTMLElement): void {
 
 function applyButtonStyle(btn: HTMLButtonElement, variant: string): void {
   btn.style.padding = '8px 16px'
-  btn.style.borderRadius = 'var(--radius, 6px)'
   btn.style.fontSize = '14px'
   btn.style.fontWeight = '500'
   btn.style.cursor = 'pointer'
   btn.style.border = 'none'
 
-  const styles: Record<string, { bg: string; fg: string }> = {
-    default: { bg: 'var(--primary, #3b82f6)', fg: '#fff' },
-    secondary: { bg: 'var(--secondary, #f3f4f6)', fg: 'var(--secondary-foreground, #1f2937)' },
-    destructive: { bg: 'var(--destructive, #ef4444)', fg: '#fff' },
-    outline: { bg: 'transparent', fg: 'inherit' },
-    ghost: { bg: 'transparent', fg: 'inherit' },
-    link: { bg: 'transparent', fg: 'var(--primary, #3b82f6)' },
+  // Only apply non-theme static colors for ghost (transparent bg)
+  if (variant === 'ghost') {
+    btn.style.backgroundColor = 'transparent'
+    btn.style.color = 'inherit'
   }
-  const s = styles[variant] ?? styles.default
-  btn.style.backgroundColor = s.bg
-  btn.style.color = s.fg
-  if (variant === 'outline') btn.style.border = '1px solid var(--border, #d1d5db)'
+  // All themed variants (default, secondary, destructive, outline, link) are
+  // handled by prefab.css via .pf-button[data-variant="..."] selectors
 }
 
 // ── Generic helpers for simple container/text renderers ──────────────────────
@@ -385,7 +377,6 @@ function renderSeparatorHr(): HTMLElement {
   const hr = document.createElement('hr')
   hr.className = 'pf-separator'
   hr.style.border = 'none'
-  hr.style.borderTop = '1px solid var(--border, #e5e7eb)'
   hr.style.margin = '4px 0'
   return hr
 }
@@ -473,15 +464,12 @@ function renderCombobox(node: ComponentNode, ctx: RenderContext): HTMLElement {
 
   input.style.padding = '6px 12px'
   input.style.borderRadius = '6px'
-  input.style.border = '1px solid var(--border, #d1d5db)'
   input.style.width = '100%'
   input.style.boxSizing = 'border-box'
 
   const dropdown = el('div', 'pf-combobox-dropdown')
   dropdown.style.display = 'none'
   dropdown.style.position = 'absolute'
-  dropdown.style.background = 'var(--popover, #fff)'
-  dropdown.style.border = '1px solid var(--border, #d1d5db)'
   dropdown.style.borderRadius = '6px'
   dropdown.style.maxHeight = '200px'
   dropdown.style.overflowY = 'auto'
@@ -549,7 +537,6 @@ function renderCalendar(node: ComponentNode, ctx: RenderContext): HTMLElement {
   if (node.maxDate != null) input.max = resolveStr(node.maxDate, ctx)
   input.style.padding = '6px 12px'
   input.style.borderRadius = '6px'
-  input.style.border = '1px solid var(--border, #d1d5db)'
 
   input.addEventListener('change', () => {
     ctx.store.set(input.name, input.value)
@@ -579,7 +566,6 @@ function renderDatePicker(node: ComponentNode, ctx: RenderContext): HTMLElement 
   if (node.maxDate != null) input.max = resolveStr(node.maxDate, ctx)
   input.style.padding = '6px 12px'
   input.style.borderRadius = '6px'
-  input.style.border = '1px solid var(--border, #d1d5db)'
   input.style.width = '100%'
   input.style.boxSizing = 'border-box'
 
@@ -598,8 +584,6 @@ function renderDatePicker(node: ComponentNode, ctx: RenderContext): HTMLElement 
 
 function renderChoiceCard(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const e = el('div', 'pf-choice-card')
-  e.style.border = '2px solid var(--border, #d1d5db)'
-  e.style.borderRadius = '8px'
   e.style.padding = '16px'
   e.style.cursor = 'pointer'
   e.style.transition = 'border-color 0.2s'
@@ -607,8 +591,6 @@ function renderChoiceCard(node: ComponentNode, ctx: RenderContext): HTMLElement 
 
   if (node.selected === true) {
     e.dataset.selected = 'true'
-    e.style.borderColor = 'var(--primary, #3b82f6)'
-    e.style.backgroundColor = 'var(--accent, #eff6ff)'
   }
 
   if (node.label != null) {
@@ -621,7 +603,6 @@ function renderChoiceCard(node: ComponentNode, ctx: RenderContext): HTMLElement 
     const desc = el('div', 'pf-choice-card-description')
     desc.textContent = resolveStr(node.description, ctx)
     desc.style.fontSize = '14px'
-    desc.style.color = 'var(--muted-foreground, #6b7280)'
     e.appendChild(desc)
   }
 

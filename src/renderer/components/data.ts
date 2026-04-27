@@ -41,7 +41,6 @@ function renderDataTable(node: ComponentNode, ctx: RenderContext): HTMLElement {
     th.textContent = col.header ?? col.key
     th.style.padding = '8px 12px'
     th.style.textAlign = 'left'
-    th.style.borderBottom = '2px solid var(--border, #e5e7eb)'
     headerRow.appendChild(th)
   }
   thead.appendChild(headerRow)
@@ -60,7 +59,6 @@ function renderDataTable(node: ComponentNode, ctx: RenderContext): HTMLElement {
       // Highlight selected row
       if (rowKey && selectedVal != null && rec[rowKey] != null && String(rec[rowKey] as string | number) === String(selectedVal as string | number)) {
         tr.classList.add('pf-datatable-row-selected')
-        tr.style.backgroundColor = 'var(--primary-bg, #eff6ff)'
       }
 
       // Row click actions
@@ -90,7 +88,6 @@ function renderDataTable(node: ComponentNode, ctx: RenderContext): HTMLElement {
         }
         td.textContent = cellVal == null ? '' : String(cellVal as string | number | boolean)
         td.style.padding = '8px 12px'
-        td.style.borderBottom = '1px solid var(--border, #e5e7eb)'
         tr.appendChild(td)
       }
       tbody.appendChild(tr)
@@ -154,7 +151,6 @@ function renderMetric(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const label = el('div', 'pf-metric-label')
   label.textContent = resolveStr(node.label, ctx)
   label.style.fontSize = '14px'
-  label.style.color = 'var(--muted-foreground, #6b7280)'
   e.appendChild(label)
 
   const value = el('div', 'pf-metric-value')
@@ -179,7 +175,6 @@ function renderMetric(node: ComponentNode, ctx: RenderContext): HTMLElement {
     const desc = el('div', 'pf-metric-desc')
     desc.textContent = resolveStr(node.description, ctx)
     desc.style.fontSize = '12px'
-    desc.style.color = 'var(--muted-foreground, #6b7280)'
     e.appendChild(desc)
   }
 
@@ -206,7 +201,6 @@ function renderRing(node: ComponentNode, ctx: RenderContext): HTMLElement {
   bgCircle.setAttribute('cy', String(size / 2))
   bgCircle.setAttribute('r', String(radius))
   bgCircle.setAttribute('fill', 'none')
-  bgCircle.setAttribute('stroke', 'var(--muted, #e5e7eb)')
   bgCircle.setAttribute('stroke-width', String(thickness))
 
   const fgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
@@ -214,7 +208,6 @@ function renderRing(node: ComponentNode, ctx: RenderContext): HTMLElement {
   fgCircle.setAttribute('cy', String(size / 2))
   fgCircle.setAttribute('r', String(radius))
   fgCircle.setAttribute('fill', 'none')
-  fgCircle.setAttribute('stroke', 'var(--primary, #3b82f6)')
   fgCircle.setAttribute('stroke-width', String(thickness))
   fgCircle.setAttribute('stroke-dasharray', String(circumference))
   fgCircle.setAttribute('stroke-dashoffset', String(offset))
@@ -247,14 +240,12 @@ function renderProgress(node: ComponentNode, ctx: RenderContext): HTMLElement {
   e.setAttribute('aria-valuemax', String(max))
 
   e.style.height = '8px'
-  e.style.backgroundColor = 'var(--muted, #e5e7eb)'
   e.style.borderRadius = '4px'
   e.style.overflow = 'hidden'
 
   const fill = el('div', 'pf-progress-fill')
   fill.style.height = '100%'
   fill.style.width = `${pct}%`
-  fill.style.backgroundColor = 'var(--primary, #3b82f6)'
   fill.style.borderRadius = '4px'
   fill.style.transition = 'width 0.3s ease'
   e.appendChild(fill)
@@ -266,7 +257,6 @@ function renderSeparator(_node: ComponentNode, _ctx: RenderContext): HTMLElement
   const e = document.createElement('hr')
   e.className = 'pf-separator'
   e.style.border = 'none'
-  e.style.borderTop = '1px solid var(--border, #e5e7eb)'
   e.style.margin = '8px 0'
   return e
 }
@@ -312,7 +302,6 @@ function renderSparkline(node: ComponentNode, _ctx: RenderContext): HTMLElement 
   const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline')
   polyline.setAttribute('points', points)
   polyline.setAttribute('fill', 'none')
-  polyline.setAttribute('stroke', 'var(--primary, #3b82f6)')
   polyline.setAttribute('stroke-width', '1.5')
   svg.appendChild(polyline)
   e.appendChild(svg)
@@ -323,17 +312,17 @@ function renderSparkline(node: ComponentNode, _ctx: RenderContext): HTMLElement 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function applyBadgeStyle(e: HTMLElement, variant: string): void {
-  const styles: Record<string, { bg: string; fg: string }> = {
-    default: { bg: 'var(--primary, #3b82f6)', fg: '#fff' },
-    secondary: { bg: 'var(--secondary, #f3f4f6)', fg: 'var(--secondary-foreground, #1f2937)' },
-    destructive: { bg: 'var(--destructive, #ef4444)', fg: '#fff' },
+  // Non-theme fallback colors for variants without CSS class coverage
+  const staticStyles: Record<string, { bg: string; fg: string }> = {
     success: { bg: '#10b981', fg: '#fff' },
     warning: { bg: '#f59e0b', fg: '#fff' },
     info: { bg: '#3b82f6', fg: '#fff' },
-    outline: { bg: 'transparent', fg: 'inherit' },
   }
-  const s = styles[variant] ?? styles.default
-  e.style.backgroundColor = s.bg
-  e.style.color = s.fg
-  if (variant === 'outline') e.style.border = '1px solid var(--border, #e5e7eb)'
+  const s = staticStyles[variant]
+  if (s) {
+    e.style.backgroundColor = s.bg
+    e.style.color = s.fg
+  }
+  // All other variants (default, secondary, destructive, outline) are handled
+  // by prefab.css via .pf-badge[data-variant="..."] selectors
 }

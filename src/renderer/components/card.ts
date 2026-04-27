@@ -16,9 +16,6 @@ export function registerCardComponents(): void {
 
 function renderCard(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const e = el('div', 'pf-card')
-  e.style.border = '1px solid var(--border, #e5e7eb)'
-  e.style.borderRadius = 'var(--radius, 8px)'
-  e.style.backgroundColor = 'var(--card, #fff)'
   e.style.overflow = 'hidden'
   renderChildren(node, e, ctx)
   return e

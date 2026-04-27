@@ -102,8 +102,6 @@ function sanitizeSvgNode(node: Element): void {
 
 function renderDropZone(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const e = el('div', 'pf-dropzone')
-  e.style.border = '2px dashed var(--border, #d1d5db)'
-  e.style.borderRadius = 'var(--radius, 8px)'
   e.style.padding = '32px'
   e.style.textAlign = 'center'
   e.style.cursor = 'pointer'
@@ -111,16 +109,16 @@ function renderDropZone(node: ComponentNode, ctx: RenderContext): HTMLElement {
 
   e.addEventListener('dragover', (ev) => {
     ev.preventDefault()
-    e.style.borderColor = 'var(--primary, #3b82f6)'
+    e.classList.add('pf-dropzone-active')
   })
 
   e.addEventListener('dragleave', () => {
-    e.style.borderColor = 'var(--border, #d1d5db)'
+    e.classList.remove('pf-dropzone-active')
   })
 
   e.addEventListener('drop', (ev) => {
     ev.preventDefault()
-    e.style.borderColor = 'var(--border, #d1d5db)'
+    e.classList.remove('pf-dropzone-active')
     // File handling would go here
   })
 

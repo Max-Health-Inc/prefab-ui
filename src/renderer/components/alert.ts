@@ -17,13 +17,6 @@ function renderAlert(node: ComponentNode, ctx: RenderContext): HTMLElement {
   const variant = (node.variant as string | undefined) ?? 'default'
   e.setAttribute('data-variant', variant)
   e.style.padding = '12px 16px'
-  e.style.borderRadius = 'var(--radius, 8px)'
-  e.style.border = '1px solid var(--border, #e5e7eb)'
-
-  if (variant === 'destructive') {
-    e.style.borderColor = 'var(--destructive, #ef4444)'
-    e.style.color = 'var(--destructive, #ef4444)'
-  }
 
   if (node.icon != null) {
     const icon = el('span', 'pf-alert-icon')

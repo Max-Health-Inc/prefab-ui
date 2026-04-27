@@ -21,8 +21,8 @@ export function registerChartComponents(): void {
 }
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
-const AXIS_COLOR = 'var(--muted-foreground, #6b7280)'
-const GRID_COLOR = 'var(--border, #e5e7eb)'
+const AXIS_COLOR = '#6b7280'
+const GRID_COLOR = '#e5e7eb'
 const AXIS_FONT = '10'
 
 export interface SeriesEntry {
@@ -552,7 +552,6 @@ function renderFallbackChart(node: ComponentNode, _ctx: RenderContext): HTMLElem
   e.textContent = `${node.type} — not yet supported in renderer`
   e.style.padding = '24px'
   e.style.textAlign = 'center'
-  e.style.color = 'var(--muted-foreground, #6b7280)'
   return e
 }
 

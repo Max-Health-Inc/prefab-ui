@@ -47,10 +47,11 @@ describe('Button rendering', () => {
     expect(btn.getAttribute('data-size')).toBe('lg')
   })
 
-  it('outline variant has border style', () => {
+  it('outline variant has data-variant attribute for CSS styling', () => {
     const ctx = makeCtx()
     const btn = renderNode({ type: 'Button', label: 'Go', variant: 'outline' } as ComponentNode, ctx) as HTMLButtonElement
-    expect(btn.style.border).toContain('1px solid')
+    expect(btn.getAttribute('data-variant')).toBe('outline')
+    expect(btn.classList.contains('pf-button')).toBe(true)
   })
 })
 
