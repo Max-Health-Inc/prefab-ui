@@ -489,6 +489,44 @@ describe('ButtonGroup rendering', () => {
 
 // ── SelectGroup / SelectLabel / SelectSeparator ──────────────────────────────
 
+describe('Select options shorthand', () => {
+  it('renders options from options array', () => {
+    const ctx = makeCtx()
+    const dom = renderNode({
+      type: 'Select',
+      name: 'subject',
+      options: [
+        { label: 'General Inquiry', value: 'general' },
+        { label: 'Bug Report', value: 'bug' },
+      ],
+    } as ComponentNode, ctx) as HTMLElement
+    const select = dom.querySelector('select')!
+    const opts = Array.from(select.querySelectorAll('option'))
+    expect(opts.length).toBe(2)
+    expect(opts[0].value).toBe('general')
+    expect(opts[0].textContent).toBe('General Inquiry')
+    expect(opts[1].value).toBe('bug')
+    expect(opts[1].textContent).toBe('Bug Report')
+  })
+
+  it('renders placeholder as disabled hidden option', () => {
+    const ctx = makeCtx()
+    const dom = renderNode({
+      type: 'Select',
+      name: 'topic',
+      placeholder: 'Choose one',
+      options: [{ label: 'A', value: 'a' }],
+    } as ComponentNode, ctx) as HTMLElement
+    const select = dom.querySelector('select')!
+    const opts = Array.from(select.querySelectorAll('option'))
+    expect(opts.length).toBe(2)
+    expect(opts[0].textContent).toBe('Choose one')
+    expect(opts[0].disabled).toBe(true)
+    expect(opts[0].hidden).toBe(true)
+    expect(opts[1].value).toBe('a')
+  })
+})
+
 describe('Select sub-components rendering', () => {
   it('SelectLabel renders text span', () => {
     const ctx = makeCtx()

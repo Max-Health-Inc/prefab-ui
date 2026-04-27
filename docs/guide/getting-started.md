@@ -30,13 +30,14 @@ The layering order is: `prefab.css` (base) → `stylesheets[]` (your overrides) 
 
 ## Usage Modes
 
-prefab has three usage modes:
+prefab has four usage modes:
 
 | Mode | Where | Import |
 |------|-------|--------|
 | **Server-side** | MCP tool handlers (Python/TS) | `@maxhealth.tech/prefab` |
 | **Client-side** | Browser (ext-app iframe) | `dist/renderer.min.js` script tag |
 | **Hybrid** | Node/Bun backend → HTML response | `PrefabApp.toHTML()` |
+| **Remote** | Any MCP client (VS Code, Claude, etc.) | `https://maxhealth.tech/prefab/mcp` |
 
 ::: tip See it in action
 The [interactive demo](/demo/) shows how an LLM prompt becomes a fully rendered UI — dashboards, forms, charts, and more — powered by the client-side renderer.
@@ -150,6 +151,42 @@ Options:
 | `cdnVersion` | Current package version | CDN version for script/CSS tags |
 | `pretty` | `false` | Pretty-print the embedded JSON |
 | `includeStyles` | `true` | Inject the `prefab.css` base theme |
+
+## Remote: Use the Hosted MCP Server
+
+The fastest way to use prefab — no installation needed. Point any MCP client at the hosted renderer server:
+
+**VS Code (`settings.json` or `.vscode/mcp.json`):**
+
+```json
+{
+  "servers": {
+    "prefab-renderer": {
+      "type": "http",
+      "url": "https://maxhealth.tech/prefab/mcp"
+    }
+  }
+}
+```
+
+**Claude Desktop (`claude_desktop_config.json`):**
+
+```json
+{
+  "mcpServers": {
+    "prefab-renderer": {
+      "type": "http",
+      "url": "https://maxhealth.tech/prefab/mcp"
+    }
+  }
+}
+```
+
+Once connected, the server exposes a `render_prefab_ui` tool that accepts `$prefab` wire-format JSON and returns rendered HTML. Your LLM can call it directly to produce rich UI from structured data.
+
+::: tip See it in action
+The [interactive demo](/demo/) shows exactly what the remote renderer produces — dashboards, forms, charts, and more.
+:::
 
 ## Subpath Imports
 

@@ -176,6 +176,28 @@ function renderSelect(node: ComponentNode, ctx: RenderContext): HTMLElement {
   if (node.name != null) select.name = node.name as string
   applyInputStyle(select)
 
+  // Placeholder option
+  if (node.placeholder != null) {
+    const ph = document.createElement('option')
+    ph.value = ''
+    ph.textContent = resolveStr(node.placeholder as string, ctx)
+    ph.disabled = true
+    ph.selected = true
+    ph.hidden = true
+    select.appendChild(ph)
+  }
+
+  // Support shorthand `options` array: [{label, value}]
+  const opts = node.options as Array<{ label?: string; value?: string }> | undefined
+  if (Array.isArray(opts)) {
+    for (const o of opts) {
+      const option = document.createElement('option')
+      option.value = o.value ?? ''
+      option.textContent = o.label ?? option.value
+      select.appendChild(option)
+    }
+  }
+
   // Render SelectOption children
   if (node.children) {
     for (const child of node.children) {
