@@ -521,7 +521,7 @@
 
     <!-- Top bar -->
     <div class="topbar">
-      <a href="/prefab/" class="logo">prefab<span>demo</span></a>
+      <a href="/prefab/" class="logo">prefab<span> demo</span></a>
       <div class="topbar-spacer"></div>
       <select id="example-select" class="example-select" aria-label="Choose example"></select>
       <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark">
@@ -957,7 +957,7 @@
                           { "type": "Input", "name": "newTask", "placeholder": "What needs to be done?" },
                           {
                             "type": "Button", "label": "Add", "onClick": [
-                              { "action": "appendState", "key": "tasks", "item": "{{ newTask }}" },
+                              { "action": "appendState", "key": "tasks", "value": "{{ newTask }}" },
                               { "action": "setState", "key": "newTask", "value": "" }
                             ]
                           }
