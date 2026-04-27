@@ -278,7 +278,8 @@ html, body {
   border-top: 1px solid var(--border);
   border-radius: 0 0 var(--radius) var(--radius);
   padding: 20px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .prefab-render-label {
@@ -351,11 +352,52 @@ html, body {
 }
 
 /* ── Responsive ─────────────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .topbar { padding: 0 12px; }
-  .chat-inner { padding: 0 12px; }
-  .example-select { max-width: 180px; font-size: 12px; }
-  .msg-avatar { width: 28px; height: 28px; font-size: 12px; }
+
+/* Tablet */
+@media (max-width: 768px) {
+  .chat-inner { padding: 0 16px; }
+  .prefab-render { padding: 14px; }
+  .back-link { display: none; }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .topbar {
+    padding: 0 10px;
+    gap: 8px;
+    height: 48px;
+  }
+  .logo { font-size: 12px; }
+  .example-select {
+    max-width: none;
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    padding: 6px 28px 6px 10px;
+  }
+  .theme-toggle { width: 28px; height: 28px; }
+  .theme-toggle svg { width: 14px; height: 14px; }
+
+  .chat { padding: 14px 0; }
+  .chat-inner {
+    padding: 0 10px;
+    gap: 14px;
+  }
+
+  .msg { gap: 8px; }
+  .msg-avatar { width: 26px; height: 26px; font-size: 11px; }
+  .msg-name { font-size: 13px; }
+  .msg-time { font-size: 10px; }
+  .msg-bubble { font-size: 13px; padding: 10px 12px; }
+  .msg--user .msg-bubble { padding: 10px 12px; }
+
+  .assistant-text { padding: 10px 12px 8px; font-size: 13px; }
+  .prefab-render { padding: 10px; }
+  .prefab-render-label { padding: 5px 12px; font-size: 10px; }
+
+  .input-bar { padding: 8px 10px 12px; }
+  .fake-input { font-size: 13px; padding: 8px 12px; }
+  .send-btn { width: 32px; height: 32px; }
 }
 </style>
 </head>
