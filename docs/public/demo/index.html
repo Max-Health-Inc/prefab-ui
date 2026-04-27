@@ -618,11 +618,12 @@ const EXAMPLES = [
             { "type": "Column", "gap": 12, "children": [
               { "type": "Input", "name": "name", "inputType": "text", "placeholder": "Your name" },
               { "type": "Input", "name": "email", "inputType": "email", "placeholder": "you@example.com" },
-              { "type": "Select", "name": "subject", "placeholder": "Select a subject", "options": [
-                { "label": "General Inquiry", "value": "general" },
-                { "label": "Bug Report", "value": "bug" },
-                { "label": "Feature Request", "value": "feature" },
-                { "label": "Partnership", "value": "partnership" }
+              { "type": "Select", "name": "subject", "children": [
+                { "type": "SelectOption", "label": "Select a subject", "value": "" },
+                { "type": "SelectOption", "label": "General Inquiry", "value": "general" },
+                { "type": "SelectOption", "label": "Bug Report", "value": "bug" },
+                { "type": "SelectOption", "label": "Feature Request", "value": "feature" },
+                { "type": "SelectOption", "label": "Partnership", "value": "partnership" }
               ]},
               { "type": "Textarea", "name": "message", "placeholder": "Your message…", "rows": 4 },
               { "type": "Row", "gap": 8, "children": [
@@ -672,11 +673,12 @@ const EXAMPLES = [
                   { "type": "AlertDescription", "content": "Changing security settings may log out all users." }
                 ]},
                 { "type": "Checkbox", "name": "2fa", "label": "Require two-factor authentication" },
-                { "type": "Select", "name": "session_timeout", "placeholder": "Session timeout", "options": [
-                  { "label": "15 minutes", "value": "15" },
-                  { "label": "1 hour", "value": "60" },
-                  { "label": "8 hours", "value": "480" },
-                  { "label": "Never", "value": "0" }
+                { "type": "Select", "name": "session_timeout", "children": [
+                  { "type": "SelectOption", "label": "Session timeout", "value": "" },
+                  { "type": "SelectOption", "label": "15 minutes", "value": "15" },
+                  { "type": "SelectOption", "label": "1 hour", "value": "60" },
+                  { "type": "SelectOption", "label": "8 hours", "value": "480" },
+                  { "type": "SelectOption", "label": "Never", "value": "0" }
                 ]}
               ]}
             ]},
