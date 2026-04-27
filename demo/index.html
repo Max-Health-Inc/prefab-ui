@@ -273,13 +273,14 @@ html, body {
 
 /* ── Rendered UI container ──────────────────────────────────────────── */
 .prefab-render {
-  background: var(--preview-bg);
-  color: var(--preview-text);
+  background: var(--background, var(--preview-bg));
+  color: var(--foreground, var(--preview-text));
   border-top: 1px solid var(--border);
   border-radius: 0 0 var(--radius) var(--radius);
   padding: 20px;
   overflow-x: auto;
   overflow-y: hidden;
+  transition: background 0.2s, color 0.2s;
 }
 
 .prefab-render-label {
