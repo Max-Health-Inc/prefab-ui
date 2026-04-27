@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: '<span style="white-space:nowrap">@maxhealth.tech</span><wbr>/prefab'
+  name: '<span style="white-space:nowrap">@maxhealth.tech/prefab</span>'
   text: Declarative UI for MCP Apps
   tagline: 115+ components, reactive state, zero-framework renderer — from TypeScript or Python.
   actions:
