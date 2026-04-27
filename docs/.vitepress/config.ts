@@ -1,4 +1,10 @@
 import { defineConfig } from 'vitepress'
+import { readFileSync, writeFileSync, existsSync } from 'fs'
+import { resolve, dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { version } from '../../package.json'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   title: '@maxhealth.tech/prefab',
@@ -39,6 +45,19 @@ export default defineConfig({
           }
           next()
         })
+      },
+    }, {
+      name: 'inject-prefab-version',
+      closeBundle() {
+        const dist = resolve(__dirname, 'dist')
+        const files = ['demo/index.html', 'playground/index.html']
+        for (const f of files) {
+          const fp = resolve(dist, f)
+          if (existsSync(fp)) {
+            const content = readFileSync(fp, 'utf8')
+            writeFileSync(fp, content.replaceAll('__PREFAB_VERSION__', version))
+          }
+        }
       },
     }],
   },
