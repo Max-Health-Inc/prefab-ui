@@ -1,5 +1,5 @@
 /**
- * Bridge & app() tests -- prefab:* protocol (primary) with ext-apps fallback.
+ * Bridge & app() tests -- prefab:* and ui/* JSON-RPC dual protocol.
  *
  * Tests the prefab:* PostMessage protocol which VS Code Copilot supports natively.
  *

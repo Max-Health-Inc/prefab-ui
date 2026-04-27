@@ -1,6 +1,6 @@
-# ext-apps Bridge
+# PostMessage Bridge
 
-The bridge enables prefab apps running in iframes to communicate with their host via PostMessage. This is the integration layer for MCP ext-apps in hosts like VS Code, Claude, ChatGPT, or any MCP Apps host.
+The bridge enables prefab apps running in iframes to communicate with their host via PostMessage. It supports two protocols — `prefab:*` (custom) and `ui/*` JSON-RPC (MCP Apps spec) — and works in VS Code, Claude, ChatGPT, or any MCP Apps host.
 
 ## Quick Start
 

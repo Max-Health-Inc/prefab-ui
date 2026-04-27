@@ -89,7 +89,7 @@ export default defineConfig({
           items: [
             { text: 'MCP Display Helpers', link: '/guide/mcp-display' },
             { text: 'Browser Renderer', link: '/guide/renderer' },
-            { text: 'ext-apps Bridge', link: '/guide/bridge' },
+            { text: 'PostMessage Bridge', link: '/guide/bridge' },
           ],
         },
       ],

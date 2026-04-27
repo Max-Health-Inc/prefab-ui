@@ -9,10 +9,9 @@
  * Designed for CSP-restricted environments (VS Code webviews, sandboxed iframes)
  * where inline `<script>` blocks are forbidden.
  *
- * Supports all three Bridge protocols:
+ * Supports both Bridge protocols:
  *   - prefab:*   (self-hosted, custom hosts)
  *   - ui/* JSON-RPC (VS Code, Claude, ChatGPT)
- *   - ext-apps SDK (legacy)
  *
  * The host HTML only needs:
  * ```html

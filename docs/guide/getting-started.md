@@ -119,7 +119,7 @@ Load the renderer bundle and use the `app()` factory. See the [live demo](/demo/
 ```
 
 ::: tip Use versioned CDN URLs
-Always pin a version (e.g. `@0.2.7`) in production to prevent breaking changes.
+Always pin a version (e.g. `@0.2`) in production to prevent breaking changes.
 :::
 
 The `app()` factory:

@@ -15,7 +15,7 @@ Write MCP servers in **TypeScript/Bun** and generate the same wire format that P
 - **Reactive state** — `rx()` expressions, `SetState`/`ToggleState`/`AppendState` actions
 - **MCP-native** — `display()`, `display_form()`, `CallTool`, `SendMessage` built in
 - **Browser renderer** — zero dependencies, vanilla DOM (optional separate import)
-- **ext-apps bridge** — `app()` factory with PostMessage transport, host theme, lifecycle hooks
+- **PostMessage bridge** — `app()` factory with dual-protocol handshake, host theme, lifecycle hooks
 - **Auto-renderers** — `autoTable()`, `autoChart()`, `autoForm()`, `autoMetrics()` and more
 
 ## Works Everywhere
@@ -26,7 +26,7 @@ The renderer is **vanilla DOM** — no framework dependency. Drop it into any we
 - **Vue / Svelte / Angular** — same, it's just DOM
 - **Plain HTML** — single `<script>` tag
 - **Electron / Tauri** — desktop apps with web views
-- **Any iframe** — ext-apps, embedded widgets, sandboxed UIs
+- **Any iframe** — MCP Apps, embedded widgets, sandboxed UIs
 
 Any app that connects to MCP servers can render `$prefab` tool output as rich interactive UI — tables, charts, forms, badges — with zero custom code.
 
@@ -341,8 +341,8 @@ Two bundles, zero external dependencies:
 
 | Bundle | Size | Use case |
 |--------|------|----------|
-| `renderer.auto.min.js` | ~58KB | **Recommended.** Self-boots bridge, mounts `$prefab` into `#root` automatically |
-| `renderer.min.js` | ~54KB | Library only — defines `window.prefab`, you wire the bridge yourself |
+| `renderer.auto.min.js` | ~80KB | **Recommended.** Self-boots bridge, mounts `$prefab` into `#root` automatically |
+| `renderer.min.js` | ~80KB | Library only — defines `window.prefab`, you wire the bridge yourself |
 
 ### Auto-mount (recommended)
 
@@ -351,7 +351,7 @@ Two bundles, zero external dependencies:
 <script src="renderer.auto.min.js"></script>
 ```
 
-Races all three bridge protocols (`prefab:*`, `ui/*` JSON-RPC, `ext-apps`) in parallel.
+Races both bridge protocols (`prefab:*` and `ui/*` JSON-RPC) in parallel.
 First host to respond wins. Buffers tool results that arrive before the handler is wired.
 
 ### Manual mount
@@ -364,9 +364,9 @@ First host to respond wins. Buffers tool results that arrive before the handler 
 </script>
 ```
 
-### ext-apps Bridge
+### PostMessage Bridge
 
-For MCP ext-apps running in iframes:
+For MCP Apps running in iframes:
 
 ```js
 const ui = await prefab.app();

@@ -1,43 +1,55 @@
-# Rendering MCP App UIs in VS Code Copilot Chat
+# Rendering Prefab UIs in MCP Apps Hosts
 
-How to make a Model Context Protocol (MCP) server return interactive UIs
-that render inside VS Code Copilot Chat instead of as raw JSON.
+How to make an MCP server return interactive `$prefab` UIs that render
+inside any MCP Apps host — VS Code Copilot Chat, Claude Desktop,
+ChatGPT, Goose, and others.
 
-This guide is the result of reverse-engineering VS Code's built-in MCP
-Apps host (protocol version `2026-01-26`). It documents the exact wire
-format and the gotchas that cost us several hours of debugging.
+This guide documents the **MCP Apps UI protocol** (`ui/*` JSON-RPC 2.0
+over `postMessage`), the server-side wire format, and the host-specific
+gotchas that cost us several hours of debugging.
 
-> **TL;DR** VS Code does **not** speak the `prefab:*` or `ext-apps` SDK
-> bridge protocols. It uses its own **JSON-RPC 2.0 over `postMessage`**
-> protocol with `ui/*` methods, and it reads CSP from the **content
-> item** returned by `readResource`, not from the resource listing.
+> **TL;DR** The renderer auto-detects the host protocol. You only need
+> an HTML page with a single `<script>` tag pointing at
+> `renderer.auto.min.js`. The server must return `structuredContent`
+> alongside `content[]`, and CSP (if the host requires it) must appear
+> on the **content item** returned by `readResource`, not on the
+> resource listing.
 
 ## Architecture overview
 
 ```
 ┌─────────────────────────┐  stdio   ┌──────────────────────────┐
-│   VS Code Copilot Chat  │◄────────►│   your MCP server (Node) │
-└──────────┬──────────────┘  MCP     └──────────────────────────┘
+│  MCP Apps host           │◄────────►│   your MCP server        │
+│  (VS Code / Claude /    │  MCP     │   (Node, Python, etc.)   │
+│   ChatGPT / Goose / …) │          └──────────────────────────┘
+└──────────┬──────────────┘
            │
-           │  sandboxed iframe (CSP-restricted)
+           │  sandboxed iframe
            ▼
 ┌─────────────────────────┐  postMessage   ┌──────────────────┐
-│  ui:// resource (HTML)  │◄──────────────►│  VS Code host    │
-│  + your renderer JS     │   JSON-RPC     │  (acquireVsCode  │
-│                         │   ui/* methods │   Api)           │
-└─────────────────────────┘                └──────────────────┘
+│  ui:// resource (HTML)  │◄──────────────►│  Host bridge     │
+│  + renderer.auto.min.js │   JSON-RPC     │  (ui/* protocol) │
+└─────────────────────────┘   ui/*         └──────────────────┘
 ```
 
 The flow:
 
-1. Tool's `_meta.ui.resourceUri` points VS Code at a `ui://` resource.
-2. VS Code calls `readResource` and reads the HTML + CSP from the
-   returned content item's `_meta.ui`.
-3. VS Code injects a CSP meta tag and a postMessage shim, then loads the
-   HTML in a sandboxed webview.
-4. When the tool runs, VS Code sends the result to the iframe as a
+1. Tool's `_meta.ui.resourceUri` points the host at a `ui://` resource.
+2. The host calls `readResource` and loads the HTML into a sandboxed
+   iframe (webview in VS Code, iframe in Claude/ChatGPT).
+3. The renderer JS performs a `ui/initialize` handshake with the host.
+4. When the tool runs, the host sends the result to the iframe as a
    JSON-RPC `ui/notifications/tool-result` notification.
-5. Your renderer JS listens for that message and renders the UI.
+5. The renderer extracts `$prefab` wire data and mounts it into `#root`.
+
+### Host-specific notes
+
+| Host | Transport | CSP handling | Notes |
+|------|-----------|-------------|-------|
+| **VS Code** | `acquireVsCodeApi().postMessage()` | Reads `_meta.ui.csp` from content item | Injects CSP meta tag + shim automatically |
+| **Claude Desktop** | `window.parent.postMessage()` | N/A (no CSP restriction) | Sends tool result before `ui/initialize` response — buffering is critical |
+| **ChatGPT** | `window.parent.postMessage()` | N/A | Similar to Claude Desktop |
+| **Goose** | `window.parent.postMessage()` | N/A | Follows MCP Apps spec |
 
 ## Server-side wire format
 
@@ -54,17 +66,20 @@ mcp.registerTool(
   },
   async (args) => ({
     content: [{ type: 'text', text: JSON.stringify(myPrefabData) }],
-    // ⚠️ structuredContent is REQUIRED for VS Code to render the UI.
+    // ⚠️ structuredContent is REQUIRED for the host to render the UI.
     structuredContent: myPrefabData,
   }),
 );
 ```
 
-`structuredContent` is what VS Code forwards to the iframe via
+`structuredContent` is what the host forwards to the iframe via
 `ui/notifications/tool-result`. The text in `content[]` is the LLM
 fallback for hosts without UI rendering.
 
 ### 2. Renderer resource — CSP belongs on the content item
+
+> **VS Code-specific.** Other hosts (Claude, ChatGPT) don't enforce CSP
+> on `ui://` resources, so this section only matters for VS Code.
 
 This is the bug that wastes everyone's afternoon. `_meta` on the
 resource **listing** is ignored by VS Code's iframe loader. CSP must
@@ -110,6 +125,8 @@ non-app resource.
 
 ### 3. The CSP that VS Code ends up applying
 
+> **VS Code-specific.** Other hosts may not enforce CSP at all.
+
 VS Code merges your `_meta.ui.csp` into this template:
 
 ```
@@ -131,8 +148,10 @@ Inline `<script>` works (`'unsafe-inline'`), but external
 
 ## Client-side: the `ui/*` JSON-RPC protocol
 
-Inside the iframe, communication with VS Code happens via
-`acquireVsCodeApi().postMessage(...)` and `window.addEventListener('message', ...)`.
+Inside the iframe, communication with the host happens via
+`postMessage`. In VS Code, this is `acquireVsCodeApi().postMessage(...)`.
+In all other hosts, it's `window.parent.postMessage(...)`. The renderer
+detects the environment automatically.
 
 All envelopes are JSON-RPC 2.0:
 
@@ -195,13 +214,14 @@ Methods (per the MCP Apps spec):
 ## Working adapter — renderer HTML
 
 Two options for rendering `@maxhealth.tech/prefab` `$prefab` JSON
-inside a `ui://` resource. Both work in VS Code, Claude Desktop,
-ChatGPT, and any other MCP Apps host.
+inside a `ui://` resource. Both work in **every MCP Apps host** — VS Code,
+Claude Desktop, ChatGPT, Goose, and any other host that speaks the
+`ui/*` JSON-RPC protocol.
 
 ### Option A: `renderer.auto.min.js` (recommended)
 
-Since **v0.2.8**, the auto-mount bundle handles all three bridge
-protocols (`prefab:*`, `ui/*` JSON-RPC, `ext-apps`) with zero inline
+Since **v0.2.8**, the auto-mount bundle handles both bridge
+protocols (`prefab:*` and `ui/*` JSON-RPC) with zero inline
 script. It races the handshakes in parallel, buffers tool results
 that arrive before the handler is wired, and defers boot until the DOM
 is interactive.
@@ -214,12 +234,12 @@ is interactive.
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prefab</title>
   <link rel="stylesheet" crossorigin
-        href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.8/dist/prefab.css">
+        href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2/dist/prefab.css">
 </head>
 <body>
   <div id="root"></div>
   <script crossorigin
-          src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.8/dist/renderer.auto.min.js"></script>
+          src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2/dist/renderer.auto.min.js"></script>
 </body>
 </html>
 ```
@@ -234,8 +254,8 @@ auto bundle:
 4. Mounts `$prefab` wire data into `#root` when a tool result arrives
 
 > **Requires `≥ 0.2.8`.** Earlier versions used a sequential waterfall
-> (prefab → JSON-RPC → ext-apps) that wasted 1.5s on every JSON-RPC
-> host and could miss early tool results.
+> that wasted 1.5s on every JSON-RPC host and could miss early tool
+> results.
 
 ### Option B: `renderer.min.js` + inline adapter
 
@@ -251,12 +271,12 @@ protocol yourself:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prefab</title>
   <link rel="stylesheet" crossorigin
-        href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.8/dist/prefab.css">
+        href="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2/dist/prefab.css">
 </head>
 <body>
   <div id="root"></div>
   <script crossorigin
-          src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2.8/dist/renderer.min.js"></script>
+          src="https://cdn.jsdelivr.net/npm/@maxhealth.tech/prefab@0.2/dist/renderer.min.js"></script>
   <script>
     (function () {
       var api = typeof acquireVsCodeApi === 'function' ? acquireVsCodeApi() : null;
@@ -325,7 +345,7 @@ protocol yourself:
         params: {
           protocolVersion: '2026-01-26',
           capabilities: {},
-          clientInfo: { name: 'prefab-renderer', version: '0.2.8' }
+          clientInfo: { name: 'prefab-renderer', version: '0.2' }
         }
       });
     })();
@@ -336,11 +356,12 @@ protocol yourself:
 
 ## Common pitfalls
 
-### "Black iframe" / nothing renders
+### "Black iframe" / nothing renders (VS Code)
 
 Cause: CSP is blocking the external script load. VS Code only adds your
 `resourceDomains` to `script-src` if `_meta.ui.csp` is present on the
-**content item**, not on the resource listing.
+**content item**, not on the resource listing. Other hosts don't
+enforce CSP this way.
 
 Fix: add `_meta` to each entry of the `contents` array returned by
 `readResource`.
@@ -354,14 +375,9 @@ VS Code's own initialization.
 Fix: upgrade to `@maxhealth.tech/prefab@0.2.8` or later. The auto
 bundle now works correctly in VS Code.
 
-### `prefab:init timeout` followed by `ext-apps init timeout`
+### Iframe loads but shows raw JSON (all hosts)
 
-Same root cause — pre-0.2.8 `app()` tried protocols sequentially.
-Upgrade to v0.2.8+ which races them in parallel.
-
-### Iframe loads but shows raw JSON
-
-You returned `content` but no `structuredContent`. VS Code only invokes
+You returned `content` but no `structuredContent`. The host only invokes
 the UI rendering path when `structuredContent` is set. Add it to your
 tool result.
 
@@ -373,11 +389,12 @@ loader.
 
 ## Reference
 
-- VS Code core: `resources/app/out/vs/workbench/workbench.desktop.main.js`
+- **MCP Apps spec**: Protocol version `2026-01-26` — `ui/*` JSON-RPC 2.0 over `postMessage`
+- **VS Code internals**: `resources/app/out/vs/workbench/workbench.desktop.main.js`
   - `_injectPreamble({ html, csp })` — builds the CSP meta tag and the
     `acquireVsCodeApi()` shim.
   - `loadResource(uri)` — reads the resource, returns
     `{ ...n._meta?.ui, html, mimeType }`.
-- Working implementation: [`packages/mcp/src/server.ts`](../packages/mcp/src/server.ts)
-  (`rendererHtml()`).
-- Reference Python implementation: `prefab_ui` and `fastmcp` on PyPI.
+- **Reference implementations**:
+  - TypeScript: `@maxhealth.tech/prefab` on npm
+  - Python: `prefab_ui` and `fastmcp` on PyPI

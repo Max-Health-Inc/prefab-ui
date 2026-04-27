@@ -2,6 +2,7 @@ node_modules/
 dist/
 *.tgz
 .DS_Store
+meta.json
 
 # VitePress
 docs/.vitepress/cache
