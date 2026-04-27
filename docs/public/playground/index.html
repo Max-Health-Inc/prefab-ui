@@ -31,7 +31,8 @@
   --pg-success: #3fb950;
   --pg-error: #f85149;
   --pg-toolbar: #21262d;
-  --pg-preview-bg: #ffffff;
+  --pg-preview-bg: #1c1c1c;
+  --pg-preview-bg-light: #ffffff;
 }
 
 html, body {
@@ -196,6 +197,11 @@ html, body {
   overflow: auto;
   padding: 24px;
   background: var(--pg-preview-bg);
+  transition: background 0.2s;
+}
+
+#preview-root.light {
+  background: var(--pg-preview-bg-light);
 }
 
 /* ── Toast overlay ──────────────────────────────────────────────────── */
@@ -333,7 +339,7 @@ html, body {
       <span>Live Preview</span>
       <div class="pg-preview-toolbar-spacer"></div>
       <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
-        <input type="checkbox" id="dark-toggle"> Dark
+        <input type="checkbox" id="dark-toggle" checked> Dark
       </label>
     </div>
     <div id="preview-root"></div>
@@ -831,14 +837,17 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-format').addEventListener('click', formatJson);
 
   // Dark mode toggle
-  document.getElementById('dark-toggle').addEventListener('change', (e) => {
-    const root = document.getElementById('preview-root');
+  const darkToggle = document.getElementById('dark-toggle');
+  const previewRoot = document.getElementById('preview-root');
+  // Default: dark (checked)
+  previewRoot.classList.add('dark');
+  darkToggle.addEventListener('change', (e) => {
     if (e.target.checked) {
-      root.style.background = '#09090b';
-      root.classList.add('dark');
+      previewRoot.classList.add('dark');
+      previewRoot.classList.remove('light');
     } else {
-      root.style.background = '#ffffff';
-      root.classList.remove('dark');
+      previewRoot.classList.remove('dark');
+      previewRoot.classList.add('light');
     }
   });
 
