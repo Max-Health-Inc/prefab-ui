@@ -129,6 +129,44 @@ The second argument is the `submitTool` — the MCP tool name to call on submit.
 
 ---
 
+## `QuickForm(toolName)` — Chainable Builder
+
+A composable builder for rapid form generation. Produces the same result as `autoForm`, with a more ergonomic API.
+
+```ts
+import { QuickForm } from '@maxhealth.tech/prefab'
+
+const ui = QuickForm('create_user')
+  .title('Create User')
+  .text('name', { required: true })
+  .email('email', { required: true })
+  .password('password', { required: true })
+  .submit('Create')
+  .successMessage('User created!')
+  .build()
+```
+
+### Methods
+
+| Method | Description |
+|--------|-------------|
+| `.title(t)` | Form heading |
+| `.subtitle(s)` | Secondary text |
+| `.submit(label)` | Submit button text |
+| `.field(name, opts?)` | Add field with explicit type |
+| `.text(name, opts?)` | Shorthand for `type: 'text'` |
+| `.email(name, opts?)` | Shorthand for `type: 'email'` |
+| `.number(name, opts?)` | Shorthand for `type: 'number'` |
+| `.password(name, opts?)` | Shorthand for `type: 'password'` |
+| `.url(name, opts?)` | Shorthand for `type: 'url'` |
+| `.tel(name, opts?)` | Shorthand for `type: 'tel'` |
+| `.onSubmit(action)` | Custom submit action (overrides tool call) |
+| `.successMessage(msg)` | Toast on success |
+| `.errorMessage(msg)` | Toast on error |
+| `.build()` | Build the component tree |
+
+---
+
 ## `autoMetrics(metrics, opts?)`
 
 Generate metric cards from numeric data.

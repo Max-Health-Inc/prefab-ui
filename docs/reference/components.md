@@ -19,10 +19,17 @@ Column([Text('No gap')])                          // shorthand
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `gap` | `number` | Spacing between children (in spacing units) |
+| `gap` | `number \| GapToken` | Spacing between children. Accepts a number or semantic token: `'none'`, `'xs'`, `'sm'`, `'md'`, `'lg'`, `'xl'`, `'2xl'` |
 | `align` | `string` | Cross-axis alignment (`start`, `center`, `end`, `stretch`) |
 | `justify` | `string` | Main-axis alignment |
 | `cssClass` | `string` | Extra CSS class |
+
+**Gap tokens** map to numbers: `none`=0, `xs`=1, `sm`=2, `md`=3, `lg`=4, `xl`=6, `2xl`=8.
+
+```ts
+Column({ gap: 'md' }, [Text('Hello')])  // same as gap: 3
+Row({ gap: 'xl' }, [Button('A'), Button('B')])
+```
 
 ### `Row(props?, children?)`
 
@@ -48,7 +55,7 @@ Grid({ columns: 3, gap: 4 }, [
 | Prop | Type | Description |
 |------|------|-------------|
 | `columns` | `number` | Number of columns |
-| `gap` | `number` | Grid gap |
+| `gap` | `number \| GapToken` | Grid gap (number or semantic token) |
 
 ### `GridItem(props?, children?)`
 
@@ -173,7 +180,14 @@ Card([
   CardContent([Text('Name: Alice')]),
   CardFooter([Button('Edit')]),
 ])
+
+// With variant:
+Card({ variant: 'elevated' }, [CardContent([Text('Raised card')])])
 ```
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `variant` | `CardVariant` | `'default'` \| `'outline'` \| `'ghost'` \| `'elevated'` \| `'destructive'` |
 
 ### `CardHeader` / `CardTitle` / `CardDescription` / `CardContent` / `CardFooter`
 
@@ -531,10 +545,13 @@ Radial progress chart and histogram distribution chart.
 
 ## Media
 
-### `Image(props)`
+### `Image(src, opts?)` / `Image(props)`
+
+Positional form (consistent with Audio/Video/Embed) or props form:
 
 ```ts
-Image({ src: '/photo.jpg', alt: 'Profile photo', width: 200, height: 200 })
+Image('/photo.jpg', { alt: 'Profile photo' })   // positional (recommended)
+Image({ src: '/photo.jpg', alt: 'Profile photo' })  // props form (also works)
 ```
 
 ### `Audio(props)` / `Video(props)` / `Embed(props)`
@@ -572,15 +589,24 @@ Alert({ variant: 'warning' }, [
   AlertTitle('Warning'),
   AlertDescription('This action cannot be undone.'),
 ])
+
+Alert({ variant: 'success', icon: 'CheckCircle' }, [
+  AlertTitle('Saved'),
+  AlertDescription('Changes applied successfully.'),
+])
 ```
 
 | Variant | Color |
 |---------|-------|
 | `default` | Neutral |
-| `info` | Blue |
 | `success` | Green |
 | `warning` | Yellow |
 | `destructive` | Red |
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `variant` | `AlertVariant` | `'default'` \| `'destructive'` \| `'success'` \| `'warning'` |
+| `icon` | `string` | Icon name (e.g. `'CheckCircle'`, `'AlertTriangle'`) |
 
 ---
 
@@ -601,14 +627,18 @@ ForEach({ each: rx('state.items'), as: 'item' }, [
 | `each` | `Rx \| string` | Expression for the array to iterate |
 | `as` | `string` | Variable name for each item (default: `item`) |
 
-### `If(props?, children?)` / `Elif(props?, children?)` / `Else(children?)`
+### `If(condition, children)` / `If(props)` / `Elif` / `Else`
 
-Conditional rendering.
+Conditional rendering. Supports both shorthand and props form:
 
 ```ts
-If({ condition: rx('state.loading') }, [Loader()])
-Elif({ condition: rx('state.error') }, [Alert({ variant: 'destructive' }, [Text(rx`${STATE}.error`)])])
+// Shorthand (recommended):
+If('$loading', [Loader()])
+Elif('$error', [Alert({ variant: 'destructive' }, [Text('$error')])])
 Else([Text('Content loaded!')])
+
+// Props form (also works):
+If({ condition: '$loading', children: [Loader()] })
 ```
 
 ### `Define(props?, children?)` / `Use(props)` / `Slot(props?)`

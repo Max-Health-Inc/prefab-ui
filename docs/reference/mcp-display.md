@@ -3,7 +3,10 @@
 These functions wrap prefab component trees as MCP tool result content arrays. Use them in MCP tool handlers to return rich UIs.
 
 ```ts
-import { display, display_form, display_update, display_error } from '@maxhealth.tech/prefab/mcp'
+import {
+  display, display_form, display_update, display_error, display_success,
+  resourceMeta, PREFAB_CDN_META,
+} from '@maxhealth.tech/prefab/mcp'
 ```
 
 ---
@@ -50,9 +53,13 @@ Accepts either a `Component` (auto-wrapped in `PrefabApp`) or a `PrefabApp` inst
       "type": "text",
       "text": "{\"$prefab\":{\"version\":\"0.2\"},\"view\":{...},\"state\":{...}}"
     }
-  ]
+  ],
+  "structuredContent": { "$prefab": { "version": "0.2" }, "view": { ... } }
 }
 ```
+
+> **Since v0.2.18:** All display helpers include `structuredContent` alongside
+> `content[]`. This is required for MCP Apps hosts to render the iframe UI.
 
 ---
 
@@ -151,6 +158,93 @@ async function getPatient(args: any) {
 | `detail` | `string` | Detailed error / stack trace (shown in code block) |
 | `hint` | `string` | Help text for the user (shown as muted text) |
 | `theme` | `Theme` | Theme overrides |
+
+---
+
+## `display_success(title, message, opts?)`
+
+Return a success confirmation view (green alert with check icon).
+
+```ts
+import { display_success } from '@maxhealth.tech/prefab/mcp'
+
+async function deleteUser(args: any) {
+  await db.deleteUser(args.id)
+  return display_success('Deleted', `User ${args.id} removed successfully`, {
+    detail: 'All associated data has been archived.',
+  })
+}
+```
+
+### Parameters
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `title` | `string` | Success heading |
+| `message` | `string` | Success description |
+
+### Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `detail` | `string` | Additional context (shown as muted text) |
+| `theme` | `Theme` | Theme overrides |
+
+---
+
+## `resourceMeta(opts?)`
+
+Generate the `_meta` object for `ui://` resource registration. Includes CSP and Permission Policy configuration.
+
+```ts
+import { resourceMeta, PREFAB_CDN_META } from '@maxhealth.tech/prefab/mcp'
+
+// Custom meta with permissions:
+const meta = resourceMeta({
+  csp: { resourceDomains: ['https://cdn.jsdelivr.net'] },
+  permissions: { camera: true, clipboardWrite: true },
+})
+
+// Or use the pre-built default (jsDelivr CDN only):
+mcp.resource('viewer', 'ui://my/viewer', {
+  mimeType: 'text/html;profile=mcp-app',
+  _meta: PREFAB_CDN_META,
+}, async (uri) => ({
+  contents: [{ uri: uri.toString(), mimeType: 'text/html;profile=mcp-app', text: html, _meta: PREFAB_CDN_META }],
+}))
+```
+
+### Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `csp.resourceDomains` | `string[]` | Origins for scripts, styles, images |
+| `csp.connectDomains` | `string[]` | Origins for fetch/XHR/WebSocket |
+| `csp.frameDomains` | `string[]` | Origins for nested iframes |
+| `csp.baseUriDomains` | `string[]` | Additional base URIs |
+| `permissions.camera` | `boolean` | Request camera access |
+| `permissions.microphone` | `boolean` | Request microphone access |
+| `permissions.geolocation` | `boolean` | Request geolocation access |
+| `permissions.clipboardWrite` | `boolean` | Request clipboard write access |
+
+---
+
+## `PrefabApp.toMcpResult()`
+
+On any `PrefabApp` instance, call `.toMcpResult()` to get a ready-to-return tool result:
+
+```ts
+import { PrefabApp, Column, H1 } from '@maxhealth.tech/prefab'
+
+const app = new PrefabApp({
+  title: 'Dashboard',
+  view: Column([H1('Hello')]),
+})
+
+// In your tool handler:
+return app.toMcpResult()
+// → { content: [{ type: 'text', text: '...' }], structuredContent: { ... } }
+```
 
 ---
 
