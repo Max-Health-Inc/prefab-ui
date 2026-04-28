@@ -75,6 +75,12 @@ export interface PrefabApp {
   openLink: (url: string, target?: string) => void
   /** Send context updates. */
   updateContext: (context: Record<string, unknown>) => void
+  /**
+   * Observe an element and notify the host whenever it resizes.
+   * Mirrors the ext-apps SDK `autoResize: true` behaviour.
+   * Returns a teardown function that disconnects the observer.
+   */
+  setupAutoResize: (target: string | HTMLElement) => () => void
   /** Host context from initialization. */
   host: HostContext
   /** Host capabilities. */
@@ -246,6 +252,11 @@ export async function app(options?: AppOptions): Promise<PrefabApp> {
     updateContext: (context) => {
       if (bridge) bridge.updateContext(context)
     },
+    setupAutoResize: (target) => {
+      if (!bridge) return noop
+      const el = typeof target === 'string' ? resolveTarget(target) : target
+      return bridge.setupAutoResize(el)
+    },
     host: hostContext,
     capabilities: hostContext.capabilities,
     theme: hostContext.theme,
@@ -257,6 +268,9 @@ export async function app(options?: AppOptions): Promise<PrefabApp> {
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
+
+/** Reusable empty function to satisfy lint (no-empty-function). */
+const noop = (): void => { /* no-op */ }
 
 function resolveTarget(target: string | HTMLElement): HTMLElement {
   if (typeof target === 'string') {

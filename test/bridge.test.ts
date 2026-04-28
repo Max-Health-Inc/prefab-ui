@@ -733,3 +733,212 @@ describe('app() tool-result buffering', () => {
     window.removeEventListener('message', respondToInit)
   })
 })
+
+// ── Bridge.setupAutoResize ───────────────────────────────────────────────────
+
+describe('Bridge.setupAutoResize', () => {
+  let bridge: Bridge
+
+  beforeEach(() => {
+    bridge = new Bridge('*')
+    bridge.connect()
+  })
+
+  afterEach(() => {
+    bridge.disconnect()
+  })
+
+  it('sends ui/notifications/size-changed via JSON-RPC after init', async () => {
+    // Complete JSON-RPC handshake first so protocol is 'jsonrpc'
+    const respond = (event: MessageEvent): void => {
+      const msg = event.data
+      if (msg?.jsonrpc === '2.0' && msg.method === 'ui/initialize' && msg.id != null) {
+        window.postMessage({
+          jsonrpc: '2.0',
+          id: msg.id,
+          result: {
+            protocolVersion: '2026-01-26',
+            hostInfo: { name: 'TestHost', version: '1.0' },
+            hostCapabilities: {},
+            hostContext: {},
+          },
+        }, '*')
+      }
+    }
+    window.addEventListener('message', respond)
+    await bridge.initialize({ toolInput: true })
+    window.removeEventListener('message', respond)
+
+    expect(bridge.activeProtocol).toBe('jsonrpc')
+
+    // Capture outgoing size notifications
+    const sizeMessages: { width: number; height: number }[] = []
+    const capture = (event: MessageEvent): void => {
+      const msg = event.data
+      if (msg?.jsonrpc === '2.0' && msg.method === 'ui/notifications/size-changed') {
+        sizeMessages.push(msg.params as { width: number; height: number })
+      }
+    }
+    window.addEventListener('message', capture)
+
+    const el = document.createElement('div')
+    document.body.appendChild(el)
+    el.style.width = '300px'
+    el.style.height = '200px'
+
+    const teardown = bridge.setupAutoResize(el)
+
+    // Wait for ResizeObserver callback + initial notification
+    await new Promise((r) => setTimeout(r, 100))
+
+    expect(sizeMessages.length).toBeGreaterThanOrEqual(1)
+    // Should be a JSON-RPC notification (no id)
+    expect(sizeMessages[0].width).toBeGreaterThanOrEqual(0)
+    expect(sizeMessages[0].height).toBeGreaterThanOrEqual(0)
+
+    teardown()
+    document.body.removeChild(el)
+    window.removeEventListener('message', capture)
+  })
+
+  it('sends prefab:size-changed when using prefab protocol', async () => {
+    // Complete prefab handshake
+    const respond = (event: MessageEvent): void => {
+      const msg = event.data as BridgeMessage
+      if (msg?.type === 'prefab:init') {
+        window.postMessage({
+          type: 'prefab:init-response',
+          payload: { capabilities: {} } as unknown as Record<string, unknown>,
+        } satisfies BridgeMessage, '*')
+      }
+    }
+    window.addEventListener('message', respond)
+    await bridge.initialize({ toolInput: true })
+    window.removeEventListener('message', respond)
+
+    expect(bridge.activeProtocol).toBe('prefab')
+
+    const sizeMessages: Record<string, unknown>[] = []
+    const capture = (event: MessageEvent): void => {
+      const msg = event.data as BridgeMessage
+      if (msg?.type === 'prefab:size-changed') {
+        sizeMessages.push(msg.payload ?? {})
+      }
+    }
+    window.addEventListener('message', capture)
+
+    const el = document.createElement('div')
+    document.body.appendChild(el)
+    el.style.width = '400px'
+    el.style.height = '250px'
+
+    const teardown = bridge.setupAutoResize(el)
+
+    await new Promise((r) => setTimeout(r, 100))
+
+    expect(sizeMessages.length).toBeGreaterThanOrEqual(1)
+    expect(sizeMessages[0].width).toBeGreaterThanOrEqual(0)
+    expect(sizeMessages[0].height).toBeGreaterThanOrEqual(0)
+
+    teardown()
+    document.body.removeChild(el)
+    window.removeEventListener('message', capture)
+  })
+
+  it('teardown stops the ResizeObserver', async () => {
+    const respond = (event: MessageEvent): void => {
+      const msg = event.data as BridgeMessage
+      if (msg?.type === 'prefab:init') {
+        window.postMessage({
+          type: 'prefab:init-response',
+          payload: { capabilities: {} } as unknown as Record<string, unknown>,
+        } satisfies BridgeMessage, '*')
+      }
+    }
+    window.addEventListener('message', respond)
+    await bridge.initialize({ toolInput: true })
+    window.removeEventListener('message', respond)
+
+    const el = document.createElement('div')
+    document.body.appendChild(el)
+
+    // Capture size messages from the start (including the initial notification)
+    const sizeMessages: Record<string, unknown>[] = []
+    const capture = (event: MessageEvent): void => {
+      const msg = event.data as BridgeMessage
+      if (msg?.type === 'prefab:size-changed') {
+        sizeMessages.push(msg.payload ?? {})
+      }
+    }
+    window.addEventListener('message', capture)
+
+    const teardown = bridge.setupAutoResize(el)
+
+    // Wait for the initial notification to arrive
+    await new Promise((r) => setTimeout(r, 100))
+    const countBeforeTeardown = sizeMessages.length
+
+    teardown()
+
+    // After teardown, changing size should NOT produce new messages
+    el.style.width = '999px'
+    el.style.height = '999px'
+    await new Promise((r) => setTimeout(r, 100))
+
+    expect(sizeMessages.length).toBe(countBeforeTeardown)
+
+    document.body.removeChild(el)
+    window.removeEventListener('message', capture)
+  })
+
+  it('deduplicates identical sizes', async () => {
+    const respond = (event: MessageEvent): void => {
+      const msg = event.data
+      if (msg?.jsonrpc === '2.0' && msg.method === 'ui/initialize' && msg.id != null) {
+        window.postMessage({
+          jsonrpc: '2.0',
+          id: msg.id,
+          result: {
+            protocolVersion: '2026-01-26',
+            hostInfo: { name: 'TestHost', version: '1.0' },
+            hostCapabilities: {},
+            hostContext: {},
+          },
+        }, '*')
+      }
+    }
+    window.addEventListener('message', respond)
+    await bridge.initialize({ toolInput: true })
+    window.removeEventListener('message', respond)
+
+    const sizeMessages: { width: number; height: number }[] = []
+    const capture = (event: MessageEvent): void => {
+      const msg = event.data
+      if (msg?.jsonrpc === '2.0' && msg.method === 'ui/notifications/size-changed') {
+        sizeMessages.push(msg.params as { width: number; height: number })
+      }
+    }
+    window.addEventListener('message', capture)
+
+    const el = document.createElement('div')
+    document.body.appendChild(el)
+    el.style.width = '100px'
+    el.style.height = '100px'
+
+    const teardown = bridge.setupAutoResize(el)
+    await new Promise((r) => setTimeout(r, 100))
+
+    const countAfterInit = sizeMessages.length
+
+    // "Resize" to the same dimensions — should NOT fire another notification
+    el.style.width = '100px'
+    el.style.height = '100px'
+    await new Promise((r) => setTimeout(r, 100))
+
+    expect(sizeMessages.length).toBe(countAfterInit)
+
+    teardown()
+    document.body.removeChild(el)
+    window.removeEventListener('message', capture)
+  })
+})

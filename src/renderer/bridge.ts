@@ -217,6 +217,54 @@ export class Bridge {
     }
   }
 
+  /**
+   * Observe an element's size and notify the host whenever it changes.
+   * Mirrors the ext-apps SDK's `autoResize: true` behaviour — uses a
+   * `ResizeObserver` on the target element and sends
+   * `ui/notifications/size-changed` (JSON-RPC) or
+   * `prefab:size-changed` (prefab protocol).
+   *
+   * Returns a teardown function that disconnects the observer.
+   */
+  setupAutoResize(el: HTMLElement): () => void {
+    if (typeof ResizeObserver === 'undefined') return noop
+
+    let lastW = -1
+    let lastH = -1
+
+    const notify = (width: number, height: number): void => {
+      if (width === lastW && height === lastH) return
+      lastW = width
+      lastH = height
+      if (this.protocol === 'jsonrpc') {
+        this.sendRpcNotification('ui/notifications/size-changed', { width, height })
+      } else {
+        this.sendPrefab('prefab:size-changed', { width, height })
+      }
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // Prefer borderBoxSize when available (more accurate for CSS box-model)
+        if (entry.borderBoxSize.length) {
+          const box = entry.borderBoxSize[0]
+          notify(Math.ceil(box.inlineSize), Math.ceil(box.blockSize))
+        } else {
+          const rect = entry.target.getBoundingClientRect()
+          notify(Math.ceil(rect.width), Math.ceil(rect.height))
+        }
+      }
+    })
+
+    observer.observe(el)
+
+    // Fire an initial notification so the host gets the right size immediately
+    const rect = el.getBoundingClientRect()
+    notify(Math.ceil(rect.width), Math.ceil(rect.height))
+
+    return () => observer.disconnect()
+  }
+
   /** Register a handler for a message type (prefab:* or internal). */
   on(type: string, handler: (payload: Record<string, unknown>) => void): void {
     if (!this.listeners.has(type)) {
@@ -484,6 +532,11 @@ export class Bridge {
     })
   }
 
+  /** Send a JSON-RPC notification (no id, no response expected). */
+  private sendRpcNotification(method: string, params: Record<string, unknown>): void {
+    this.postJsonRpc({ jsonrpc: '2.0', method, params })
+  }
+
   /** Low-level: post a JSON-RPC envelope. Uses acquireVsCodeApi if available. */
   private postJsonRpc(msg: Record<string, unknown>): void {
     if (typeof window === 'undefined') return
@@ -512,6 +565,8 @@ export class Bridge {
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
+/** Reusable empty function to satisfy lint (no-empty-function). */
+const noop = (): void => { /* no-op */ }
 
 // ── Host Theme → CSS Variables ───────────────────────────────────────────────
 

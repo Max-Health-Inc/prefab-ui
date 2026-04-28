@@ -76,6 +76,10 @@ async function boot(): Promise<void> {
   const el: HTMLElement = root
   const ui = await app()
 
+  // Auto-resize: notify the host whenever #root changes size
+  // (mirrors ext-apps SDK `autoResize: true`)
+  ui.setupAutoResize(el)
+
   let mounted: MountedApp | undefined
 
   function mount(data: PrefabWireData): void {
