@@ -191,10 +191,10 @@ describe('applyHostTheme', () => {
     expect(root.style.getPropertyValue('--accent')).toBe('blue')
   })
 
-  it('sets data-theme attribute for color scheme', () => {
+  it('does NOT set data-theme for color scheme (host vars resolve via cascade)', () => {
     const root = document.createElement('div')
     applyHostTheme(root, { colorScheme: 'dark' })
-    expect(root.getAttribute('data-theme')).toBe('dark')
+    expect(root.getAttribute('data-theme')).toBeNull()
   })
 
   it('does not set data-theme for auto', () => {

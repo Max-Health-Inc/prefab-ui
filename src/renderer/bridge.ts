@@ -581,9 +581,11 @@ export function applyHostTheme(root: HTMLElement, hostTheme: HostTheme): void {
     }
   }
 
-  if (hostTheme.colorScheme && hostTheme.colorScheme !== 'auto') {
-    root.setAttribute('data-theme', hostTheme.colorScheme)
-  }
+  // NOTE: we deliberately do NOT set data-theme here.
+  // Host vars (--color-background-primary, --vscode-editor-background, etc.)
+  // resolve through the var() fallback chain in :root / @media-dark blocks.
+  // Setting data-theme would activate the static-only [data-theme] block,
+  // which ignores host vars entirely.
 
   if (hostTheme.fontCss) {
     applyHostFonts(hostTheme.fontCss)

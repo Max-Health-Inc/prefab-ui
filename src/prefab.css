@@ -111,85 +111,84 @@
   }
 }
 
-/* Explicit dark override via data-theme attribute.
+/* Explicit dark override via data-theme attribute (standalone toggle only).
    Specificity (0,2,0) via :root[...] to beat the @media dark :root:not(...) rule.
-   Full fallback chain: MCP Apps → VS Code → static.
-   In hosted mode (Claude/VS Code): applyHostTheme() sets both data-theme AND
-   the inline MCP Apps vars, so the chain resolves to host values.
-   In standalone mode: MCP Apps / VS Code vars are undefined → static wins,
-   so the manual theme toggle produces correct colors. */
+   Static values only — NO host var references.
+   In hosted mode (Claude/VS Code), data-theme is never set; the host's inline
+   vars resolve through the var() chain in :root / @media-dark above.
+   data-theme is only set by the standalone theme toggle button. */
 :root[data-theme="dark"] {
-  --background:            var(--color-background-primary, var(--vscode-editor-background, #09090b));
-  --foreground:            var(--color-text-primary, var(--vscode-editor-foreground, #fafafa));
+  --background: #09090b;
+  --foreground: #fafafa;
 
-  --card:                  var(--color-background-secondary, var(--vscode-editorWidget-background, #111113));
-  --card-foreground:       var(--color-text-primary, var(--vscode-editorWidget-foreground, #fafafa));
+  --card: #111113;
+  --card-foreground: #fafafa;
 
-  --popover:               var(--color-background-secondary, var(--vscode-editorHoverWidget-background, #111113));
-  --popover-foreground:    var(--color-text-primary, var(--vscode-editorHoverWidget-foreground, #fafafa));
+  --popover: #111113;
+  --popover-foreground: #fafafa;
 
-  --primary:               var(--color-background-info, var(--vscode-button-background, #60a5fa));
-  --primary-foreground:    var(--color-text-inverse, var(--vscode-button-foreground, #09090b));
+  --primary: #60a5fa;
+  --primary-foreground: #09090b;
 
-  --secondary:             var(--color-background-tertiary, var(--vscode-button-secondaryBackground, #1f2937));
-  --secondary-foreground:  var(--color-text-secondary, var(--vscode-button-secondaryForeground, #f3f4f6));
+  --secondary: #1f2937;
+  --secondary-foreground: #f3f4f6;
 
-  --muted:                 var(--color-background-tertiary, var(--vscode-editorWidget-background, #1f2937));
-  --muted-foreground:      var(--color-text-tertiary, var(--vscode-descriptionForeground, #9ca3af));
+  --muted: #1f2937;
+  --muted-foreground: #9ca3af;
 
-  --accent:                var(--color-background-ghost, var(--vscode-list-hoverBackground, #1e3a5f));
-  --accent-foreground:     var(--color-text-info, var(--vscode-list-hoverForeground, #93c5fd));
+  --accent: #1e3a5f;
+  --accent-foreground: #93c5fd;
 
-  --destructive:           var(--color-background-danger, var(--vscode-errorForeground, #f87171));
-  --destructive-foreground: var(--color-text-inverse, #09090b);
+  --destructive: #f87171;
+  --destructive-foreground: #09090b;
 
-  --success:               var(--color-background-success, #4ade80);
-  --success-foreground:    var(--color-text-inverse, #09090b);
+  --success: #4ade80;
+  --success-foreground: #09090b;
 
-  --warning:               var(--color-background-warning, #fbbf24);
-  --warning-foreground:    var(--color-text-inverse, #09090b);
+  --warning: #fbbf24;
+  --warning-foreground: #09090b;
 
-  --border:                var(--color-border-primary, var(--vscode-panel-border, #27272a));
-  --input:                 var(--color-border-secondary, var(--vscode-input-background, #27272a));
-  --ring:                  var(--color-ring-primary, var(--vscode-focusBorder, #60a5fa));
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #60a5fa;
 }
 
-/* Explicit light override via data-theme attribute.
-   Same specificity + fallback strategy as the dark block above. */
+/* Explicit light override via data-theme attribute (standalone toggle only).
+   Same specificity + static strategy as the dark block above. */
 :root[data-theme="light"] {
-  --background:            var(--color-background-primary, var(--vscode-editor-background, #ffffff));
-  --foreground:            var(--color-text-primary, var(--vscode-editor-foreground, #09090b));
+  --background: #ffffff;
+  --foreground: #09090b;
 
-  --card:                  var(--color-background-secondary, var(--vscode-editorWidget-background, #ffffff));
-  --card-foreground:       var(--color-text-primary, var(--vscode-editorWidget-foreground, #09090b));
+  --card: #ffffff;
+  --card-foreground: #09090b;
 
-  --popover:               var(--color-background-secondary, var(--vscode-editorHoverWidget-background, #ffffff));
-  --popover-foreground:    var(--color-text-primary, var(--vscode-editorHoverWidget-foreground, #09090b));
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
 
-  --primary:               var(--color-background-info, var(--vscode-button-background, #3b82f6));
-  --primary-foreground:    var(--color-text-inverse, var(--vscode-button-foreground, #ffffff));
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
 
-  --secondary:             var(--color-background-tertiary, var(--vscode-button-secondaryBackground, #f3f4f6));
-  --secondary-foreground:  var(--color-text-secondary, var(--vscode-button-secondaryForeground, #1f2937));
+  --secondary: #f3f4f6;
+  --secondary-foreground: #1f2937;
 
-  --muted:                 var(--color-background-tertiary, var(--vscode-editorWidget-background, #f3f4f6));
-  --muted-foreground:      var(--color-text-tertiary, var(--vscode-descriptionForeground, #6b7280));
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
 
-  --accent:                var(--color-background-ghost, var(--vscode-list-hoverBackground, #eff6ff));
-  --accent-foreground:     var(--color-text-info, var(--vscode-list-hoverForeground, #1e40af));
+  --accent: #eff6ff;
+  --accent-foreground: #1e40af;
 
-  --destructive:           var(--color-background-danger, var(--vscode-errorForeground, #ef4444));
-  --destructive-foreground: var(--color-text-inverse, #ffffff);
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
 
-  --success:               var(--color-background-success, #22c55e);
-  --success-foreground:    var(--color-text-inverse, #ffffff);
+  --success: #22c55e;
+  --success-foreground: #ffffff;
 
-  --warning:               var(--color-background-warning, #f59e0b);
-  --warning-foreground:    var(--color-text-inverse, #ffffff);
+  --warning: #f59e0b;
+  --warning-foreground: #ffffff;
 
-  --border:                var(--color-border-primary, var(--vscode-panel-border, #e5e7eb));
-  --input:                 var(--color-border-secondary, var(--vscode-input-background, #e5e7eb));
-  --ring:                  var(--color-ring-primary, var(--vscode-focusBorder, #3b82f6));
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #3b82f6;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
