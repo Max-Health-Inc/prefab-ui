@@ -30,6 +30,7 @@
 import { Store } from './state.js'
 import { renderNode } from './engine.js'
 import type { ComponentNode, RenderContext } from './engine.js'
+import { DestroyRegistry } from './engine.js'
 import { registerAllComponents } from './components/index.js'
 import { applyTheme, applyKeyBindings, createThemeToggle } from './theme.js'
 import type { ThemeToggleOptions } from './theme.js'
@@ -50,7 +51,8 @@ export { Bridge, isIframe, applyHostTheme } from './bridge.js'
 export { registerPipe, unregisterPipe, listPipes } from '../rx/pipes.js'
 export type { PipeFn } from '../rx/pipes.js'
 export { registerComponent } from './engine.js'
-export type { RenderFn, ComponentNode, RenderContext } from './engine.js'
+export type { RenderFn, RenderResult, RenderFnReturn, ComponentNode, RenderContext } from './engine.js'
+export { DestroyRegistry } from './engine.js'
 export type {
   AppCapabilities,
   HostCapabilities,
@@ -140,6 +142,9 @@ export const PrefabRenderer = {
     // Toast handler with fallback
     const onToast = options?.onToast ?? defaultToastHandler
 
+    // Destroy registry — tracks component cleanup callbacks
+    const destroyRegistry = new DestroyRegistry()
+
     // Build render context
     const ctx: RenderContext = {
       store,
@@ -148,6 +153,7 @@ export const PrefabRenderer = {
       rerender: () => render(),
       onToast,
       defs: data.defs,
+      destroyRegistry,
     }
 
     // Apply theme
@@ -189,6 +195,8 @@ export const PrefabRenderer = {
 
     // Render function
     function render(): void {
+      // Flush destroy callbacks from previous render cycle
+      destroyRegistry.flush()
       // Preserve the toggle button across re-renders
       const toggleBtn = root.querySelector('.pf-theme-toggle')
       root.innerHTML = ''
@@ -211,6 +219,7 @@ export const PrefabRenderer = {
       },
       store,
       destroy() {
+        destroyRegistry.flush()
         cleanupToggle?.()
         cleanupKeys?.()
         clearAllIntervals()

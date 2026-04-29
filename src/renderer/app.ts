@@ -136,6 +136,11 @@ export async function app(options?: AppOptions): Promise<PrefabApp> {
     applyHostTheme(document.documentElement, hostContext.theme)
   }
 
+  // VS Code webview theme sync: detect data-vscode-theme-kind and keep in sync
+  if (typeof document !== 'undefined' && !bridge) {
+    syncVsCodeTheme()
+  }
+
   // Lifecycle handlers
   let toolInputHandler: ToolInputHandler | undefined
   let toolResultHandler: ToolResultHandler | undefined
@@ -282,4 +287,27 @@ function resolveTarget(target: string | HTMLElement): HTMLElement {
     return el as HTMLElement
   }
   return target
+}
+
+// ── VS Code Theme Sync ───────────────────────────────────────────────────────
+
+/**
+ * Detect VS Code webview theme from `data-vscode-theme-kind` on body
+ * and keep `data-theme` on `:root` in sync via MutationObserver.
+ * VS Code sets: vscode-dark, vscode-light, vscode-high-contrast, vscode-high-contrast-light.
+ */
+function syncVsCodeTheme(): void {
+  function applyVsCodeThemeKind(): void {
+    const kind = document.body.getAttribute('data-vscode-theme-kind')
+    if (!kind) return
+    const theme = kind.includes('light') ? 'light' : 'dark'
+    document.documentElement.setAttribute('data-theme', theme)
+  }
+
+  // Apply immediately if attribute already present
+  applyVsCodeThemeKind()
+
+  // Watch for changes (VS Code updates this when user switches theme)
+  const observer = new MutationObserver(applyVsCodeThemeKind)
+  observer.observe(document.body, { attributes: true, attributeFilter: ['data-vscode-theme-kind'] })
 }

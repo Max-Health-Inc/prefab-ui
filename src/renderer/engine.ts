@@ -32,11 +32,50 @@ export interface RenderContext {
   defs?: Record<string, ComponentNode>
   templates?: Record<string, ComponentNode[]>
   slots?: Record<string, ComponentNode[]>
+  destroyRegistry?: DestroyRegistry
 }
 
-export type RenderFn = (node: ComponentNode, ctx: RenderContext) => HTMLElement | DocumentFragment
+/** Result of a render function that includes a cleanup callback. */
+export interface RenderResult {
+  element: HTMLElement | DocumentFragment
+  destroy: () => void
+}
+
+export type RenderFnReturn = HTMLElement | DocumentFragment | RenderResult
+
+export type RenderFn = (node: ComponentNode, ctx: RenderContext) => RenderFnReturn
+
+// ── Destroy registry ─────────────────────────────────────────────────────────
+
+/** Tracks destroy callbacks for mounted components within a render cycle. */
+export class DestroyRegistry {
+  private callbacks: (() => void)[] = []
+
+  /** Register a destroy callback. */
+  track(cb: () => void): void {
+    this.callbacks.push(cb)
+  }
+
+  /** Call all registered destroy callbacks and clear the list. */
+  flush(): void {
+    for (const cb of this.callbacks) {
+      try { cb() } catch (e) { console.warn('[prefab] destroy callback error:', e) }
+    }
+    this.callbacks = []
+  }
+
+  /** Number of registered callbacks (for testing). */
+  get size(): number {
+    return this.callbacks.length
+  }
+}
 
 // ── Registry ─────────────────────────────────────────────────────────────────
+
+/** Type guard: does the render function return include a destroy callback? */
+function isRenderResult(value: RenderFnReturn): value is RenderResult {
+  return typeof value === 'object' && 'element' in value
+}
 
 const registry = new Map<string, RenderFn>()
 
@@ -70,7 +109,13 @@ export function renderNode(node: ComponentNode, ctx: RenderContext): HTMLElement
   let el: HTMLElement | DocumentFragment
 
   if (renderFn) {
-    el = renderFn(node, ctx)
+    const result = renderFn(node, ctx)
+    if (isRenderResult(result)) {
+      el = result.element
+      ctx.destroyRegistry?.track(result.destroy)
+    } else {
+      el = result
+    }
   } else {
     // Fallback: generic div with data-type
     el = document.createElement('div')

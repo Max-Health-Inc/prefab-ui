@@ -14,3 +14,4 @@ test/**/*.js.map
 test/**/*.d.ts
 test/**/*.d.ts.map
 test_output.txt
+test_full_output.txt
