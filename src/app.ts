@@ -12,7 +12,7 @@ import { drainAutoState } from './rx/state-collector.js'
 import type { PipeFn } from './rx/pipes.js'
 
 /** Package version — injected by build script, updated at release time. */
-export const VERSION = '0.2.21'
+export const VERSION = '0.2.22'
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 
