@@ -63,6 +63,8 @@ export interface HostContext {
 export interface HostTheme {
   variables?: Record<string, string>
   colorScheme?: 'light' | 'dark' | 'auto'
+  /** Raw CSS for @font-face / @import rules (from MCP Apps styles.css.fonts) */
+  fontCss?: string
 }
 
 // ── JSON-RPC types ───────────────────────────────────────────────────────────
@@ -405,8 +407,9 @@ export class Bridge {
           theme.colorScheme = params.theme as 'light' | 'dark' | 'auto'
         }
         if (typeof params.styles === 'object' && params.styles !== null) {
-          const styles = params.styles as { variables?: Record<string, string> }
+          const styles = params.styles as { variables?: Record<string, string>; css?: { fonts?: string } }
           if (styles.variables) theme.variables = styles.variables
+          if (typeof styles.css?.fonts === 'string') theme.fontCss = styles.css.fonts
         }
         this.dispatch('prefab:theme-update', theme as Record<string, unknown>)
         break
@@ -442,8 +445,9 @@ export class Bridge {
               theme.colorScheme = hostCtx.theme as 'light' | 'dark' | 'auto'
             }
             if (typeof hostCtx.styles === 'object' && hostCtx.styles !== null) {
-              const styles = hostCtx.styles as { variables?: Record<string, string> }
+              const styles = hostCtx.styles as { variables?: Record<string, string>; css?: { fonts?: string } }
               if (styles.variables) theme.variables = styles.variables
+              if (typeof styles.css?.fonts === 'string') theme.fontCss = styles.css.fonts
             }
           }
 
@@ -580,6 +584,20 @@ export function applyHostTheme(root: HTMLElement, hostTheme: HostTheme): void {
   if (hostTheme.colorScheme && hostTheme.colorScheme !== 'auto') {
     root.setAttribute('data-theme', hostTheme.colorScheme)
   }
+
+  if (hostTheme.fontCss) {
+    applyHostFonts(hostTheme.fontCss)
+  }
+}
+
+/** Inject host-provided @font-face / @import CSS (idempotent). */
+function applyHostFonts(fontCss: string): void {
+  const styleId = '__prefab-host-fonts'
+  if (document.getElementById(styleId)) return
+  const style = document.createElement('style')
+  style.id = styleId
+  style.textContent = fontCss
+  document.head.appendChild(style)
 }
 
 // ── Environment Detection ────────────────────────────────────────────────────

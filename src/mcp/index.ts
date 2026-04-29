@@ -14,4 +14,4 @@ export type {
   McpAppPermissions,
   ResourceMetaOptions,
 } from './display.js'
-export type { McpToolResult, McpContent, McpTextContent, McpImageContent, McpResourceContent } from './types.js'
+export type { McpToolResult, McpContent, McpTextContent, McpImageContent, McpResourceContent, McpTextResourceContents, McpBlobResourceContents } from './types.js'
