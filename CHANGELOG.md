@@ -2,7 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] — v0.2.19
+## [Unreleased] — v0.2.20
+
+### Theme Toggle Fix
+- **Fixed**: dark/light toggle icon flipped but colours didn't change — `@media (prefers-color-scheme: dark) :root:not(...)` at specificity (0,2,0) beat `[data-theme]` at (0,1,0). Bumped to `:root[data-theme="dark/light"]` (0,2,0) so toggle wins by source order
+- `[data-theme]` blocks now use static values only (not host var fallback chains) — prevents both themes resolving to the same host variable
+
+### VS Code Theme Sync
+- `syncVsCodeTheme()` — reads `data-vscode-theme-kind` from `document.body`, maps to `data-theme` on `:root` (`vscode-dark` / `vscode-high-contrast` → `dark`, else `light`)
+- `MutationObserver` watches for VS Code theme switches and keeps `data-theme` in sync automatically
+- Only active in standalone / VS Code context (skipped when MCP Apps bridge is present)
+
+### Tests
+- Added `renderer-destroy.test.ts` — 12 tests for component destroy hook lifecycle
+- **1142 tests** passing across 32 files
+
+## [0.2.19] — 2026-04-29
 
 ### SDK Type Compatibility
 - `McpToolResult` now structurally assignable to `@modelcontextprotocol/sdk` `CallToolResult` — no cast needed when returning `display()` from SDK tool handlers
@@ -17,19 +32,6 @@ All notable changes to this project will be documented in this file.
 - Added `--shadow-sm/md/lg` and `--border-radius-*` → `--radius` mapping from MCP Apps spec
 - `applyHostTheme()` now injects host-provided `@font-face` / `@import` CSS from `styles.css.fonts` (idempotent `<style>` tag)
 - `HostTheme.fontCss` field added; extracted from both `ui/initialize` and `ui/notifications/host-context-changed`
-
-### Theme Toggle Fix
-- **Fixed**: dark/light toggle icon flipped but colours didn't change — `@media (prefers-color-scheme: dark) :root:not(...)` at specificity (0,2,0) beat `[data-theme]` at (0,1,0). Bumped to `:root[data-theme="dark/light"]` (0,2,0) so toggle wins by source order
-- `[data-theme]` blocks now use static values only (not host var fallback chains) — prevents both themes resolving to the same host variable
-
-### VS Code Theme Sync
-- `syncVsCodeTheme()` — reads `data-vscode-theme-kind` from `document.body`, maps to `data-theme` on `:root` (`vscode-dark` / `vscode-high-contrast` → `dark`, else `light`)
-- `MutationObserver` watches for VS Code theme switches and keeps `data-theme` in sync automatically
-- Only active in standalone / VS Code context (skipped when MCP Apps bridge is present)
-
-### Tests
-- Added `renderer-destroy.test.ts` — 12 tests for component destroy hook lifecycle
-- **1142 tests** passing across 32 files
 
 ## [0.2.18] — 2026-04-29
 
