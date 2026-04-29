@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.18] — 2026-04-29
+
+### SDK Type Compatibility
+- `McpToolResult` now structurally assignable to `@modelcontextprotocol/sdk` `CallToolResult` — no cast needed when returning `display()` from SDK tool handlers
+- Added `[key: string]: unknown` index signature (satisfies SDK's `Result` base)
+- Split `McpResourceContent.resource` into discriminated union (`McpTextResourceContents | McpBlobResourceContents`) matching SDK's `EmbeddedResource`
+- Added optional `annotations?` and `_meta?` on all content types
+
+### Host Theme Token Mapping
+- **CSS fallback chain**: all design tokens in `prefab.css` resolve through 3 tiers — MCP Apps spec vars (`--color-background-primary`) → VS Code vars (`--vscode-editor-background`) → static defaults
+- Applies to all theme blocks: `:root`, `@media (prefers-color-scheme: dark)`, `[data-theme="dark"]`, `[data-theme="light"]`
+- Downstream MCP servers no longer need custom CSS for Claude Desktop or VS Code webview theming
+- Added `--shadow-sm/md/lg` and `--border-radius-*` → `--radius` mapping from MCP Apps spec
+- `applyHostTheme()` now injects host-provided `@font-face` / `@import` CSS from `styles.css.fonts` (idempotent `<style>` tag)
+- `HostTheme.fontCss` field added; extracted from both `ui/initialize` and `ui/notifications/host-context-changed`
+
+### Builder API Improvements
+- `display_success(title, body?)` — success-variant alert helper
+- `resourceMeta(opts)` — build `_meta` for `resources/read` (CSP, permissions, domain, border)
+- `PREFAB_CDN_META` — pre-built meta with jsDelivr CDN CSP for common deployments
+- `structuredContent` on all display helpers (`display`, `display_form`, `display_update`, `display_error`, `display_success`)
+- `PrefabApp.toMcpResult()` — returns `{ content, structuredContent }` for direct SDK tool handler return
+- MCP actions: `RequestDisplayMode` action + `displayMode` option on `CallTool`
+- New component support: `Embed`, `Markdown`, `Mermaid`, `CodeBlock` builder classes
+
+### Tests
+- **1130 tests** passing across 31 files
+
 ## [0.2.17] — 2026-04-28
 
 ### Auto-Resize
