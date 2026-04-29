@@ -2,11 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] — v0.2.20
+## [Unreleased] — v0.2.21
+
+### Host Theme Adaptation
+- **Fixed**: `[data-theme]` blocks had static-only values, so Claude Desktop's host theme colors were ignored — UI looked plain/unstyled despite receiving host variables
+- Restored 3-tier fallback chain (`MCP Apps → VS Code → static`) in all four theme blocks (`:root`, `@media dark`, `[data-theme="dark"]`, `[data-theme="light"]`)
+- Standalone toggle still works: MCP/VS Code vars undefined → falls to static defaults
+
+## [0.2.20] — 2026-04-29
 
 ### Theme Toggle Fix
 - **Fixed**: dark/light toggle icon flipped but colours didn't change — `@media (prefers-color-scheme: dark) :root:not(...)` at specificity (0,2,0) beat `[data-theme]` at (0,1,0). Bumped to `:root[data-theme="dark/light"]` (0,2,0) so toggle wins by source order
-- `[data-theme]` blocks now use static values only (not host var fallback chains) — prevents both themes resolving to the same host variable
 
 ### VS Code Theme Sync
 - `syncVsCodeTheme()` — reads `data-vscode-theme-kind` from `document.body`, maps to `data-theme` on `:root` (`vscode-dark` / `vscode-high-contrast` → `dark`, else `light`)
