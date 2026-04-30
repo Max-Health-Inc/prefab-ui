@@ -2,7 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] — v0.2.22
+## [0.2.23] — 2026-04-30
+
+### Utility Classes
+- **Added**: ~200 Tailwind-compatible utility classes in `prefab.css` — auto-renderers no longer require Tailwind CSS
+- Categories: display, flexbox, gap, padding (px/py/pt/pb/pl/pr scales), margin (mx/my/mt/mb/ml/mr scales), width, height, max-width (xs–7xl), typography (text-xs–4xl, font weights, alignment, line-height, tracking), theme-aware text/bg colors, borders, rounded, shadows, overflow, position, z-index, opacity, cursor, transitions, sr-only
+
+### Theme Fix
+- **Fixed**: reverted to v0.2.20 theme behaviour after regressions in v0.2.21/v0.2.22
+- `applyHostTheme()` sets `data-theme` from host `colorScheme` again — toggle works correctly in hosted mode
+- `syncVsCodeTheme()` restored for standalone VS Code webviews (reads `data-vscode-theme-kind`, MutationObserver)
+- `[data-theme]` blocks use static values only (no host var references) — prevents both blocks resolving identically
+
+## [0.2.22] — 2026-04-29
+
+### Host Theme Adaptation
+- Separated host theming from toggle: `applyHostTheme()` no longer sets `data-theme`
+- Removed `syncVsCodeTheme()` (later restored in v0.2.23)
 
 ## [0.2.21] — 2026-04-29
 
