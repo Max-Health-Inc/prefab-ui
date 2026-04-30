@@ -19,7 +19,7 @@
 
 import { type Component } from '../core/component.js'
 import { PrefabApp } from '../app.js'
-import type { Theme } from '../app.js'
+import type { Theme, LayoutHints } from '../app.js'
 import type { Action } from '../actions/types.js'
 import type { McpToolResult } from './types.js'
 
@@ -40,6 +40,8 @@ export interface DisplayOptions {
   keyBindings?: Record<string, Action | Action[]>
   /** Extra CSS class on root element. */
   cssClass?: string
+  /** Size hints for the host container (iframe, panel, etc.). */
+  layout?: LayoutHints
 }
 
 /**
@@ -65,6 +67,7 @@ export function display(
         onMount: options?.onMount,
         keyBindings: options?.keyBindings,
         cssClass: options?.cssClass,
+        layout: options?.layout,
       })
 
   const wire = app.toJSON()

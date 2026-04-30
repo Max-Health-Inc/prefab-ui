@@ -76,6 +76,8 @@ export interface PrefabWireData {
   stylesheets?: string[]
   /** Custom pipe source code strings — hydrated by the renderer on mount. */
   pipes?: Record<string, string>
+  /** Size hints for the host container. */
+  layout?: { preferredHeight?: number; minHeight?: number; maxHeight?: number }
 }
 
 export interface PrefabUpdateData {
@@ -158,6 +160,16 @@ export const PrefabRenderer = {
 
     // Apply theme
     applyTheme(root, data.theme)
+
+    // Apply layout hints as inline styles on the root element
+    if (data.layout) {
+      if (data.layout.preferredHeight != null) root.style.height = `${data.layout.preferredHeight}px`
+      if (data.layout.minHeight != null) root.style.minHeight = `${data.layout.minHeight}px`
+      if (data.layout.maxHeight != null) {
+        root.style.maxHeight = `${data.layout.maxHeight}px`
+        root.style.overflow = 'auto'
+      }
+    }
 
     // Inject stylesheets
     const styleEls: HTMLStyleElement[] = []

@@ -72,6 +72,25 @@ describe('PrefabApp', () => {
     expect(json.theme).toBeUndefined()
     expect(json.defs).toBeUndefined()
     expect(json.keyBindings).toBeUndefined()
+    expect(json.layout).toBeUndefined()
+  })
+
+  it('includes layout hints when provided', () => {
+    const app = new PrefabApp({
+      view: Heading('Dashboard'),
+      layout: { preferredHeight: 600, minHeight: 300, maxHeight: 900 },
+    })
+    const json = app.toJSON()
+    expect(json.layout).toEqual({ preferredHeight: 600, minHeight: 300, maxHeight: 900 })
+  })
+
+  it('includes partial layout hints', () => {
+    const app = new PrefabApp({
+      view: Heading('Widget'),
+      layout: { preferredHeight: 400 },
+    })
+    const json = app.toJSON()
+    expect(json.layout).toEqual({ preferredHeight: 400 })
   })
 
   it('generates valid HTML', () => {

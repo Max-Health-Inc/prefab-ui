@@ -85,6 +85,7 @@ async function boot(): Promise<void> {
   function mount(data: PrefabWireData): void {
     if (mounted) mounted.destroy()
     mounted = ui.mount(el, data)
+    if (data.layout) ui.notifyPreferredSize(data.layout)
   }
 
   // ── Tool result handler (structuredContent from MCP) ───────────────────

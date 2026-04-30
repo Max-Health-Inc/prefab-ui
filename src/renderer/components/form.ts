@@ -484,7 +484,7 @@ function renderCombobox(node: ComponentNode, ctx: RenderContext): HTMLElement {
     input.addEventListener('input', () => {
       const q = input.value.toLowerCase()
       for (const opt of Array.from(dropdown.querySelectorAll('.pf-combobox-option'))) {
-        const text = (opt as HTMLElement).textContent.toLowerCase()
+        const text = ((opt as HTMLElement).textContent ?? '').toLowerCase()
         ;(opt as HTMLElement).style.display = text.includes(q) ? '' : 'none'
       }
     })

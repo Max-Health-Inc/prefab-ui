@@ -572,4 +572,40 @@ describe('PrefabRenderer', () => {
     app.destroy()
     expect(root.innerHTML).toBe('')
   })
+
+  it('applies layout preferredHeight as inline style', () => {
+    const data: PrefabWireData = {
+      $prefab: { version: '0.2' },
+      view: { type: 'Text', content: 'Hi' },
+      layout: { preferredHeight: 500 },
+    }
+    const app = PrefabRenderer.mount(root, data)
+    expect(root.style.height).toBe('500px')
+    app.destroy()
+  })
+
+  it('applies layout minHeight and maxHeight', () => {
+    const data: PrefabWireData = {
+      $prefab: { version: '0.2' },
+      view: { type: 'Text', content: 'Hi' },
+      layout: { minHeight: 200, maxHeight: 800 },
+    }
+    const app = PrefabRenderer.mount(root, data)
+    expect(root.style.minHeight).toBe('200px')
+    expect(root.style.maxHeight).toBe('800px')
+    expect(root.style.overflow).toBe('auto')
+    app.destroy()
+  })
+
+  it('does not apply layout styles when layout is absent', () => {
+    const data: PrefabWireData = {
+      $prefab: { version: '0.2' },
+      view: { type: 'Text', content: 'Hi' },
+    }
+    const app = PrefabRenderer.mount(root, data)
+    expect(root.style.height).toBe('')
+    expect(root.style.minHeight).toBe('')
+    expect(root.style.maxHeight).toBe('')
+    app.destroy()
+  })
 })

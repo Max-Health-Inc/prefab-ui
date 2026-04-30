@@ -21,6 +21,18 @@ export interface Theme {
   dark?: Record<string, string>
 }
 
+// ── Layout hints ─────────────────────────────────────────────────────────────
+
+/** Declarative size hints for the host container (iframe, panel, etc.). */
+export interface LayoutHints {
+  /** Preferred height in pixels — host should allocate this before first paint. */
+  preferredHeight?: number
+  /** Minimum usable height in pixels. */
+  minHeight?: number
+  /** Maximum height in pixels — content scrolls beyond this. */
+  maxHeight?: number
+}
+
 // ── Wire format ──────────────────────────────────────────────────────────────
 
 export interface PrefabWireFormat {
@@ -34,6 +46,8 @@ export interface PrefabWireFormat {
   stylesheets?: string[]
   /** Custom pipe source code — hydrated by the renderer on mount. */
   pipes?: Record<string, string>
+  /** Size hints for the host container. */
+  layout?: LayoutHints
 }
 
 // ── PrefabApp ────────────────────────────────────────────────────────────────
@@ -51,6 +65,8 @@ export interface PrefabAppOptions {
   cssClass?: string
   /** Custom pipes to serialize in the wire format. Functions are converted to source strings. */
   pipes?: Record<string, PipeFn>
+  /** Size hints for the host container. */
+  layout?: LayoutHints
 }
 
 export class PrefabApp {
@@ -65,6 +81,7 @@ export class PrefabApp {
   readonly keyBindings?: Record<string, Action | Action[]>
   readonly cssClass?: string
   readonly pipes?: Record<string, PipeFn>
+  readonly layout?: LayoutHints
 
   constructor(opts: PrefabAppOptions) {
     this.title = opts.title ?? 'Prefab'
@@ -85,6 +102,7 @@ export class PrefabApp {
     this.keyBindings = opts.keyBindings
     this.cssClass = opts.cssClass
     this.pipes = opts.pipes
+    this.layout = opts.layout
   }
 
   /**
@@ -137,6 +155,8 @@ export class PrefabApp {
         wire.pipes[name] = fn.toString()
       }
     }
+
+    if (this.layout) wire.layout = this.layout
 
     return wire
   }

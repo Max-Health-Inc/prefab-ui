@@ -105,6 +105,21 @@ describe('display()', () => {
     const json = JSON.stringify(parsePrefab(result))
     expect(json).toContain('Card')
   })
+
+  it('includes layout hints in wire format', () => {
+    const result = display(Text('Dashboard'), {
+      title: 'Analytics',
+      layout: { preferredHeight: 600, minHeight: 300, maxHeight: 900 },
+    })
+    const wire = parsePrefab(result) as PrefabWireFormat
+    expect(wire.layout).toEqual({ preferredHeight: 600, minHeight: 300, maxHeight: 900 })
+  })
+
+  it('omits layout when not provided', () => {
+    const result = display(Text('Simple'))
+    const wire = parsePrefab(result) as PrefabWireFormat
+    expect(wire.layout).toBeUndefined()
+  })
 })
 
 // ── display_form() ───────────────────────────────────────────────────────────

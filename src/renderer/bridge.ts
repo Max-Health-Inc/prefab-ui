@@ -267,6 +267,21 @@ export class Bridge {
     return () => observer.disconnect()
   }
 
+  /**
+   * Notify the host of declarative layout/size hints from the wire format.
+   * Sends once when the UI mounts so the host can pre-allocate space.
+   *
+   * Uses `ui/notifications/preferred-size` (JSON-RPC) or
+   * `prefab:preferred-size` (prefab protocol).
+   */
+  notifyPreferredSize(layout: { preferredHeight?: number; minHeight?: number; maxHeight?: number }): void {
+    if (this.protocol === 'jsonrpc') {
+      this.sendRpcNotification('ui/notifications/preferred-size', layout)
+    } else {
+      this.sendPrefab('prefab:preferred-size', layout as Record<string, unknown>)
+    }
+  }
+
   /** Register a handler for a message type (prefab:* or internal). */
   on(type: string, handler: (payload: Record<string, unknown>) => void): void {
     if (!this.listeners.has(type)) {

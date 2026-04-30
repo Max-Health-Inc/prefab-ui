@@ -13,7 +13,7 @@ export type { ValidationError, ValidationResult } from './core/validate.js'
 
 // ── App ──────────────────────────────────────────────────────────────────────
 export { PrefabApp } from './app.js'
-export type { PrefabAppOptions, PrefabWireFormat, Theme } from './app.js'
+export type { PrefabAppOptions, PrefabWireFormat, Theme, LayoutHints } from './app.js'
 
 // ── Layout ───────────────────────────────────────────────────────────────────
 export { Column, Row, Grid, GridItem, Container, Div, Span, Dashboard, DashboardItem, Pages, Page, Detail, MasterDetail } from './components/layout/index.js'

@@ -81,6 +81,11 @@ export interface PrefabApp {
    * Returns a teardown function that disconnects the observer.
    */
   setupAutoResize: (target: string | HTMLElement) => () => void
+  /**
+   * Notify the host of declarative layout/size preferences from the wire format.
+   * Called automatically when mounting wire data with a `layout` field.
+   */
+  notifyPreferredSize: (layout: { preferredHeight?: number; minHeight?: number; maxHeight?: number }) => void
   /** Host context from initialization. */
   host: HostContext
   /** Host capabilities. */
@@ -261,6 +266,9 @@ export async function app(options?: AppOptions): Promise<PrefabApp> {
       if (!bridge) return noop
       const el = typeof target === 'string' ? resolveTarget(target) : target
       return bridge.setupAutoResize(el)
+    },
+    notifyPreferredSize: (layout) => {
+      if (bridge) bridge.notifyPreferredSize(layout)
     },
     host: hostContext,
     capabilities: hostContext.capabilities,
