@@ -109,6 +109,7 @@ function renderDataTable(node: ComponentNode, ctx: RenderContext): HTMLElement {
       const q = input.value.toLowerCase()
       const trs = Array.from(tbody.querySelectorAll('tr'))
       for (const tr of trs) {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- textContent is string | null per DOM spec
         const cellText = ((tr as HTMLElement).textContent ?? '').toLowerCase()
         ;(tr as HTMLElement).style.display = cellText.includes(q) ? '' : 'none'
       }
