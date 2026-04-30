@@ -34,21 +34,16 @@ jobs:
         id: version
         run: |
           PACKAGE_NAME=$(jq -r .name package.json)
-          PKG_VERSION=$(jq -r .version package.json)
 
-          # Get latest version from npm; fall back to package.json version
+          # Always bump from npm latest (ignore package.json version)
           NPM_LATEST=$(npm view "$PACKAGE_NAME" version 2>/dev/null || echo "0.0.0")
-
-          # Use whichever is higher: npm or package.json
-          # Compare by sorting semver and taking the last
-          LATEST=$(printf '%s\n%s' "$NPM_LATEST" "$PKG_VERSION" | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)
           echo "npm-latest=$NPM_LATEST" >> "$GITHUB_OUTPUT"
 
-          # Bump patch: 0.1.1 → 0.1.2
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$LATEST"
+          # Bump patch: 0.2.24 → 0.2.25
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$NPM_LATEST"
           NEXT="${MAJOR}.${MINOR}.$((PATCH + 1))"
           echo "next=$NEXT" >> "$GITHUB_OUTPUT"
-          echo "### Version: $LATEST → $NEXT" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Version: $NPM_LATEST → $NEXT" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Update package.json version
         run: |
