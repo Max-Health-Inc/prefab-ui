@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.25] — 2026-04-30
+
+### Layout Hints
+- **New**: `LayoutHints` type — `preferredHeight`, `minHeight`, `maxHeight` (px) for declarative host container sizing
+- `PrefabWireFormat.layout` — new optional field in the `$prefab` wire format
+- `PrefabAppOptions.layout` — set directly on the app constructor
+- `DisplayOptions.layout` — set via `display(view, { layout: { preferredHeight: 600 } })`
+- Renderer applies `height` / `min-height` / `max-height` + `overflow: auto` as inline styles on the mount root
+- `Bridge.notifyPreferredSize()` — emits `ui/notifications/preferred-size` (JSON-RPC) or `prefab:preferred-size` (prefab protocol) to the host on mount
+- Auto-mount (`renderer.auto.min.js`) forwards layout hints automatically when wire data contains a `layout` field
+
+### CSS Utilities
+- **Added**: `max-h-*` utility classes (`max-h-48`, `max-h-64`, `max-h-80`, `max-h-96`, `max-h-full`, `max-h-screen`, `max-h-none`)
+
+### Bug Fixes
+- **Fixed**: `DOM.Iterable` added to tsconfig `lib` — resolves `NodeListOf` iteration errors in strict mode
+- **Fixed**: null-safe `.textContent` access in `data.ts` (DataTable search) and `form.ts` (Combobox filter)
+- **0 tsc errors**, **1149 tests** passing across 32 files
+
 ## [0.2.24] — 2026-04-30
 
 ### Utility Classes
